@@ -540,6 +540,7 @@ bool get_extreme_pts_refine_halfspaces_alg1(halfspace_set_t *half_set)
 
     //update the bounding rectangle
     //update_bounding_rectangle(half_set);
+    
     // update the set of halfspaces
     fscanf(rPtr, "%i", &size);
 

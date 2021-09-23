@@ -103,6 +103,7 @@ typedef struct hyperplane_set
 }	hyperplane_set_t;
 
 // data structure for storing halfspace.
+// Note: point2 has higher utility than point1
 typedef struct halfspace
 {
 	point_t*	normal;

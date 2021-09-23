@@ -12,7 +12,7 @@
 void construct_halfspace_set(std::vector<point_t *> &p_set, halfspace_set_t *R, std::vector<point_t *> &choose_item_points,
                              std::vector<halfspace_set_t *> &half_set_set, std::vector<int> &considered_half_set)
 {
-    //initial
+    //construct_halfspace_set(p_top1, R_half_set, choose_item_points, half_set_set, considered_half_set);
     choose_item_points.clear(); half_set_set.clear(); considered_half_set.clear();
     int M = p_set.size();
     if (M < 2)
@@ -584,10 +584,10 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
      * R_half_set            The utility range R
      */
     halfspace_set_t *R_half_set = R_initial(dim);
-    std::vector<halfspace_set_t *> half_set_set;
+    std::vector<halfspace_set_t *> half_set_set; 
     std::vector<int> considered_half_set;   //[i] shows the index in half_set_set
     std::vector<point_t *> choose_item_points;
-    std::vector<choose_item *> choose_item_set;
+    std::vector<choose_item *> choose_item_set; //the items are sorted for each case (positive, negative and intersection)
     construct_halfspace_set(p_top1, R_half_set, choose_item_points, half_set_set, considered_half_set);
 
     //index the index of the chosen hyperplane(question)
@@ -597,7 +597,7 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
     double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
     double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
 
-    //initial
+    //update item table based on comparison results
     halfspace_t *hy; int numOfQuestion = 0;
     while (p_result.size() < k)
     {

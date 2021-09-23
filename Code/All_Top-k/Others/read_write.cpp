@@ -44,6 +44,7 @@ int dominates(point_t* p1, point_t* p2)
 	return 1;
 }
 
+// returns True if p1 dominates p2
 int dominates_same(point_t* p1, point_t* p2)
 {
     int d_num = 0;

@@ -16,6 +16,8 @@ include_directories(${INC_DIR})
 link_directories(${LINK_DIR})
 link_libraries(glpk)
 
+add_definitions(${CMAKE_CXX_FLAGS} "-g")
+
 add_executable(InteractiveTopk
         2DPI/2dPI.cpp
         2DPI/2dPI.h

@@ -1128,6 +1128,8 @@ bool find_possible_topk(std::vector<point_t *> p_set, halfspace_set_t *half_set,
         }
         return true;
     }
+
+    //select 3 extreme points and see if their top-k are the same
     for (int i = 0; i < half_set->ext_pts.size()&&i <= 2; i++)
     {
         //top       used to store the top-k point for a single ext_pts
@@ -1272,7 +1274,7 @@ bool check_possible_alltopk(std::vector<point_t *> p_set, halfspace_set_t *half_
     for (int i = 0; i < size; i++)
     {
         bool is_top = true;
-        int large_num = 0;
+        int large_num = 0; 
         for (int j = 0; j < p_set.size(); j++)
         {
             //if the points have the same coordinates, we do not need to use function check_situation
@@ -1291,7 +1293,7 @@ bool check_possible_alltopk(std::vector<point_t *> p_set, halfspace_set_t *half_
                 int relation = check_situation_positive(h, half_set);
                 if (relation != 1)
                 {
-                    large_num++;
+                    large_num++; //number of points with utility > top_current[i]
                     if (large_num >= k)
                     {
                         is_top = false;

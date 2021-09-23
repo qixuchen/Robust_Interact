@@ -52,7 +52,8 @@ int Random_half(std::vector<point_t*> p_set, point_t* u, int k)
                 {
                     hyperplane_t* h = alloc_hyperplane(p_set[i], current_point[scan_index], 0);
                     int relation = check_situation_accelerate(h, R_half_set, 0);
-                    //if intersect, calculate the distance
+                    //if intersect, calculate the distance and find the hyperplane
+                    //with minimum distance to R_c
                     if(relation==0)
                     {
                         need_ask=true;

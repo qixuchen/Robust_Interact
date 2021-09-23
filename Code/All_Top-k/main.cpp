@@ -23,12 +23,12 @@ int main(int argc, char *argv[])
     // generate the utility vector
     point_t *u = alloc_point(dim);
     double sum = 0;
-    for (int i = 0; i < dim; i++)
+    for (int i = 0; i < dim; i++) //randomly select utility vector
     {
         u->coord[i] = ((double) rand()) / RAND_MAX;
         sum += u->coord[i];
     }
-    for (int i = 0; i < dim; i++)
+    for (int i = 0; i < dim; i++) //normalize utility vecotr
         u->coord[i] = u->coord[i]/sum;
 
     // look for the ground truth top-k point
