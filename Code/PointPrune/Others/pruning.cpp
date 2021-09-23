@@ -248,7 +248,8 @@ void update_bounding_sphere(halfspace_set_t *half_set)
         double dis = 0;
         for (int j = 0; j < dim; j++)
         {
-            dis += (coord[j] - half_set->ext_pts[i]->coord[j]) * (coord[j] - half_set->ext_pts[i]->coord[j]);
+            dis += (coord[j] - half_set->ext_pts[i]->coord[j]) *
+                   (coord[j] - half_set->ext_pts[i]->coord[j]);
         }
         if (half_set->out_radius < dis)
         {
@@ -540,7 +541,6 @@ bool get_extreme_pts_refine_halfspaces_alg1(halfspace_set_t *half_set)
 
     //update the bounding rectangle
     //update_bounding_rectangle(half_set);
-    
     // update the set of halfspaces
     fscanf(rPtr, "%i", &size);
 

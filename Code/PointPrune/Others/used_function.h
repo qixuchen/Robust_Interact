@@ -1,5 +1,5 @@
 #define Beta 0.01
-#define Precision 0.0000006
+#define Precision 0.0000015
 #define RandRate 0.5
 
 #include "../Others/data_utility.h"
@@ -63,13 +63,6 @@ void delete_same(std::vector<point_t *> p_set, std::vector<point_t *> &p0);
 //@param u 				The linear function
 void sort_point(std::vector<point_t*> p_set, std::vector<point_t*> &return_point, point_t* u);
 
-/**
- * @brief   Calculate the length of the utility space in each dimension
- * @param R_half_set
- * @return
- */
-void calculate_length(halfspace_set_t *R, double *len, double *position);
-
 //@brief Calculate the distance between a point and a hyperplane
 //@param hyper 	The hyperplane
 //@param p 		The point
@@ -97,8 +90,6 @@ void find_top_k(point_t* u, std::vector<point_t*> p_set, std::vector<point_t*> &
 //@param level		The number of dimensions we have set. For user, only need to set level=0
 //@param used_seg	The range which has been assigned to the u[i]. For user, set rest_seg=0
 void find_top1_sampling(std::vector<point_t*> p_set, std::vector<point_t*> &top_set, point_t* u, int level, int used_seg);
-
-void find_top1_sampling(std::vector<point_t *> p_set, std::vector<point_t *> &top_set, point_t *u, int level, int used_seg, double *posi, double *len);
 
 void find_top1(std::vector<point_t *> p_set, std::vector<point_t *> &top);
 
@@ -156,8 +147,6 @@ int check_situation_accelerate(hyperplane_t* hyper, halfspace_set_t* half_set, i
  */
 int check_situation_positive(hyperplane_t* hyper, halfspace_set_t* half_set);
 
-int check_situation_positive_tough(hyperplane_t *hyper, halfspace_set_t *half_set);
-
 /*
  * @brief Find points which could be the top-k points for any utility vector in half_set
  *        Not accurate. It needs to be used with function check_possible_top_k()
@@ -181,7 +170,7 @@ bool find_possible_topk(std::vector<point_t*> p_set, halfspace_set_t* half_set, 
  */
 point_t* check_possible_topk(std::vector<point_t*> p_set, halfspace_set_t* half_set, int k, std::vector<point_t*> &top_current);
 
-bool check_possible_alltopk(std::vector<point_t *> p_set, halfspace_set_t *half_set, int k, std::vector<point_t *> &top_current);
+
 /*
  * @brief Print the information of halfspaces and extreme points of R
  * @param R     The utility range R

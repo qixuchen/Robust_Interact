@@ -33,5 +33,6 @@
 
 #project specific
 .vscode/
-Code/All_Top-k/build/
-Code/InteractiveTopk/build/
+All_Top-k/build/
+PointPrune/build/
+InteractiveTopk/build/

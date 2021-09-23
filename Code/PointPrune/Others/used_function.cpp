@@ -301,41 +301,11 @@ double calculate_distance(hyperplane_t *hyper, point_t *p)
     }
 }
 
-
-/**
- * @brief   Calculate the length of the utility space in each dimension
- * @param R_half_set
- * @return
- */
-void calculate_length(halfspace_set_t *R, double *len, double *position)
-{
-    int dim = R->ext_pts[0]->dim;
-    double *max = new double[dim];
-    for(int i = 0; i < dim; ++i)
-    {
-        position[i] = R->ext_pts[0]->coord[i];
-        max[i] = R->ext_pts[0]->coord[i];
-    }
-    for(int i = 1; i < R->ext_pts.size(); ++i)
-    {
-        for(int j = 0; j < dim; ++j)
-        {
-            if(position[j] > R->ext_pts[i]->coord[j])
-                position[j] = R->ext_pts[i]->coord[j];
-            if(max[j] < R->ext_pts[i]->coord[j])
-                max[j] = R->ext_pts[i]->coord[j];
-        }
-    }
-    for(int i = 0; i < dim; ++i)
-        len[i] = max[i] - position[i];
-}
-
-
 //@brief Find the top-k point w.r.t linear function u
 //@param u 			The linear function
 //@param p_set 		The original dataset
 //@param top 		The returned top-k point
-//@param k 			The threshold of top-k
+//@param k 			The threhold of top-k
 void find_top_k(point_t *u, point_set_t *p_set, std::vector<point_t *> &top, int k)
 {
     std::vector<double> value;
@@ -494,65 +464,6 @@ void find_top1_sampling(std::vector<point_t *> p_set, std::vector<point_t *> &to
     }
     //printf("top1_size%d\n", p_set.size());
 }
-
-//@brief Use sampling to find all the points which is able to be top-1 at some utility vector
-//@param p_set 		The point set containing all the points
-//@param top_set	The returned point set containing all the possible top-1 point
-//@param u 			The utility vector. For user, point_t* u = alloc_point(dim)
-//@param level		The number of dimensions we have set. For user, only need to set level=0
-//@param used_seg	The range which has been assigned to the u[i]. For user, set rest_seg=0
-void find_top1_sampling(std::vector<point_t *> p_set, std::vector<point_t *> &top_set, point_t *u, int level, int used_seg, double *posi, double *len)
-{
-    int dim = p_set[0]->dim, M = p_set.size();
-    double segment = 10, length;
-    if (level >= dim - 2)
-    {
-        length = len[dim - 2] / segment;
-        for (int j = 0; j <= segment - used_seg; j++)
-        {
-            u->coord[level] = posi[dim - 2] + j * length;
-            u->coord[dim - 1] = 1;
-            for (int i = 0; i < dim - 1; i++)
-                u->coord[dim - 1] -= u->coord[i];
-
-            //Find the point with max utility w.r.t u
-            double maxValue = 0;
-            int maxIdx = 0;
-            for (int i = 0; i < M; i++)
-            {
-                double value = dot_prod(u, p_set[i]);//utility of the points
-                if (value > maxValue)
-                {
-                    maxValue = value;
-                    maxIdx = i;
-                }
-            }
-            //Check if it is already in top_set
-            bool is_inside = false;
-            for (int i = 0; i < top_set.size(); i++)
-            {
-                if (top_set[i]->id == p_set[maxIdx]->id)
-                {
-                    is_inside = true;
-                    break;
-                }
-            }
-            if (!is_inside)
-                top_set.push_back(p_set[maxIdx]);
-        }
-    }
-    else
-    {
-        for (int i = 0; i <= segment - used_seg; i++)
-        {
-            length = len[level]/segment;
-            u->coord[level] = posi[level] + i * length;
-            find_top1_sampling(p_set, top_set, u, level + 1, used_seg + i);
-        }
-    }
-}
-
-
 
 //@brief Use LP to check each point, whether it is able to be top-1 at some utility vector
 //@param p_set 		The point set containing all the points
@@ -897,7 +808,7 @@ void skyline_c(std::vector<point_t *> p_set, std::vector<point_t *> &return_poin
     }
 }
 
-/**
+/*
  * @brief Initial utility range R
  * @param dim   Dimension
  * @return      The utility range(utility space)
@@ -1075,39 +986,6 @@ int check_situation_positive(hyperplane_t *hyper, halfspace_set_t *half_set)
 }
 
 /*
- * @brief Check whether the half_set is on the positive side of the hyperplane
- *        Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
- * @param hyper 		The hyperplane
- * @param half_set	The half_set/Intersection of the halfspace
- * @return The relation	1: half_set on the positive side of the hyperplane
- *						0: half_set on the negative side of the hyperplane/intersects with the hyperplane
- *                      -2: Error for check situation
- */
-int check_situation_positive_tough(hyperplane_t *hyper, halfspace_set_t *half_set)
-{
-    int M = half_set->ext_pts.size();
-    if (M < 1)
-    {
-        printf("%s\n", "None of the ext_pts in the set.");
-        return -2;
-    }
-    int D = half_set->ext_pts[0]->dim;
-    for (int i = 0; i < M; i++)
-    {
-        double sum = 0;
-        for (int j = 0; j < D; j++)
-        {
-            //printf("hyper %lf %lf \n", hyper->normal->coord[j], half_set->ext_pts[i]->coord[j]);
-            sum += (hyper->normal->coord[j] * half_set->ext_pts[i]->coord[j]);
-        }
-        if (sum < Precision)
-        {
-            return 0;
-        }
-    }
-    return 1;
-}
-/*
  * @brief Find points which could be the top-k points for any utility vector in half_set
  *        Not accurate. It needs to be used with function check_possible_top_k()
  * @param p_set			The dataset
@@ -1128,8 +1006,6 @@ bool find_possible_topk(std::vector<point_t *> p_set, halfspace_set_t *half_set,
         }
         return true;
     }
-
-    //select 3 extreme points and see if their top-k are the same
     for (int i = 0; i < half_set->ext_pts.size()&&i <= 2; i++)
     {
         //top       used to store the top-k point for a single ext_pts
@@ -1181,11 +1057,14 @@ bool find_possible_topk(std::vector<point_t *> p_set, halfspace_set_t *half_set,
         if (i == 0)
         {
             for (int j = 0; j < top.size(); j++)
+            {
                 top_current.push_back(top[j]);
+            }
         }
         else
         {
-            int scan_index = 0, top_current_size = top_current.size();
+            int scan_index = 0;
+            double top_current_size = top_current.size();
             for (int j = 0; j < top_current_size; j++)
             {
                 bool is_in = false;
@@ -1197,9 +1076,19 @@ bool find_possible_topk(std::vector<point_t *> p_set, halfspace_set_t *half_set,
                         break;
                     }
                 }
-                if (!is_in)
-                    return false;
+                if (is_in)
+                {
+                    scan_index++;
+                }
+                else
+                {
+                    top_current.erase(top_current.begin() + scan_index);
+                }
             }
+        }
+        if (top_current.size() < 1)
+        {
+            return false;
         }
     }
     return true;
@@ -1257,55 +1146,6 @@ point_t* check_possible_topk(std::vector<point_t *> p_set, halfspace_set_t *half
         }
     }
     return point_topk;
-}
-
-/**
- * @brief Used to check whether there is a top-k points w.r.t any utility vector in half_set
- * @param p_set			The dataset containing all the points
- * @param half_set 		The half_set/intersection of the halfspace
- * @param k 			top-k
- * @param top_current 	The dataset containing all the possible top-k point found by function find_top_k_point_by_ext()
- * @return              If there is a top-k point w.r.t any utility vector in half_set, return it
- *                      Otherwise, return false
- */
-bool check_possible_alltopk(std::vector<point_t *> p_set, halfspace_set_t *half_set, int k, std::vector<point_t *> &top_current)
-{
-    int size = top_current.size();
-    for (int i = 0; i < size; i++)
-    {
-        bool is_top = true;
-        int large_num = 0; 
-        for (int j = 0; j < p_set.size(); j++)
-        {
-            //if the points have the same coordinates, we do not need to use function check_situation
-            bool is_same = true;
-            for (int w = 0; w < top_current[i]->dim; w++)
-            {
-                if (top_current[i]->coord[w] != p_set[j]->coord[w])
-                {
-                    is_same = false;
-                    break;
-                }
-            }
-            if (!is_same)
-            {
-                hyperplane_t *h = alloc_hyperplane(top_current[i], p_set[j], 0);
-                int relation = check_situation_positive(h, half_set);
-                if (relation != 1)
-                {
-                    large_num++; //number of points with utility > top_current[i]
-                    if (large_num >= k)
-                    {
-                        is_top = false;
-                        break;
-                    }
-                }
-            }
-        }
-        if (!is_top)
-            return false;
-    }
-    return true;
 }
 
 /*

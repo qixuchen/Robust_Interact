@@ -9,19 +9,22 @@
  * @param half_set_set			The returned partitions
  * @param considered_half_set	The set recorded all the partitions in the form of index
  */
-void construct_halfspace_set(std::vector<point_t *> &p_set, halfspace_set_t *R, std::vector<point_t *> &choose_item_points,
+void construct_halfspace_set(std::vector<point_t *> &p_set, std::vector<point_t *> &choose_item_points,
                              std::vector<halfspace_set_t *> &half_set_set, std::vector<int> &considered_half_set)
 {
-    //construct_halfspace_set(p_top1, R_half_set, choose_item_points, half_set_set, considered_half_set);
-    choose_item_points.clear(); half_set_set.clear(); considered_half_set.clear();
     int M = p_set.size();
     if (M < 2)
+    {
+        printf("%s\n", "Error: The number of points is smaller than 2.");
         return;
-
+    }
+    int dim = p_set[0]->dim;
+    halfspace_set_t *half_set;
     //record we use i-th point as the pivot(p[i]>p)
     for (int i = 0; i < M; i++)
     {
-        halfspace_set_t *half_set = alloc_halfspace_set(R);
+        //printf("%d \n", i);
+        half_set = R_initial(dim);
         for (int j = 0; j < M; j++)
         {
             if (!is_same_point(p_set[i], p_set[j]))
@@ -52,11 +55,13 @@ void construct_halfspace_set(std::vector<point_t *> &p_set, halfspace_set_t *R, 
 int build_choose_item_table(std::vector<halfspace_set_t *> half_set_set, std::vector<point_t *> p_set,
                             std::vector<choose_item *> &choose_item_set)
 {
-    choose_item_set.clear();
     int M = p_set.size(); //The number of points used to construct hyperplane(questions)
     int H_M = half_set_set.size(); //The number of halfspace sets
     if (M < 2)
+    {
+        printf("%s\n", "Error: The number of points is smaller than 2.");
         return -1;
+    }
     if (H_M < 2)
     {
         printf("%s\n", "Error: The number of partition is smaller than 1.");
@@ -353,7 +358,8 @@ int modify_choose_item_table(std::vector<choose_item *> &choose_item_set,
                 {
                     if (choose_item_set[j]->intersect_case[intersect_count] == num_set)
                     {
-                        int which_side = check_situation_accelerate(choose_item_set[j]->hyper, half_set_set[num_set],0);
+                        int which_side = check_situation_accelerate(choose_item_set[j]->hyper, half_set_set[num_set],
+                                                                    0);
                         if (which_side == -2)
                         {
                             printf("%s\n", "Error: check side failed.");
@@ -423,7 +429,7 @@ int modify_choose_item_table(std::vector<choose_item *> &choose_item_set,
         int M_positive = choose_item_set[item_count]->positive_side.size();
         int M_negative = choose_item_set[item_count]->negative_side.size();
         int M_intersect = choose_item_set[item_count]->intersect_case.size();
-        if (M_negative + M_intersect == 0 || M_positive + M_intersect == 0)// || M_negative + M_positive == 0)
+        if (M_negative + M_intersect == 0 || M_positive + M_intersect == 0)// || M_positive + M_negative == 0)
         {
             choose_item_set.erase(choose_item_set.begin() + item_count);
         }
@@ -462,14 +468,14 @@ int modify_choose_item_table(std::vector<choose_item *> &choose_item_set,
  */
 int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
 {
-    //p_top1 contains the points which are the convex points
-    std::vector<point_t *> p_top1, p_refined, p_result;
+    //p_set_1 contains the points which are not dominated by >=1 points
+    //p_set_k contains the points which are not dominated by >=k points
+    //p_top_1 contains the points which are the convex points
+    std::vector<point_t *> p_set_1, p_top_1;
     int dim = p_set[0]->dim;
     point_t *uk = alloc_point(dim);
-    find_top1_sampling(p_set, p_top1, uk, 0, 0);//use sampling method
+    find_top1_sampling(p_set, p_top_1, uk, 0, 0);//use sampling method
     release_point(uk);
-    for(int i = 0; i < p_set.size(); ++i)
-        p_refined.push_back(p_set[i]);
 
     /* half_set_set          contains all the partitions(intersection of halfspaces)
      * considered_half_set   contains all the possible partitions considered
@@ -477,12 +483,11 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
      * choose_item_set       contains all the hyperplanes(questions) which can be asked user
      * R_half_set            The utility range R
      */
-    halfspace_set_t *R_half_set = R_initial(dim);
     std::vector<halfspace_set_t *> half_set_set;
     std::vector<int> considered_half_set;   //[i] shows the index in half_set_set
     std::vector<point_t *> choose_item_points;
     std::vector<choose_item *> choose_item_set;
-    construct_halfspace_set(p_top1, R_half_set, choose_item_points, half_set_set, considered_half_set);
+    construct_halfspace_set(p_top_1, choose_item_points, half_set_set, considered_half_set);
 
     //index the index of the chosen hyperplane(question)
     //v1    the utility of point 1
@@ -492,8 +497,12 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
     double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
 
     //initial
-    halfspace_t *hy; int numOfQuestion = 0;
-    while (p_result.size() < k)
+    halfspace_set_t *R_half_set = R_initial(dim);
+    get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+    halfspace_t *hy;
+    int numOfQuestion = 0;
+    point_t* point_result = NULL;
+    while (considered_half_set.size() > 1)
     {
         numOfQuestion++;
         if (v1 >= v2)
@@ -506,56 +515,31 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
             hy = alloc_halfspace(choose_item_set[index]->hyper->point1, choose_item_set[index]->hyper->point2, 0, true);
             index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
         }
+        v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
+        v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
 
         //Find whether there exist point which is the topk point w.r.t any u in R
         R_half_set->halfspaces.push_back(hy);
         get_extreme_pts_refine_halfspaces_alg1(R_half_set);
         std::vector<point_t *> top_current;
-        if(find_possible_topk(p_set, R_half_set, k, top_current))
+        point_result = NULL;
+        bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
+        if (check_result)
         {
-            if (check_possible_alltopk(p_set, R_half_set, k, top_current))
-            {
-                printf("|%30s |%10d |%10s |\n", "HDPI-sampling", numOfQuestion, "--");
-                for(int i = 0; i < top_current.size(); ++i)
-                    printf("|%30s |%10d |%10d |\n", "Point", i + 1, top_current[i]->id);
-                printf("---------------------------------------------------------\n");
-                return numOfQuestion;
-            }
+            point_result = check_possible_topk(p_set, R_half_set, k, top_current);
         }
-        double *len = new double[dim], *position = new double[dim];
-        calculate_length(R_half_set, len, position);
-        while(considered_half_set.size() < 2 && p_result.size() < k)
+        if (point_result!= NULL)
         {
-            uk = alloc_point(dim);
-            point_t *point_sure;
-            if(half_set_set.size() < 1)
-                point_sure = p_top1[0];
-            else
-                point_sure = half_set_set[considered_half_set[0]]->represent_point[0];
-            p_top1.clear();
-            p_result.push_back(point_sure);
-            for(int i = 0; i < p_refined.size(); ++i)
-            {
-                if(is_same_point(p_refined[i], point_sure))
-                {
-                    p_refined.erase(p_refined.begin() + i);
-                    break;
-                }
-            }
-            find_top1_sampling(p_refined, p_top1, uk, 0, 0, position, len);//use sampling method
-            release_point(uk);
-            construct_halfspace_set(p_top1, R_half_set, choose_item_points, half_set_set, considered_half_set);
-            index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
-        }
-        if(p_result.size() < k)
-        {
-            v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-            v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+            printf("|%30s |%10d |%10s |\n", "HD-PI_sampling", numOfQuestion, "--");
+            printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
+            printf("---------------------------------------------------------\n");
+            return numOfQuestion;
         }
     }
-    printf("|%30s |%10d |%10s |\n", "HDPI-sampling", numOfQuestion, "--");
-    for(int i = 0; i < p_result.size(); ++i)
-        printf("|%30s |%10d |%10d |\n", "Point", i + 1, p_result[i]->id);
+
+    printf("|%30s |%10d |%10s |\n", "HD-PI_sampling", numOfQuestion, "--");
+    printf("|%30s |%10s |%10d |\n", "Point", "--",
+           half_set_set[considered_half_set[0]]->represent_point[0]->id);
     printf("---------------------------------------------------------\n");
     return numOfQuestion;
 }
@@ -569,26 +553,24 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
  */
 int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
 {
-    //p_top1 contains the points which are the convex points
-    std::vector<point_t *> p_convex, p_top1, p_refined, p_result;
+    //p_set_1 contains the points which are not dominated by >=1 points
+    //p_set_k contains the points which are not dominated by >=k points
+    //p_top_1 contains the points which are the convex points
+    std::vector<point_t *> p_set_1, top;
+    //onion(p_set, p_set_1, 1);
     int dim = p_set[0]->dim;
-    find_top1(p_set, p_convex);
-    skyline_c(p_convex, p_top1);
-    for(int i = 0; i < p_set.size(); ++i)
-        p_refined.push_back(p_set[i]);
-
-    /* half_set_set          contains all the partitions(intersection of halfspaces)
-     * considered_half_set   contains all the possible partitions considered
-     * choose_item_points    contains all the points used to construce hyperplanes(questions)
-     * choose_item_set       contains all the hyperplanes(questions) which can be asked user
-     * R_half_set            The utility range R
-     */
-    halfspace_set_t *R_half_set = R_initial(dim);
-    std::vector<halfspace_set_t *> half_set_set; 
+    find_top1(p_set, top);
+    skyline_c(top, p_set_1);
+    //half_set_set          contains all the partitions(intersection of halfspaces)
+    //considered_half_set   contains all the possible partitions considered
+    //choose_item_points    contains all the points used to construct hyperplanes(questions)
+    //choose_item_set       contains all the hyperplanes(questions) which can be asked user
+    //R_half_set            The utility range R
+    std::vector<halfspace_set_t *> half_set_set;
     std::vector<int> considered_half_set;   //[i] shows the index in half_set_set
     std::vector<point_t *> choose_item_points;
-    std::vector<choose_item *> choose_item_set; //the items are sorted for each case (positive, negative and intersection)
-    construct_halfspace_set(p_top1, R_half_set, choose_item_points, half_set_set, considered_half_set);
+    std::vector<choose_item *> choose_item_set;
+    construct_halfspace_set(p_set_1, choose_item_points, half_set_set, considered_half_set);
 
     //index the index of the chosen hyperplane(question)
     //v1    the utility of point 1
@@ -597,9 +579,13 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
     double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
     double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
 
-    //update item table based on comparison results
-    halfspace_t *hy; int numOfQuestion = 0;
-    while (p_result.size() < k)
+    //initial
+    halfspace_set_t *R_half_set = R_initial(dim);
+    get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+    halfspace_t *hy;
+    int numOfQuestion = 0;
+    point_t* point_result = NULL;
+    while (considered_half_set.size() > 1)
     {
         numOfQuestion++;
         if (v1 >= v2)
@@ -612,51 +598,30 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
             hy = alloc_halfspace(choose_item_set[index]->hyper->point1, choose_item_set[index]->hyper->point2, 0, true);
             index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
         }
+        v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
+        v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
 
         //Find whether there exist point which is the topk point w.r.t any u in R
         R_half_set->halfspaces.push_back(hy);
         get_extreme_pts_refine_halfspaces_alg1(R_half_set);
         std::vector<point_t *> top_current;
-        if(find_possible_topk(p_set, R_half_set, k, top_current))
+        point_result = NULL;
+        bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
+        if (check_result)
         {
-            if (check_possible_alltopk(p_set, R_half_set, k, top_current))
-            {
-                printf("|%30s |%10d |%10s |\n", "HDPI-accurate", numOfQuestion, "--");
-                for(int i = 0; i < top_current.size(); ++i)
-                    printf("|%30s |%10d |%10d |\n", "Point", i + 1, top_current[i]->id);
-                printf("---------------------------------------------------------\n");
-                return numOfQuestion;
-            }
+            point_result = check_possible_topk(p_set, R_half_set, k, top_current);
         }
-        while(considered_half_set.size() < 2 && p_result.size() < k)
+        if (point_result!= NULL)
         {
-            p_convex.clear(); p_top1.clear();
-            point_t *point_sure = half_set_set[considered_half_set[0]]->represent_point[0];
-            p_result.push_back(point_sure);
-            for(int i = 0; i < p_refined.size(); ++i)
-            {
-                if(is_same_point(p_refined[i], point_sure))
-                {
-                    p_refined.erase(p_refined.begin() + i);
-                    break;
-                }
-            }
-            find_top1(p_refined, p_convex);
-            skyline_c(p_convex, p_top1);
-            construct_halfspace_set(p_top1, R_half_set, choose_item_points, half_set_set, considered_half_set);
-            index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
-        }
-        if(p_result.size() < k)
-        {
-            v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-            v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+            printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", numOfQuestion, "--");
+            printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
+            printf("---------------------------------------------------------\n");
+            return numOfQuestion;
         }
     }
-    printf("|%30s |%10d |%10s |\n", "HDPI-accurate", numOfQuestion, "--");
-    for(int i = 0; i < p_result.size(); ++i)
-        printf("|%30s |%10d |%10d |\n", "Point", i + 1, p_result[i]->id);
+    printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", numOfQuestion, "--");
+    printf("|%30s |%10s |%10d |\n", "Point", "--",
+           half_set_set[considered_half_set[0]]->represent_point[0]->id);
     printf("---------------------------------------------------------\n");
     return numOfQuestion;
 }
-
-
