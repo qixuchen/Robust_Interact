@@ -113,6 +113,7 @@ hyperplane_t *alloc_hyperplane(point_t *normal, double offset)
     return hyperplane_v;
 }
 
+
 /*
  *	Allocate memory for a hyperplane in dim-dimensional space
  */

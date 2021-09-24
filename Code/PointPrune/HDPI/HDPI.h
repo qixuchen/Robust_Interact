@@ -17,3 +17,7 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k);
  * @param k 			 The parameter
  */
 int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k);
+
+
+
+int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta);
