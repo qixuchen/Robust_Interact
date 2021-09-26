@@ -45,6 +45,54 @@ void construct_halfspace_set(std::vector<point_t *> &p_set, std::vector<point_t 
     }
 }
 
+
+/**
+ * @brief Used in PointPrune, Build all the partition(intersection of the halfspace), each partition corresponds to a top-1 point and store a copy
+ * @param p_set 				The set containing all the points which are possible to be the top-1 point
+ *                              for some utility vectors
+ * @param choose_item_points		The set containing points used to build choose_item
+ * @param half_set_set			The returned partitions
+ * @param considered_half_set	The set recorded all the partitions in the form of index
+ */
+void construct_halfspace_set_copy(std::vector<point_t *> &p_set, std::vector<point_t *> &choose_item_points, 
+                            std::vector<point_t *> &choose_item_points_p, std::vector<halfspace_set_t *> &half_set_set, 
+                            std::vector<halfspace_set_t *> &half_set_set_p, std::vector<int> &considered_half_set, 
+                            std::vector<int> &considered_half_set_p)
+{
+    int M = p_set.size();
+    if (M < 2)
+    {
+        printf("%s\n", "Error: The number of points is smaller than 2.");
+        return;
+    }
+    int dim = p_set[0]->dim;
+    halfspace_set_t *half_set;
+    //record we use i-th point as the pivot(p[i]>p)
+    for (int i = 0; i < M; i++)
+    {
+        //printf("%d \n", i);
+        half_set = R_initial(dim);
+        for (int j = 0; j < M; j++)
+        {
+            if (!is_same_point(p_set[i], p_set[j]))
+            {
+                //halfspace in the form of <=
+                halfspace_t *h = alloc_halfspace(p_set[j], p_set[i], 0, true);
+                half_set->halfspaces.push_back(h);
+            }
+        }
+        bool result = get_extreme_pts_refine_from_halfspaces(half_set);
+        if (result)
+        {
+            half_set->represent_point.push_back(p_set[i]);
+            half_set_set.push_back(half_set);
+            choose_item_points.push_back(p_set[i]);
+            considered_half_set.push_back(half_set_set.size() - 1);
+        }
+    }
+}
+
+
 /**
  * @brief Build the choose_item table used for selecting the hyperplane(question) asked user
  * @param half_set_set 		All the partitions
@@ -479,7 +527,7 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
         hyperplane_t *h = alloc_hyperplane(selected_halfspaces[i]->normal, selected_halfspaces[i]->offset);
         choose_item* cur_item=NULL;
         int cur_size, j=0;
-        while(j<item_size){
+        while(j<item_size-1){
             if(is_same_hyperplane(h,choose_item_set[j]->hyper)){
                 cur_item = choose_item_set[j];
                 break;
@@ -496,12 +544,13 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
             cur_size = cur_item->negative_side.size();
         }
         if(cur_size>best_size){
-            best_item = cur_item;
+            best_size=cur_size;
+            best_item=cur_item;
             best_item_index=j;
         }
         release_hyperplane(h);
     }
-    if(best_item==NULL){
+    if(best_size==-1){
         printf("%s\n", "Error: Cannot find the best item");
     }
     
@@ -694,10 +743,10 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
     //choose_item_points    contains all the points used to construct hyperplanes(questions) (set C in the paper)
     //choose_item_set       contains all the hyperplanes(questions) which can be asked user
     //R_half_set            The utility range R
-    std::vector<halfspace_set_t *> half_set_set;
-    std::vector<int> considered_half_set;   //[i] shows the index in half_set_set
-    std::vector<point_t *> choose_item_points;
-    std::vector<choose_item *> choose_item_set;
+    std::vector<halfspace_set_t *> half_set_set, half_set_set_p;
+    std::vector<int> considered_half_set, considered_half_set_p;   //[i] shows the index in half_set_set
+    std::vector<point_t *> choose_item_points, choose_item_points_p;
+    std::vector<choose_item *> choose_item_set,  choose_item_set_p;
     construct_halfspace_set(p_set_1, choose_item_points, half_set_set, considered_half_set);
 
     //index the index of the chosen hyperplane(question)
@@ -707,13 +756,17 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
     double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
     double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
 
+
+    std::vector<halfspace_t*> selected_halfspace;
+    std::vector<choose_item *> old_choose_item_set = choose_item_set;
+
     //initial
     halfspace_set_t *R_half_set = R_initial(dim);
     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
     halfspace_t *hy;
     int numOfQuestion = 0;
     point_t* point_result = NULL;
-    while (considered_half_set.size() > 1)
+    while (considered_half_set.size() > 1 && point_result==NULL)
     {
         numOfQuestion++;
         if (v1 >= v2)
@@ -731,6 +784,12 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
 
         //Find whether there exist point which is the topk point w.r.t any u in R
         R_half_set->halfspaces.push_back(hy);
+
+        halfspace_t *hy2 = alloc_halfspace(choose_item_set[index]->hyper->point1, choose_item_set[index]->hyper->point2, 0, true);
+        selected_halfspace.push_back(hy2);
+        find_best_hyperplane(old_choose_item_set,selected_halfspace);
+
+
         get_extreme_pts_refine_halfspaces_alg1(R_half_set);
         std::vector<point_t *> top_current;
         point_result = NULL;
@@ -739,17 +798,16 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
         {
             point_result = check_possible_topk(p_set, R_half_set, k, top_current);
         }
-        if (point_result!= NULL)
-        {
-            printf("|%30s |%10d |%10s |\n", "PointPrune", numOfQuestion, "--");
-            printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
-            printf("---------------------------------------------------------\n");
-            return numOfQuestion;
+        else if(considered_half_set.size() == 1){
+            point_result=half_set_set[considered_half_set[0]]->represent_point[0];
         }
     }
+
+
+
     printf("|%30s |%10d |%10s |\n", "PointPrune", numOfQuestion, "--");
-    printf("|%30s |%10s |%10d |\n", "Point", "--",
-           half_set_set[considered_half_set[0]]->represent_point[0]->id);
+    printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     printf("---------------------------------------------------------\n");
     return numOfQuestion;
+    
 }

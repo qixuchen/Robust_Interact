@@ -31,9 +31,9 @@ bool is_same_point(point_t *p1, point_t *p2)
  */
 bool is_same_hyperplane(hyperplane_t* h1, hyperplane_t* h2){
 
-    int dim = h1->point1->dim;
+    int dim = h1->normal->dim;
 
-    if(h1->offset==h2->offset){
+    if(h1->offset!=h2->offset){
         return false;
     }
     
