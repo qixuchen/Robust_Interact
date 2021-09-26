@@ -54,7 +54,7 @@ void construct_halfspace_set(std::vector<point_t *> &p_set, std::vector<point_t 
  * @param half_set_set			The returned partitions
  * @param considered_half_set	The set recorded all the partitions in the form of index
  */
-void construct_halfspace_set_copy(std::vector<point_t *> &p_set, std::vector<point_t *> &choose_item_points, 
+void construct_halfspace_set_with_copy(std::vector<point_t *> &p_set, std::vector<point_t *> &choose_item_points, 
                             std::vector<point_t *> &choose_item_points_p, std::vector<halfspace_set_t *> &half_set_set, 
                             std::vector<halfspace_set_t *> &half_set_set_p, std::vector<int> &considered_half_set, 
                             std::vector<int> &considered_half_set_p)
@@ -66,7 +66,7 @@ void construct_halfspace_set_copy(std::vector<point_t *> &p_set, std::vector<poi
         return;
     }
     int dim = p_set[0]->dim;
-    halfspace_set_t *half_set;
+    halfspace_set_t *half_set, *half_set_p;
     //record we use i-th point as the pivot(p[i]>p)
     for (int i = 0; i < M; i++)
     {
@@ -88,6 +88,12 @@ void construct_halfspace_set_copy(std::vector<point_t *> &p_set, std::vector<poi
             half_set_set.push_back(half_set);
             choose_item_points.push_back(p_set[i]);
             considered_half_set.push_back(half_set_set.size() - 1);
+
+
+            half_set_p = deepcopy_halfspace_set(half_set);
+            half_set_set_p.push_back(half_set_p);
+            choose_item_points_p.push_back(p_set[i]);
+            considered_half_set_p.push_back(half_set_set_p.size() - 1);
         }
     }
 }
@@ -747,12 +753,17 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
     std::vector<int> considered_half_set, considered_half_set_p;   //[i] shows the index in half_set_set
     std::vector<point_t *> choose_item_points, choose_item_points_p;
     std::vector<choose_item *> choose_item_set,  choose_item_set_p;
-    construct_halfspace_set(p_set_1, choose_item_points, half_set_set, considered_half_set);
+    construct_halfspace_set_with_copy(p_set_1, choose_item_points, choose_item_points_p, half_set_set, 
+                                    half_set_set_p, considered_half_set, considered_half_set_p);
 
     //index the index of the chosen hyperplane(question)
     //v1    the utility of point 1
     //v2    the utility of point 2
     int index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
+    for(int i=0; i<choose_item_set.size();i++){
+        choose_item_set_p.push_back(deepcopy_choose_item(choose_item_set[i]));
+    }
+
     double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
     double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
 

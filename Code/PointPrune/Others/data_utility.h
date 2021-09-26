@@ -36,6 +36,7 @@ struct valueCmp
 // allocate/release memory for points/hyperplanes 
 point_t* alloc_point(int dim);
 point_t* alloc_point(int dim, int id);
+point_t *deepcopy_point(const point_t *p);
 void release_point( point_t* &point_v);
 point_t* rand_point(int dim);
 point_set_t* alloc_point_set(int numberOfPoints);
@@ -46,6 +47,7 @@ utility_t* alloc_utility();
 
 hyperplane_t* alloc_hyperplane(point_t* normal, double offset);
 hyperplane_t* alloc_hyperplane(point_t* p_1, point_t* p_2, double offset);
+hyperplane_t* deepcopy_hyperplane(const hyperplane_t *h);
 void release_hyperplane(hyperplane_t* &hyperplane_v);
 
 cluster_t* alloc_cluster();
@@ -54,10 +56,13 @@ s_node_t* alloc_s_node(int dim);
 point_count_t* alloc_point_count();
 
 halfspace_t* alloc_halfspace(point_t* p_1, point_t* p_2, double offset, bool direction);
+halfspace_t* deepcopy_halfspace(const halfspace_t* h);
 void release_halfspace(halfspace_t* &halfspace_v);
 halfspace_set_t* alloc_halfspace_set(int dim);
+halfspace_set_t* deepcopy_halfspace_set(const halfspace_set_t* hss);
 void release_halfspace_set(halfspace_set_t* &halfspace_set_v);
 
+choose_item *deepcopy_choose_item(const choose_item *item);
 
 // print informaiton
 void print_point(point_t* point_v);
