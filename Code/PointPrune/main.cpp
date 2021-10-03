@@ -11,9 +11,9 @@
 
 int main(int argc, char *argv[])
 {
-    point_set_t *P0 = read_points((char*)"4d.txt");
+    point_set_t *P0 = read_points((char*)"car.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
-    int k = 20;
+    int k =1;
     double theta=0.1;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
@@ -42,9 +42,9 @@ int main(int argc, char *argv[])
 
     //Algorithm HDPI
     // HDPI_sampling(p_set, u, k);
-    // HDPI_accurate(p_set, u, k);
+    HDPI_accurate(p_set, u, k);
 
-    PointPrune(p_set, u, k, theta);
+    //PointPrune(p_set, u, k, theta);
 
     release_point_set(P, true);
     return 0;

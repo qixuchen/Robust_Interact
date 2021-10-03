@@ -842,7 +842,7 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
         R_half_set_cp->halfspaces.push_back(hy_cp);
         get_extreme_pts_refine_halfspaces_alg1(R_half_set_cp);
 
-        // IMPORTANT: Remove the halfspaces that are no longer helpful (lie on one side of R)
+        // IMPORTANT: Remove the halfspaces that are no longer helpful (lies on one side of R)
         int m=0;
         while(m<selected_halfspaces.size()){
             hyperplane_t *h = alloc_hyperplane(selected_halfspaces[m]->normal, selected_halfspaces[m]->offset);
