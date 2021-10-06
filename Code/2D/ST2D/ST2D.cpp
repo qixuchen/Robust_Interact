@@ -10,7 +10,7 @@ int ST2D(std::vector<point_t *> p_convh, point_t *u, int k, double theta){
     if(size==1){
         return 0;
     }
-    int L=0, U=size;
+    int L=0, U=size-1;
 
     while(L<U){
         int search_size = U-L+1;
@@ -21,7 +21,7 @@ int ST2D(std::vector<point_t *> p_convh, point_t *u, int k, double theta){
         while(sU-sL+1>m){
             int p_i = (sU+sL)/2;
             int p_j = p_i+1;
-            if(dot_prod(u,p_convh[p_i]) > dot_prod(u,p_convh[p_j])){
+            if(user_rand_err(p_convh,u,p_i,p_j,theta)==p_i){
                 sU = p_i;
             }
             else{

@@ -10,10 +10,13 @@
 #include <sys/time.h>
 
 int main(int argc, char *argv[]){
+
+    double theta=0.1;
+    int k = 1;
+    
+    srand(time(0));  // Initialize random number generator.
     point_set_t *P = read_points((char*)"2d.txt");
     int dim = P->points[0]->dim; //obtain the dimension of the point
-    double theta=0;
-    int k = 1;
     std::vector<point_t *> p_set, top, p_convh;
     skyband(P, p_set, 1);
     find_top1(p_set, top);
@@ -28,7 +31,8 @@ int main(int argc, char *argv[]){
     }
     for (int i = 0; i < dim; i++)
         u->coord[i] = u->coord[i]/sum;
-
+    //u->coord[0] = 0.1835;
+    //u->coord[1] = 0.8165;
 
 
     // look for the ground truth top-k point

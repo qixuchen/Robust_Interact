@@ -12,13 +12,13 @@
  * @param err_rate      The user's error rate
  * @return point_t* 
  */
-point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
-    srand(time(0));  // Initialize random number generator.
+int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate){
     if((double) rand()/RAND_MAX > err_rate){ //user answers correctly
-        return (dot_prod(u,p1)>dot_prod(u,p2)? p1 : p2) ;
+        return (dot_prod(u,p_set[p1])>dot_prod(u,p_set[p2])? p1 : p2) ;
     }
     else{ //user answers wrongly
-        return (dot_prod(u,p1)>dot_prod(u,p2)? p2 : p1) ;
+        printf("user answer wrongly\n");
+        return (dot_prod(u,p_set[p1])>dot_prod(u,p_set[p2])? p2 : p1) ;    
     }
 
 }
@@ -34,12 +34,12 @@ point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
  * @return point_t*     The checking result
  */
 
-int checking(std::vector<point_t *> p_set, point_t* u, int p1, int p2, double err_rate, int k){
+int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate, int k){
     int p1_count=0, p2_count=0;
-    point* result_this_round;
+    int result_this_round;
     for(int i=0; i<=k; i++){
-        result_this_round = user_rand_err(u, p_set[p1], p_set[p2], err_rate); 
-        if(result_this_round==p_set[p1]){
+        result_this_round = user_rand_err(p_set, u, p1, p2, err_rate); 
+        if(result_this_round==p1){
             p1_count++;
         }
         else{
