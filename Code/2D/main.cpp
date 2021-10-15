@@ -9,13 +9,15 @@
 #include <ctime>
 #include <sys/time.h>
 
+int num_wrong_answer=0;
+
 int main(int argc, char *argv[]){
 
     double theta=0.1;
     int k = 1;
     
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P = read_points((char*)"2d.txt");
+    point_set_t *P = read_points((char*)"2d5K.txt");
     int dim = P->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh;
     skyband(P, p_set, 1);
@@ -46,6 +48,7 @@ int main(int argc, char *argv[]){
 
 
     ST2D(p_convh, u, k, theta);
+    printf("# of incorrect answer : %d\n", num_wrong_answer);
 
     release_point_set(P0, true);
     return 0;

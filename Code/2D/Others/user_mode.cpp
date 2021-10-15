@@ -17,7 +17,7 @@ int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p
         return (dot_prod(u,p_set[p1])>dot_prod(u,p_set[p2])? p1 : p2) ;
     }
     else{ //user answers wrongly
-        printf("user answer wrongly\n");
+        num_wrong_answer++;
         return (dot_prod(u,p_set[p1])>dot_prod(u,p_set[p2])? p2 : p1) ;    
     }
 
