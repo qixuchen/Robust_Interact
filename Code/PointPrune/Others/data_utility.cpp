@@ -222,6 +222,7 @@ point_count_t *alloc_point_count()
 /*
  *	Allocate memory for a halfspace in dim-dimensional space
  	The coordinate of the halfspace is p1-p2
+    if this is a utility halfspace, then utility p2 > p1
  */
 halfspace_t *alloc_halfspace(point_t *p_1, point_t *p_2, double offset, bool direction)
 {

@@ -37,6 +37,8 @@ add_executable(PointPrune
         Others/read_write.h
         Others/used_function.cpp
         Others/used_function.h
+        Others/user_mode.cpp
+        Others/user_mode.h
         output/ext_pt.txt
         output/hyperplane_data.txt
         output/point.txt

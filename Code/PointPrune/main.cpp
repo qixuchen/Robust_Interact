@@ -8,6 +8,7 @@
 #include <ctime>
 #include <sys/time.h>
 
+int num_wrong_answer=0;
 
 int main(int argc, char *argv[])
 {
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
     // HDPI_sampling(p_set, u, k);
     HDPI_accurate(p_set, u, k);
 
-    //PointPrune(p_set, u, k, theta);
+    PointPrune(p_set, u, k, theta);
 
     release_point_set(P, true);
     return 0;

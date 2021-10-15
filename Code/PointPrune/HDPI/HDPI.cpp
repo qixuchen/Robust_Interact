@@ -1,6 +1,7 @@
 #include "HDPI.h"
 #include <sys/time.h>
 
+
 /**
  * @brief Build all the partition(intersection of the halfspace), each partition corresponds to a top-1 point
  * @param p_set 				The set containing all the points which are possible to be the top-1 point
@@ -762,115 +763,120 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
     construct_halfspace_set_with_copy(p_set_1, choose_item_points, choose_item_points_cp, half_set_set, 
                                     half_set_set_cp, considered_half_set, considered_half_set_cp);
 
-    //index the index of the chosen hyperplane(question)
-    //v1    the utility of point 1
-    //v2    the utility of point 2
+    //index: the index of the chosen hyperplane(question)
+    //p1:    the first point
+    //p2:    the second point
     int index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
+    // double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
+    // double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+    point_t* p1 = choose_item_set[index]->hyper->point1;
+    point_t* p2 = choose_item_set[index]->hyper->point2;
+    point_t* user_choice = (dot_prod(u,p1)>dot_prod(u,p2))? p1: p2;
+
+
+
+
     for(int i=0; i<choose_item_set.size();i++){
         choose_item_set_cp.push_back(deepcopy_choose_item(choose_item_set[i]));
     }
-
-
-    //start of inner loop
-    //==========================================================================================================================================
-    double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-    double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
-
-    //initial
-    halfspace_set_t *R_half_set = R_initial(dim);
-    get_extreme_pts_refine_halfspaces_alg1(R_half_set);
-    halfspace_t *hy, *hy_cp;
-
     point_t* point_result = NULL, *true_point_result = NULL;
 
-
-    while (point_result==NULL)
-    {
-        numOfQuestion++;
-        if (v1 >= v2)
-        {
-            hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
-            index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, true);
-        }
-        else
-        {
-            hy = alloc_halfspace(choose_item_set[index]->hyper->point1, choose_item_set[index]->hyper->point2, 0, true);
-            index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
-        }
-        v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-        v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
-
-        //Find whether there exist point which is the topk point w.r.t any u in R
-        R_half_set->halfspaces.push_back(hy);
-        halfspace_t *hy2 = deepcopy_halfspace(hy);
-        selected_halfspaces.push_back(hy2);
-
-        get_extreme_pts_refine_halfspaces_alg1(R_half_set);
-        std::vector<point_t *> top_current;
-        point_result = NULL;
-        bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
-        if (check_result)
-        {
-            point_result = check_possible_topk(p_set, R_half_set, k, top_current);
-        }
-        else if(considered_half_set.size() == 1){
-            point_result=half_set_set[considered_half_set[0]]->represent_point[0];
-        }
-    }
-
-    //=================================================================================================================================
-    //End of inner loop
-
     while(true_point_result==NULL){
-        int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces);
-        v1 = dot_prod(u, choose_item_set_cp[best_index]->hyper->point1);
-        v2 = dot_prod(u, choose_item_set_cp[best_index]->hyper->point2);
+    //re-initialize all data structures used in the inner loop
+        selected_halfspaces.clear();
 
-        if (v1 >= v2)
+
+        //start of phase 1
+        //==========================================================================================================================================
+
+        //initial
+        halfspace_set_t *R_half_set = R_initial(dim);
+        get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+        halfspace_t *hy, *hy_cp;
+
+        while (point_result==NULL)
         {
-            hy_cp = alloc_halfspace(choose_item_set_cp[best_index]->hyper->point2, choose_item_set_cp[best_index]->hyper->point1, 0, true);
-            modify_choose_item_table(choose_item_set_cp, half_set_set_cp, considered_half_set_cp, best_index, true);
-        }
-        else
-        {
-            hy_cp = alloc_halfspace(choose_item_set_cp[best_index]->hyper->point1, choose_item_set_cp[best_index]->hyper->point2, 0, true);
-            modify_choose_item_table(choose_item_set_cp, half_set_set_cp, considered_half_set_cp, best_index, false);
-        }
-        v1 = dot_prod(u, choose_item_set_cp[best_index]->hyper->point1);
-        v2 = dot_prod(u, choose_item_set_cp[best_index]->hyper->point2);
-
-        R_half_set_cp->halfspaces.push_back(hy_cp);
-        get_extreme_pts_refine_halfspaces_alg1(R_half_set_cp);
-
-        // IMPORTANT: Remove the halfspaces that are no longer helpful (lies on one side of R)
-        int m=0;
-        while(m<selected_halfspaces.size()){
-            hyperplane_t *h = alloc_hyperplane(selected_halfspaces[m]->normal, selected_halfspaces[m]->offset);
-            if(check_situation_accelerate(h,R_half_set_cp,0)!=0){
-                selected_halfspaces.erase(selected_halfspaces.begin()+m);
+            numOfQuestion++;
+            if (user_choice==p1)
+            {
+                hy = alloc_halfspace(p2, p1, 0, true);
+                index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, true);
             }
-            else{
-                m++;
+            else
+            {
+                hy = alloc_halfspace(p1, p2, 0, true);
+                index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
+            }
+            p1 = choose_item_set[index]->hyper->point1;
+            p2 = choose_item_set[index]->hyper->point2;
+            user_choice = (dot_prod(u,p1)>dot_prod(u,p2))? p1: p2;
+
+            //Find whether there exist point which is the topk point w.r.t any u in R
+            R_half_set->halfspaces.push_back(hy);
+            halfspace_t *hy2 = deepcopy_halfspace(hy);
+            selected_halfspaces.push_back(hy2);
+
+            get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+            std::vector<point_t *> top_current;
+            point_result = NULL;
+            bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
+            if (check_result)
+            {
+                point_result = check_possible_topk(p_set, R_half_set, k, top_current);
+            }
+            else if(considered_half_set.size() == 1){
+                point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
         }
-        std::vector<point_t *> top_current;
-        true_point_result = NULL;
-        bool check_result = find_possible_topk(p_set, R_half_set_cp, k, top_current);
-        if (check_result)
-        {
-            true_point_result = check_possible_topk(p_set, R_half_set_cp, k, top_current);
-        }
-        else if(considered_half_set_cp.size() == 1){
-            true_point_result=half_set_set_cp[considered_half_set_cp[0]]->represent_point[0];
+        //=================================================================================================================================
+        //End of phase 1
+
+        while(true_point_result==NULL && selected_halfspaces.size()>0){
+            int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces);
+            p1 = choose_item_set_cp[best_index]->hyper->point1;
+            p2 = choose_item_set_cp[best_index]->hyper->point2;
+            user_choice = (dot_prod(u,p1)>dot_prod(u,p2))? p1: p2;
+
+            if (user_choice==p1)
+            {
+                hy_cp = alloc_halfspace(p2, p1, 0, true);
+                best_index=modify_choose_item_table(choose_item_set_cp, half_set_set_cp, considered_half_set_cp, best_index, true);
+            }
+            else
+            {
+                hy_cp = alloc_halfspace(p1, p2, 0, true);
+                modify_choose_item_table(choose_item_set_cp, half_set_set_cp, considered_half_set_cp, best_index, false);
+            }
+
+            R_half_set_cp->halfspaces.push_back(hy_cp);
+            get_extreme_pts_refine_halfspaces_alg1(R_half_set_cp);
+
+            // IMPORTANT: Remove the halfspaces that are no longer helpful (lies on one side of R)
+            int m=0;
+            while(m<selected_halfspaces.size()){
+                hyperplane_t *h = alloc_hyperplane(selected_halfspaces[m]->normal, selected_halfspaces[m]->offset);
+                if(check_situation_accelerate(h,R_half_set_cp,0)!=0){
+                    selected_halfspaces.erase(selected_halfspaces.begin()+m);
+                }
+                else{
+                    m++;
+                }
+            }
+
+            std::vector<point_t *> top_current;
+            true_point_result = NULL;
+            bool check_result = find_possible_topk(p_set, R_half_set_cp, k, top_current);
+            if (check_result)
+            {
+                true_point_result = check_possible_topk(p_set, R_half_set_cp, k, top_current);
+            }
+            else if(considered_half_set_cp.size() == 1){
+                true_point_result=half_set_set_cp[considered_half_set_cp[0]]->represent_point[0];
+            }
+
         }
 
     }
-
-
-    printf("|%30s |%10d |%10s |\n", "PointPrune", numOfQuestion, "--");
-    printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
-    printf("---------------------------------------------------------\n");
-
 
     printf("|%30s |%10d |%10s |\n", "PointPrune", numOfQuestion, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);

@@ -1,4 +1,7 @@
 #include "../Others/used_function.h"
+#include "../Others/user_mode.h"
+
+
 
 /**
  * @brief Asking user question and return one of the top-k points
