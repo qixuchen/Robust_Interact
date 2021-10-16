@@ -9,18 +9,22 @@
 #include <sys/time.h>
 
 int num_wrong_answer=0;
+int num_questions=0;
+
 
 int main(int argc, char *argv[])
 {
     point_set_t *P0 = read_points((char*)"car.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k =1;
-    double theta=0.1;
+    int checknum=3;
+    double theta=0.07;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);
 
     // generate the utility vector
+    srand(time(0));  // Initialize random number generator.
     point_t *u = alloc_point(dim);
     double sum = 0;
     for (int i = 0; i < dim; i++)
@@ -42,10 +46,10 @@ int main(int argc, char *argv[])
     printf("---------------------------------------------------------\n");
 
     //Algorithm HDPI
-    // HDPI_sampling(p_set, u, k);
+    HDPI_sampling(p_set, u, k);
     HDPI_accurate(p_set, u, k);
 
-    PointPrune(p_set, u, k, theta);
+    PointPrune(p_set, u, k, checknum, theta);
 
     release_point_set(P, true);
     return 0;

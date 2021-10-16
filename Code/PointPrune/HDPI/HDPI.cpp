@@ -514,6 +514,49 @@ int modify_choose_item_table(std::vector<choose_item *> &choose_item_set,
     return num_hyperplane;
 }
 
+
+
+int choose_best_item(std::vector<choose_item*> choose_item_set){
+    int item_count = 0;                         //the index for scanning the choose_item_set
+    int ES_h = -1000;                           //Even score
+    int num_hyperplane = 0;                     //index of the chosen hyperplane(question)
+    int choose_size = choose_item_set.size();   //the original size of the choose_item_set
+    for (int i = 0; i < choose_size; i++)
+    {
+        choose_item_t *c_item = choose_item_set[item_count];
+        int M_positive = choose_item_set[item_count]->positive_side.size();
+        int M_negative = choose_item_set[item_count]->negative_side.size();
+        int M_intersect = choose_item_set[item_count]->intersect_case.size();
+        if (M_negative + M_intersect == 0 || M_positive + M_intersect == 0)// || M_positive + M_negative == 0)
+        {
+            choose_item_set.erase(choose_item_set.begin() + item_count);
+        }
+        else
+        {
+            if (M_positive < M_negative)
+            {
+                double ES_i = M_positive - (Beta * M_intersect);
+                if (ES_h < ES_i)
+                {
+                    ES_h = ES_i;
+                    num_hyperplane = item_count;
+                }
+            }
+            else
+            {
+                double ES_i = M_negative - (Beta * M_intersect);
+                if (ES_h < ES_i)
+                {
+                    ES_h = ES_i;
+                    num_hyperplane = item_count;
+                }
+            }
+            item_count++;
+        }
+    }
+    return num_hyperplane;
+}
+
 /**
  * @brief Find the best halfspace that will be used for checking. the best halfspace prunes the largest number of items/partitions
  * 
@@ -529,6 +572,11 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
     choose_item* best_item = NULL;
     int best_size = -1, best_item_index=-1;
     int select_idx = 0; //used to delete the best from selected_halfspaces
+
+
+    if(hs_size<1){
+        printf("%s\n", "Error: No halfspace candidates");
+    }
     for(int i=0; i<hs_size; i++){
         hyperplane_t *h = alloc_hyperplane(selected_halfspaces[i]->normal, selected_halfspaces[i]->offset);
         choose_item* cur_item=NULL;
@@ -738,7 +786,7 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
 
 
 
-int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
+int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta)
 {
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -759,44 +807,41 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
     std::vector<choose_item *> choose_item_set,  choose_item_set_cp;
     std::vector<halfspace_t*> selected_halfspaces;
     halfspace_set_t *R_half_set_cp = R_initial(dim);
-    int numOfQuestion =0;
+    halfspace_set_t *R_half_set = R_initial(dim);
+    get_extreme_pts_refine_halfspaces_alg1(R_half_set_cp);
+    get_extreme_pts_refine_halfspaces_alg1(R_half_set);
     construct_halfspace_set_with_copy(p_set_1, choose_item_points, choose_item_points_cp, half_set_set, 
                                     half_set_set_cp, considered_half_set, considered_half_set_cp);
 
-    //index: the index of the chosen hyperplane(question)
-    //p1:    the first point
-    //p2:    the second point
-    int index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
-    // double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-    // double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
-    point_t* p1 = choose_item_set[index]->hyper->point1;
-    point_t* p2 = choose_item_set[index]->hyper->point2;
-    point_t* user_choice = (dot_prod(u,p1)>dot_prod(u,p2))? p1: p2;
-
-
-
-
-    for(int i=0; i<choose_item_set.size();i++){
-        choose_item_set_cp.push_back(deepcopy_choose_item(choose_item_set[i]));
+    build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
+    for(int i =0 ; i<choose_item_set.size();i++){
+        choose_item * c_i=deepcopy_choose_item(choose_item_set[i]);
+        choose_item_set_cp.push_back(c_i);
     }
+
     point_t* point_result = NULL, *true_point_result = NULL;
+    halfspace_t *hy=NULL, *hy_cp=NULL;
 
     while(true_point_result==NULL){
-    //re-initialize all data structures used in the inner loop
-        selected_halfspaces.clear();
+
+        point_result = NULL;
+        //index: the index of the chosen hyperplane(question)
+        //p1:    the first point
+        //p2:    the second point
+        int index = choose_best_item(choose_item_set);
+        // double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
+        // double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+        point_t* p1 = choose_item_set[index]->hyper->point1;
+        point_t* p2 = choose_item_set[index]->hyper->point2;
+        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+
 
 
         //start of phase 1
         //==========================================================================================================================================
 
-        //initial
-        halfspace_set_t *R_half_set = R_initial(dim);
-        get_extreme_pts_refine_halfspaces_alg1(R_half_set);
-        halfspace_t *hy, *hy_cp;
-
         while (point_result==NULL)
         {
-            numOfQuestion++;
             if (user_choice==p1)
             {
                 hy = alloc_halfspace(p2, p1, 0, true);
@@ -809,7 +854,7 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
             }
             p1 = choose_item_set[index]->hyper->point1;
             p2 = choose_item_set[index]->hyper->point2;
-            user_choice = (dot_prod(u,p1)>dot_prod(u,p2))? p1: p2;
+            user_choice = user_rand_err(u,p1,p2,theta);
 
             //Find whether there exist point which is the topk point w.r.t any u in R
             R_half_set->halfspaces.push_back(hy);
@@ -835,7 +880,7 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
             int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces);
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
-            user_choice = (dot_prod(u,p1)>dot_prod(u,p2))? p1: p2;
+            user_choice = checking(u,p2,p1,theta,checknum);
 
             if (user_choice==p1)
             {
@@ -876,11 +921,63 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta)
 
         }
 
+        if(true_point_result!=NULL){
+            break;
+        }
+
+        //  re-initialize all data structures used in the inner loop with the record of the outer loop
+        //  std::vector<halfspace_set_t *> half_set_set
+        //  std::vector<int> considered_half_set
+        //  std::vector<point_t *> choose_item_points
+        //  std::vector<choose_item *> choose_item_set
+        //  std::vector<halfspace_t*> selected_halfspaces
+        //  halfspace_set_t *R_half_set
+
+
+        selected_halfspaces.clear();
+
+        release_halfspace_set(R_half_set);
+        R_half_set = deepcopy_halfspace_set(R_half_set_cp);
+
+        choose_item_points.clear();
+        for(int i=0; i<choose_item_points_cp.size();i++){
+            choose_item_points.push_back(choose_item_points_cp[i]);
+        }
+
+        considered_half_set.clear();
+        for(int i=0; i<considered_half_set_cp.size();i++){
+            considered_half_set.push_back(considered_half_set_cp[i]);
+        }
+        //////
+        half_set_set.clear();
+        // while(half_set_set.size()>0){
+        //     release_halfspace_set(half_set_set[0]);
+        //     half_set_set.erase(half_set_set.begin());
+        // }
+        // half_set_set.clear();
+        ////////
+        for(int i=0; i<half_set_set_cp.size();i++){
+            halfspace_set_t *hs = deepcopy_halfspace_set(half_set_set_cp[i]);
+            half_set_set.push_back(hs);
+        }
+
+        while(choose_item_set.size()>0){
+            release_choose_item(choose_item_set[0]);
+            choose_item_set.erase(choose_item_set.begin());
+        }
+        choose_item_set.clear();
+        for(int i =0 ; i<choose_item_set_cp.size();i++){
+            choose_item * c_i=deepcopy_choose_item(choose_item_set_cp[i]);
+            choose_item_set.push_back(c_i);
+        }
+
+
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune", numOfQuestion, "--");
+    printf("|%30s |%10d |%10s |\n", "PointPrune", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
-    return numOfQuestion;
+    printf("# of wrong answers:%d\n",num_wrong_answer);
+    return num_questions;
     
 }

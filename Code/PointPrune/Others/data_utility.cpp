@@ -500,6 +500,28 @@ choose_item *deepcopy_choose_item(const choose_item *it){
 
 }
 
+/*
+ *	Release memory for choose_item
+ */
+void release_choose_item(choose_item *&c_i)
+{
+
+
+    if (c_i == NULL)
+    {
+        return;
+    }
+
+    if(c_i->hyper != NULL){
+        release_hyperplane(c_i->hyper);
+    }
+    c_i->positive_side.clear();
+    c_i->negative_side.clear();
+    c_i->intersect_case.clear();
+
+    free(c_i);
+    c_i = NULL;
+}
 
 
 /*

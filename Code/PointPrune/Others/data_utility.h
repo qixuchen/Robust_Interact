@@ -63,6 +63,8 @@ halfspace_set_t* deepcopy_halfspace_set(const halfspace_set_t* hss);
 void release_halfspace_set(halfspace_set_t* &halfspace_set_v);
 
 choose_item *deepcopy_choose_item(const choose_item *item);
+void release_choose_item(choose_item *&c_i);
+
 
 // print informaiton
 void print_point(point_t* point_v);

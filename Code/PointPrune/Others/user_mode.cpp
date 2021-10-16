@@ -13,6 +13,7 @@
  * @return point_t* 
  */
 int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate){
+    num_questions++;
     if((double) rand()/RAND_MAX > err_rate){ //user answers correctly
         return (dot_prod(u,p_set[p1])>dot_prod(u,p_set[p2])? p1 : p2) ;
     }
@@ -33,6 +34,7 @@ int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p
  * @return point_t* 
  */
 point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
+    num_questions++;
     if((double) rand()/RAND_MAX > err_rate){ //user answers correctly
         return (dot_prod(u,p1)>dot_prod(u,p2)? p1 : p2) ;
     }
@@ -56,9 +58,10 @@ point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
  */
 
 int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate, int k){
-    int p1_count=0, p2_count=0;
+    int p1_count=1, p2_count=0; //p1_count set to 1 since it is preferred in the first round
     int result_this_round;
-    for(int i=0; i<=k; i++){
+    int num_asked=0;
+    while (p1_count<=k/2 && p2_count<=k/2 && num_asked<k){
         result_this_round = user_rand_err(p_set, u, p1, p2, err_rate); 
         if(result_this_round==p1){
             p1_count++;
@@ -66,8 +69,10 @@ int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, do
         else{
             p2_count++;
         }
+        num_asked++;
     }
-    return (p1_count>p2_count ? p1 : p2);
+
+    return (p1_count>k/2 ? p1 : p2);
 }
 
 
@@ -84,9 +89,10 @@ int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, do
  */
 
 point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k){
-    int p1_count=0, p2_count=0;
-    point_t* result_this_round;
-    for(int i=0; i<=k; i++){
+    int p1_count=1, p2_count=0; //p1_count set to 1 since it is preferred in the first round
+    point_t *result_this_round;
+    int num_asked=0;
+    while (p1_count<=k/2 && p2_count<=k/2 && num_asked<k){
         result_this_round = user_rand_err(u, p1, p2, err_rate); 
         if(result_this_round==p1){
             p1_count++;
@@ -94,6 +100,8 @@ point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k){
         else{
             p2_count++;
         }
+        num_asked++;
     }
-    return (p1_count>p2_count ? p1 : p2);
+
+    return (p1_count>k/2 ? p1 : p2);
 }

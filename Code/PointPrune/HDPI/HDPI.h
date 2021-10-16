@@ -2,7 +2,8 @@
 #include "../Others/user_mode.h"
 
 
-
+extern int num_questions;
+extern int num_wrong_answer;
 /**
  * @brief Asking user question and return one of the top-k points
  *        Find the top-1 point by sampling
@@ -23,4 +24,4 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k);
 
 
 
-int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, double theta);
+int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta);
