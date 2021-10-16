@@ -564,7 +564,8 @@ int choose_best_item(std::vector<choose_item*> choose_item_set){
  * @param selected_halfspaces   contain all the halfspaces indicated by the user
  * @return                      return the index of the item that can possibly prunes the largest number of partitions
  */
-int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<halfspace_t *> &selected_halfspaces){
+int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<halfspace_t *> &selected_halfspaces, 
+                        point_t *&best_p1, point_t *&best_p2){
     
     
     int hs_size = selected_halfspaces.size();
@@ -610,6 +611,8 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
     }
 
     halfspace_t *h_erase = selected_halfspaces[select_idx];
+    best_p1=selected_halfspaces[select_idx]->point1;
+    best_p2=selected_halfspaces[select_idx]->point2;
     selected_halfspaces.erase(selected_halfspaces.begin()+select_idx);
     release_halfspace(h_erase);
     return best_item_index;
@@ -877,10 +880,17 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
         //End of phase 1
 
         while(true_point_result==NULL && selected_halfspaces.size()>0){
-            int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces);
+            point_t *best_p1=NULL, *best_p2=NULL;
+            int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces, best_p1, best_p2);
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
-            user_choice = checking(u,p2,p1,theta,checknum);
+            
+            if(best_p1==p1){
+                user_choice = checking(u,p2,p1,theta,checknum);
+            }
+            else{
+                user_choice = checking(u,p1,p2,theta,checknum);
+            }
 
             if (user_choice==p1)
             {
@@ -918,7 +928,6 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
             else if(considered_half_set_cp.size() == 1){
                 true_point_result=half_set_set_cp[considered_half_set_cp[0]]->represent_point[0];
             }
-
         }
 
         if(true_point_result!=NULL){
@@ -978,6 +987,7 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     printf("# of wrong answers:%d\n",num_wrong_answer);
+    printf("# of critical wrong answers:%d\n",crit_wrong_answer);
     return num_questions;
     
 }

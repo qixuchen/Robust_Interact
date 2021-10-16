@@ -9,16 +9,17 @@
 #include <sys/time.h>
 
 int num_wrong_answer=0;
+int crit_wrong_answer=0;
 int num_questions=0;
 
 
 int main(int argc, char *argv[])
 {
-    point_set_t *P0 = read_points((char*)"car.txt");
+    point_set_t *P0 = read_points((char*)"nba.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k =1;
     int checknum=3;
-    double theta=0.07;
+    double theta=0.1;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);

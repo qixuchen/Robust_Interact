@@ -3,6 +3,7 @@
 
 
 extern int num_questions;
+extern int crit_wrong_answer;
 extern int num_wrong_answer;
 /**
  * @brief Asking user question and return one of the top-k points

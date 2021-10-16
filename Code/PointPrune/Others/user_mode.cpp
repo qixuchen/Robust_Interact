@@ -103,5 +103,10 @@ point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k){
         num_asked++;
     }
 
-    return (p1_count>k/2 ? p1 : p2);
+    point_t* final_res = p1_count>k/2 ? p1 : p2;
+    point_t* true_res = dot_prod(u, p1) > dot_prod(u,p2)? p1: p2;
+    if(final_res!=true_res){
+        crit_wrong_answer++ ;
+    }
+    return final_res;
 }
