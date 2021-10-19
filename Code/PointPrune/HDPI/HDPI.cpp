@@ -880,6 +880,8 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
         //End of phase 1
 
         while(true_point_result==NULL && selected_halfspaces.size()>0){
+            // IMPORTANT: The order of point recorded in choose_item does not imply user preference
+            // The user preference is indicated in selected_halfspaces: p2 > p1
             point_t *best_p1=NULL, *best_p2=NULL;
             int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces, best_p1, best_p2);
             p1 = choose_item_set_cp[best_index]->hyper->point1;

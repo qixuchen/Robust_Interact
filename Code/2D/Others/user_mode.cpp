@@ -37,7 +37,7 @@ int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p
 int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate, int k){
     int p1_count=0, p2_count=0;
     int result_this_round;
-    for(int i=0; i<=k; i++){
+    for(int i=0; i<k; i++){
         result_this_round = user_rand_err(p_set, u, p1, p2, err_rate); 
         if(result_this_round==p1){
             p1_count++;
