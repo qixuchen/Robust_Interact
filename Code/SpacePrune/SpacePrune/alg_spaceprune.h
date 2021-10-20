@@ -18,6 +18,8 @@
 #include "generators/known_polytope_generators.h"
 #include "sampling/sampling.hpp"
 
+#define Precision 0.0000015
+
 /**
  * @brief The SpacePrune Algorithm
  * @param p_set 		    The refined dataset

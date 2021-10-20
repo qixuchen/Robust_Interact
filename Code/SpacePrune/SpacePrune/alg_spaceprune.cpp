@@ -2,6 +2,65 @@
 #include <sys/time.h>
 
 /**
+ * @brief                   Shift the old halfspace according to shift_point
+ * 
+ * @param old_halfspace     The old halfspace before shifting
+ * @param shift_point       The shift point
+ * @return halfspace_t*     halfspace after shifting
+ */
+halfspace_t * shift_halfspace(const halfspace_t *old_halfspace, std::vector<double> &shift_point){
+    halfspace_t *hs = alloc_halfspace(old_halfspace->point1, old_halfspace->point2, 
+                                        old_halfspace->offset, old_halfspace->direction);
+    hs->offset=0;
+
+    int dim = hs->point1->dim;
+    double sum=0;
+    for(int i=0;i<dim;i++){
+        sum+=hs->normal->coord[i]*shift_point[i];
+    }
+    hs->offset-=sum;
+    return hs;
+}
+
+halfspace_t *find_best_halfspace(std::vector<halfspace_t *> &selected_halfspaces, std::vector<std::vector<double>> &randPoints,
+                                std::vector<double> &shift_point){
+    if(selected_halfspaces.size()==0){
+        printf("No halfspace can be selected");
+        return NULL;
+    }
+
+    int dim = selected_halfspaces[0]->normal->dim;
+    int best_num=0;
+    int best_index=-1;
+    for(int i=0; i<selected_halfspaces.size(); i++){
+        int cur_num=0;
+        halfspace_t *cur_hs = shift_halfspace(selected_halfspaces[i],shift_point);
+        for(int j=0; j<randPoints.size(); j++){
+            double sum=0;
+            for(int k=0; k<dim; k++){
+                sum += cur_hs->normal->coord[k]*randPoints[j][k];
+            }
+            if(sum>cur_hs->offset){
+                cur_num++;
+            }
+        }
+        if(cur_num > best_num){
+            best_num=cur_num;
+            best_index=i;
+        }
+    }
+
+    if(best_index<0){
+        printf("SpacePrune cannot find the best hyperplane");
+        return NULL;
+    }
+    halfspace_t * res=selected_halfspaces[best_index];
+    selected_halfspaces.erase(selected_halfspaces.begin()+best_index);
+    return res; 
+}
+
+
+/**
  * @brief                   Sample a number of points from R
  * 
  * @param R                 The input polytope 
@@ -136,7 +195,7 @@ int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta)
 
     point_random(p_set);
     int dim = p_set[0]->dim, M = p_set.size(), numOfQuestion = 0;
-    int num_points=10;
+    int num_points=20;
     
 
     //initial: add the basic halfspace into R_hyperplane
@@ -211,16 +270,19 @@ int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta)
                     numOfQuestion++;
                     double v1=dot_prod(u, p_set[i]);
                     double v2=dot_prod(u, current_point[p_index]);
+                    halfspace_t* half=NULL;
                     if(v1>v2)
                     {
-                        halfspace_t* half=alloc_halfspace(current_point[p_index], p_set[i], 0, true);
+                        half=alloc_halfspace(current_point[p_index], p_set[i], 0, true);
                         R_half_set->halfspaces.push_back(half);
                     }
                     else
                     {
-                        halfspace_t* half=alloc_halfspace(p_set[i], current_point[p_index], 0, true);
+                        half=alloc_halfspace(p_set[i], current_point[p_index], 0, true);
                         R_half_set->halfspaces.push_back(half);
                     }
+                    halfspace_t *hy2 = deepcopy_halfspace(half);
+                    selected_halfspaces.push_back(hy2);
                     current_point.erase(current_point.begin() + p_index);
                     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
 
@@ -240,6 +302,8 @@ int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta)
         }
         i++; //increment i
     }
+    polytope_sampling(R_half_set_cp, num_points, randPoints, shift_point);
+    find_best_halfspace(selected_halfspaces, randPoints,shift_point);
     printf("|%30s |%10d |%10s |\n", "RH", numOfQuestion, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     printf("---------------------------------------------------------\n");
