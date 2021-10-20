@@ -3,6 +3,7 @@
 #include "Others/read_write.h"
 #include "Others/pruning.h"
 #include "RH/alg_one.h"
+#include "SpacePrune/alg_spaceprune.h"
 #include "Others/qhull_build.h"
 #include <vector>
 #include <ctime>
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
     point_set_t *P0 = read_points((char*)"4d.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k = 1;
+    double theta=0.1;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);
@@ -41,7 +43,7 @@ int main(int argc, char *argv[])
 
 
     //Algorithm RH
-    Random_half(p_set, u, k);
+    SpacePrune(p_set,u,k,theta);
 
     release_point_set(P, true);
     return 0;

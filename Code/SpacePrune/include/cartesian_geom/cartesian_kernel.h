@@ -30,7 +30,7 @@ class Cartesian
 public:
   typedef Cartesian<K> Self;
   typedef K                    FT;
-  typedef point<Self>              Point;
+  typedef point_type<Self>              Point;
     
 };
 

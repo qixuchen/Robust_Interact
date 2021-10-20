@@ -81,6 +81,8 @@ else ()
               main.cpp
               RH/alg_one.cpp
               RH/alg_one.h
+              SpacePrune/alg_spaceprune.h
+              SpacePrune/alg_spaceprune.cpp
               Others/data_struct.h
               Others/data_utility.cpp
               Others/data_utility.h

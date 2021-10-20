@@ -14,7 +14,7 @@
 #include <Eigen/Eigen>
 
 template <typename K>
-class point
+class point_type
 {
 private:
     unsigned int d;
@@ -25,15 +25,15 @@ public:
     typedef Eigen::Matrix<typename K::FT, Eigen::Dynamic,1> Coeff;
     typedef typename K::FT 	FT;
 
-    point() {}
+    point_type() {}
 
-    point(const unsigned int dim)
+    point_type(const unsigned int dim)
     {
         d = dim;
         coeffs.setZero(d);
     }
 
-    point(const unsigned int dim, iter begin, iter endit)
+    point_type(const unsigned int dim, iter begin, iter endit)
     {
         d = dim;
         coeffs.resize(d);
@@ -43,13 +43,13 @@ public:
             coeffs(i++) = *it;
     }
 
-    point(const Coeff& coeffs)
+    point_type(const Coeff& coeffs)
     {
             d = coeffs.rows();
             this->coeffs = coeffs;
     }
 
-    point(const unsigned int dim, std::vector<typename K::FT> cofs)
+    point_type(const unsigned int dim, std::vector<typename K::FT> cofs)
     {
         d = dim;
         coeffs.resize(d);
@@ -96,7 +96,7 @@ public:
         return coeffs.data();
     }
 
-    void operator+= (const point& p)
+    void operator+= (const point_type& p)
     {
         coeffs += p.getCoefficients();
     }
@@ -111,26 +111,26 @@ public:
         this->coeffs = coeffs;
     }
 
-    //TODO: avoid point construction in operators +,-,*
-    point operator+ (const point& p) const
+    //TODO: avoid point_type construction in operators +,-,*
+    point_type operator+ (const point_type& p) const
     {
-        point temp;
+        point_type temp;
         temp.d = d;
         temp.coeffs = coeffs + p.getCoefficients();
         return temp;
     }
 
-    point operator- (const point& p) const
+    point_type operator- (const point_type& p) const
     {
-        point temp;
+        point_type temp;
         temp.d = d;
         temp.coeffs = coeffs - p.getCoefficients();
         return temp;
     }
 
-    point operator* (const FT k) const
+    point_type operator* (const FT k) const
     {
-        point temp;
+        point_type temp;
         temp.d = d;
         temp.coeffs = coeffs * k;
         return temp;
@@ -146,7 +146,7 @@ public:
         coeffs /= k;
     }
 
-    bool operator== (point& p) const
+    bool operator== (point_type& p) const
     {
         int i=0;
         const Coeff & coeffs = p.getCoefficients();
@@ -163,7 +163,7 @@ public:
         return true;
     }
 
-    FT dot(const point& p) const
+    FT dot(const point_type& p) const
     {
         return coeffs.dot(p.getCoefficients());
     }
@@ -196,7 +196,7 @@ public:
 };
 
 template<typename K>
-point<K> operator* (const typename K::FT& k, point<K> const& p)
+point_type<K> operator* (const typename K::FT& k, point_type<K> const& p)
 {
     return p * k;
 }
