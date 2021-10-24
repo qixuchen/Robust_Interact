@@ -9,13 +9,17 @@
 #include <ctime>
 #include <sys/time.h>
 
+int num_questions=0;
+int num_wrong_answer=0;
+int crit_wrong_answer=0;
 
 int main(int argc, char *argv[])
 {
     point_set_t *P0 = read_points((char*)"4d.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k = 1;
-    double theta=0.1;
+    double theta=0.01;
+    int check_num=3;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);
@@ -23,6 +27,7 @@ int main(int argc, char *argv[])
     // generate the utility vector
     point_t *u = alloc_point(dim);
     double sum = 0;
+    srand(time(0));
     for (int i = 0; i < dim; i++)
     {
         u->coord[i] = ((double) rand()) / RAND_MAX;
@@ -43,7 +48,7 @@ int main(int argc, char *argv[])
 
 
     //Algorithm RH
-    SpacePrune(p_set,u,k,theta);
+    SpacePrune(p_set,u,k,theta, check_num);
 
     release_point_set(P, true);
     return 0;

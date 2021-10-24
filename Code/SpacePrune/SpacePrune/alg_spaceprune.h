@@ -1,5 +1,5 @@
 #include "../Others/used_function.h"
-
+#include "../Others/user_mode.h"
 #include "Eigen/Eigen"
 //#define VOLESTI_DEBUG
 #include <fstream>
@@ -27,4 +27,4 @@
  * @param k 				The threshold top-k
  * @param theta             User error Rate
  */
-int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta);
+int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta, int check_num);

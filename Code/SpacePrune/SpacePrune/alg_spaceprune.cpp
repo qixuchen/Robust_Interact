@@ -44,7 +44,7 @@ halfspace_t *find_best_halfspace(std::vector<halfspace_t *> &selected_halfspaces
                 cur_num++;
             }
         }
-        if(cur_num > best_num){
+        if(cur_num >= best_num){
             best_num=cur_num;
             best_index=i;
         }
@@ -77,6 +77,7 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
     typedef HPolytope<Point> Hpolytope;
     typedef BoostRandomNumberGenerator<boost::mt11213b, NT> RNG;
 
+    shift_point.clear();
     int M = R->halfspaces.size();
     if (M < 1)
     {
@@ -110,7 +111,7 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
 
     Hpolytope HP;
     HP.init(HP_vec);
-    HP.print();
+    // HP.print();
 
     //Compute chebychev ball
     std::pair<Point,NT> CheBall;
@@ -148,9 +149,9 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
     // c.print();
     // std::cout <<std::endl;
 
-    std::cout << "After shifting:"<<std::endl;
-    HP.print();
-    std::cout <<std::endl;
+    // std::cout << "After shifting:"<<std::endl;
+    // HP.print();
+    // std::cout <<std::endl;
 
 
     Point p(n);
@@ -158,9 +159,9 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
     vector<Point> p_vec;
 
     uniform_sampling<BilliardWalk>(p_vec, HP, gen, walk_len, num_point, p, 10);
-    for(int i=0; i<p_vec.size(); i++){
-        p_vec[i].print();
-    }
+    // for(int i=0; i<p_vec.size(); i++){
+    //     p_vec[i].print();
+    // }
 
     //load points into randPoints
     randPoints.clear();
@@ -189,13 +190,13 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
  * @param k 				The threshold top-k
  * @param theta             User error Rate
  */
-int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta)
+int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta, int check_num)
 {
 
 
     point_random(p_set);
     int dim = p_set[0]->dim, M = p_set.size(), numOfQuestion = 0;
-    int num_points=20;
+    int num_points=50;
     
 
     //initial: add the basic halfspace into R_hyperplane
@@ -212,100 +213,159 @@ int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta)
     std::vector<halfspace_t*> selected_halfspaces;
 
     point_t* point_result = NULL, *true_point_result=NULL;
-    current_use.push_back(p_set[0]);
     //compare: p_set contains all the points
 
-    int i =1;
-    while(i<M && point_result==NULL){
 
-        bool same_exist=false;
-        for(int j=0; j < current_use.size(); j++)
-        {
-            if(is_same_point(p_set[i], current_use[j]))
-            {
-                same_exist=true;
-                break;
-            }
-        }
-        if(!same_exist)
-        {
+    while(true_point_result==NULL){
+        //Start of phase 1 ===============================================
+        release_halfspace_set(R_half_set);
+        R_half_set = R_initial(dim);
+        R_half_set = deepcopy_halfspace_set(R_half_set_cp);
+        get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+        point_result=NULL;
+        current_point.clear();
+        current_use.clear();
+        current_use.push_back(p_set[0]);
+        int i =1;
+        while(i<M && point_result==NULL){
+
+            bool same_exist=false;
             for(int j=0; j < current_use.size(); j++)
             {
-                current_point.push_back(current_use[j]);
+                if(is_same_point(p_set[i], current_use[j]))
+                {
+                    same_exist=true;
+                    break;
+                }
             }
-            current_use.push_back(p_set[i]);
-            while(current_point.size()>0)
+            if(!same_exist)
             {
-                int num_point = current_point.size();
-                int scan_index = 0;//the index where the points we have scanned
-                bool need_ask = false;
-                double distance = 999999;
-                int p_index = -1;// the index where the point we select to ask question
-                //find the question asked user
-                for(int j=0; j < num_point; j++)
+                for(int j=0; j < current_use.size(); j++)
                 {
-                    hyperplane_t* h = alloc_hyperplane(p_set[i], current_point[scan_index], 0);
-                    int relation = check_situation_accelerate(h, R_half_set, 0);
-                    //if intersect, calculate the distance
-                    if(relation==0)
-                    {
-                        need_ask=true;
-                        double d_h;
-                        d_h=calculate_distance(h, R_half_set->in_center);
-                        if(d_h < distance)
-                        {
-                            distance=d_h;
-                            p_index=scan_index;
-                        }
-                        scan_index++;
-                    }
-                    else
-                    {
-                        current_point.erase(current_point.begin() + scan_index);
-                    }
+                    current_point.push_back(current_use[j]);
                 }
-
-                if(need_ask)
+                current_use.push_back(p_set[i]);
+                while(current_point.size()>0)
                 {
-                    numOfQuestion++;
-                    double v1=dot_prod(u, p_set[i]);
-                    double v2=dot_prod(u, current_point[p_index]);
-                    halfspace_t* half=NULL;
-                    if(v1>v2)
+                    int num_point = current_point.size();
+                    int scan_index = 0;//the index where the points we have scanned
+                    bool need_ask = false;
+                    double distance = 999999;
+                    int p_index = -1;// the index where the point we select to ask question
+                    //find the question asked user
+                    for(int j=0; j < num_point; j++)
                     {
-                        half=alloc_halfspace(current_point[p_index], p_set[i], 0, true);
-                        R_half_set->halfspaces.push_back(half);
+                        hyperplane_t* h = alloc_hyperplane(p_set[i], current_point[scan_index], 0);
+                        int relation = check_situation_accelerate(h, R_half_set, 0);
+                        //if intersect, calculate the distance
+                        if(relation==0)
+                        {
+                            need_ask=true;
+                            double d_h;
+                            d_h=calculate_distance(h, R_half_set->in_center);
+                            if(d_h < distance)
+                            {
+                                distance=d_h;
+                                p_index=scan_index;
+                            }
+                            scan_index++;
+                        }
+                        else
+                        {
+                            current_point.erase(current_point.begin() + scan_index);
+                        }
                     }
-                    else
-                    {
-                        half=alloc_halfspace(p_set[i], current_point[p_index], 0, true);
-                        R_half_set->halfspaces.push_back(half);
-                    }
-                    halfspace_t *hy2 = deepcopy_halfspace(half);
-                    selected_halfspaces.push_back(hy2);
-                    current_point.erase(current_point.begin() + p_index);
-                    get_extreme_pts_refine_halfspaces_alg1(R_half_set);
 
-                    //polytope_sampling(R_half_set, num_points, randPoints, shift_point);
-                    //cout<<randPoints[0].size()<<endl;
-                    //check if we can find top-k point in R_half_set
-                    top_current.clear(); 
-                    //top_current.shrink_to_fit();
-                    point_result = NULL;
-                    bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
-                    if(check_result)
+                    if(need_ask)
                     {
-                        point_result = check_possible_topk(p_set, R_half_set, k, top_current);
+                        point_t* user_choice = user_rand_err(u, p_set[i], current_point[p_index], theta);
+                        halfspace_t* half=NULL;
+                        if(user_choice==p_set[i])
+                        {
+                            half=alloc_halfspace(current_point[p_index], p_set[i], 0, true);
+                            R_half_set->halfspaces.push_back(half);
+                        }
+                        else
+                        {
+                            half=alloc_halfspace(p_set[i], current_point[p_index], 0, true);
+                            R_half_set->halfspaces.push_back(half);
+                        }
+                        halfspace_t *hy2 = deepcopy_halfspace(half);
+                        selected_halfspaces.push_back(hy2);
+                        current_point.erase(current_point.begin() + p_index);
+                        get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+
+                        //polytope_sampling(R_half_set, num_points, randPoints, shift_point);
+                        //cout<<randPoints[0].size()<<endl;
+                        //check if we can find top-k point in R_half_set
+                        top_current.clear(); 
+                        //top_current.shrink_to_fit();
+                        point_result = NULL;
+                        bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
+                        if(check_result)
+                        {
+                            point_result = check_possible_topk(p_set, R_half_set, k, top_current);
+                        }
                     }
                 }
             }
+            i++; //increment i
         }
-        i++; //increment i
+        //End of phase 1 ==========================================================
+
+
+        //Start of phase 2 ==========================================================
+        while(true_point_result==NULL && selected_halfspaces.size()>0){
+            randPoints.clear();
+            shift_point.clear();
+            polytope_sampling(R_half_set_cp, num_points, randPoints, shift_point);
+            halfspace_t *best_hs = find_best_halfspace(selected_halfspaces, randPoints,shift_point);
+            point_t *p1, *p2, *user_choice;
+            p1 = best_hs->point1;
+            p2 = best_hs->point2;
+            user_choice = checking(u,p2,p1,theta,check_num);
+            halfspace_t *hy_cp=NULL;
+            if (user_choice==p1)
+            {
+                hy_cp = alloc_halfspace(p2, p1, 0, true);
+            }
+            else
+            {
+                hy_cp = alloc_halfspace(p1, p2, 0, true);
+            }
+    
+            R_half_set_cp->halfspaces.push_back(hy_cp);
+            get_extreme_pts_refine_halfspaces_alg1(R_half_set_cp);
+
+            // IMPORTANT: Remove the halfspaces that are no longer helpful (lies on one side of R)
+            int m=0;
+            while(m<selected_halfspaces.size()){
+                hyperplane_t *h = alloc_hyperplane(selected_halfspaces[m]->normal, selected_halfspaces[m]->offset);
+                int check_res=check_situation_accelerate(h,R_half_set_cp,0);
+                if(check_res!=0){
+                    selected_halfspaces.erase(selected_halfspaces.begin()+m);
+                }
+                else{
+                    m++;
+                }
+            }
+
+            top_current.clear(); 
+            //top_current.shrink_to_fit();
+            true_point_result = NULL;
+            bool check_result = find_possible_topk(p_set, R_half_set_cp, k, top_current);
+            if(check_result)
+            {
+                true_point_result = check_possible_topk(p_set, R_half_set_cp, k, top_current);
+            }
+            if(true_point_result!=NULL){
+                break;
+            }
+        //End of phase 2 ==========================================================
+        }
     }
-    polytope_sampling(R_half_set_cp, num_points, randPoints, shift_point);
-    find_best_halfspace(selected_halfspaces, randPoints,shift_point);
-    printf("|%30s |%10d |%10s |\n", "RH", numOfQuestion, "--");
+    printf("|%30s |%10d |%10s |\n", "RH", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     printf("---------------------------------------------------------\n");
-    return numOfQuestion;
+    return num_questions;
 }

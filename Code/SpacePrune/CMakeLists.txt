@@ -69,7 +69,7 @@ else ()
   #add_definitions(${CMAKE_CXX_FLAGS} "-Wint-in-bool-context")
   #add_definitions(${CMAKE_CXX_FLAGS} "-Wall")
 
-  add_definitions(${CMAKE_CXX_FLAGS} "-O3")  # optimization of the compiler
+  #add_definitions(${CMAKE_CXX_FLAGS} "-O3")  # optimization of the compiler
   #add_definitions(${CXX_COVERAGE_COMPILE_FLAGS} "-lgsl")
   add_definitions(${CXX_COVERAGE_COMPILE_FLAGS} "-lm")
   add_definitions(${CXX_COVERAGE_COMPILE_FLAGS} "-ldl")
@@ -123,6 +123,8 @@ else ()
               Qhull/stat.h
               Others/used_function.cpp
               Others/used_function.h
+              Others/user_mode.cpp
+              Others/user_mode.h
               Qhull/user.cpp
               Qhull/user.h
               Qhull/usermem.cpp

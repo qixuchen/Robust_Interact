@@ -64,7 +64,7 @@ typedef struct point
 	double      value;
 	char		label[LABEL_LENGTH];
 	
-} point_t;
+}	point_t;
 
 typedef struct utility
 {
