@@ -9,7 +9,7 @@
  * @param u 			 The linear function
  * @param k 			 The parameter
  */
-int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
+int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k, double theta)
 {
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -36,8 +36,8 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
     //v1    the utility of point 1
     //v2    the utility of point 2
     int index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
-    double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-    double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+    point_t* p1 = choose_item_set[index]->hyper->point1;
+    point_t* p2 = choose_item_set[index]->hyper->point2;
 
     //initial
     halfspace_set_t *R_half_set = R_initial(dim);
@@ -48,7 +48,8 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
     while (considered_half_set.size() > 1)
     {
         numOfQuestion++;
-        if (v1 >= v2)
+        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+        if (user_choice == p1)
         {
             hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
             index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, true);
@@ -58,8 +59,8 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
             hy = alloc_halfspace(choose_item_set[index]->hyper->point1, choose_item_set[index]->hyper->point2, 0, true);
             index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
         }
-        v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-        v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+        p1 = choose_item_set[index]->hyper->point1;
+        p2 = choose_item_set[index]->hyper->point2;
 
         //Find whether there exist point which is the topk point w.r.t any u in R
         R_half_set->halfspaces.push_back(hy);
@@ -76,6 +77,8 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
             printf("|%30s |%10d |%10s |\n", "HD-PI_sampling", numOfQuestion, "--");
             printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
             printf("---------------------------------------------------------\n");
+            rr_ratio = dot_prod(u, point_result)/top_1_score;
+            top_1_found= (rr_ratio>=1);
             return numOfQuestion;
         }
     }
@@ -84,6 +87,8 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
     printf("|%30s |%10s |%10d |\n", "Point", "--",
            half_set_set[considered_half_set[0]]->represent_point[0]->id);
     printf("---------------------------------------------------------\n");
+    rr_ratio = dot_prod(u, half_set_set[considered_half_set[0]]->represent_point[0])/top_1_score;
+    top_1_found= (rr_ratio>=1);
     return numOfQuestion;
 }
 
@@ -94,7 +99,7 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k)
  * @param u 			 The linear function
  * @param k 			 The parameter
  */
-int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
+int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k, double theta)
 {
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -119,8 +124,8 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
     //v1    the utility of point 1
     //v2    the utility of point 2
     int index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
-    double v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-    double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+    point_t* p1 = choose_item_set[index]->hyper->point1;
+    point_t* p2 = choose_item_set[index]->hyper->point2;
 
     //initial
     halfspace_set_t *R_half_set = R_initial(dim);
@@ -131,7 +136,8 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
     while (considered_half_set.size() > 1)
     {
         numOfQuestion++;
-        if (v1 >= v2)
+        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+        if (user_choice == p1)
         {
             hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
             index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, true);
@@ -141,8 +147,8 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
             hy = alloc_halfspace(choose_item_set[index]->hyper->point1, choose_item_set[index]->hyper->point2, 0, true);
             index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
         }
-        v1 = dot_prod(u, choose_item_set[index]->hyper->point1);
-        v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
+        p1 = choose_item_set[index]->hyper->point1;
+        p2 = choose_item_set[index]->hyper->point2;
 
         //Find whether there exist point which is the topk point w.r.t any u in R
         R_half_set->halfspaces.push_back(hy);
@@ -159,6 +165,8 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
             printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", numOfQuestion, "--");
             printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
             printf("---------------------------------------------------------\n");
+            rr_ratio = dot_prod(u, point_result)/top_1_score;
+            top_1_found= (rr_ratio>=1);
             return numOfQuestion;
         }
     }
@@ -166,6 +174,8 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k)
     printf("|%30s |%10s |%10d |\n", "Point", "--",
            half_set_set[considered_half_set[0]]->represent_point[0]->id);
     printf("---------------------------------------------------------\n");
+    rr_ratio = dot_prod(u, half_set_set[considered_half_set[0]]->represent_point[0])/top_1_score;
+    top_1_found= (rr_ratio>=1);
     return numOfQuestion;
 }
 

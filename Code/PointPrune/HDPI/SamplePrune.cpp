@@ -289,12 +289,16 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
 
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
-            double ratio=0;
+            double prune_ratio=0;
             randPoints.clear();
             shift_point.clear();
             polytope_sampling(R_half_set_cp, num_points, randPoints, shift_point);
 
-            halfspace_t *best_hs = find_best_halfspace(selected_halfspaces, randPoints,shift_point, ratio);
+
+            point_t *best_p1=NULL, *best_p2=NULL;
+            halfspace_t *best_hs = find_best_halfspace(selected_halfspaces, randPoints,shift_point, prune_ratio);
+            best_p1 = best_hs->point1;
+            best_p2 = best_hs->point2;
 
             //find the corresponding hyperplane index in choose_item_set_cp
             int item_size = choose_item_set_cp.size();
@@ -311,16 +315,30 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
 
             if(best_index<0){
                 printf("Cannot find the best index\n");
-                return 0;
+                return -1;
             }
-
 
             point_t *p1, *p2, *user_choice;
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
-            user_choice = checking(u,p2,p1,theta,checknum);
+
+            //printf("%10f\n",ratio);
+            if(best_p1==p1){
+                user_choice = checking(u,p2,p1,theta,checknum);
+            }
+            else{
+                user_choice = checking(u,p1,p2,theta,checknum);
+            }
+            if(user_choice!=best_p2){
+                encounter_err = true;
+            }
+            if(encounter_err==true && prune_ratio<0.2){
+                //printf("enc err\n");
+                end_premature=true;
+            }
             
             halfspace_t *hy_cp=NULL;
+
             if (user_choice==p1)
             {
                 //encounter_err = true;
@@ -331,10 +349,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
             {
                 hy_cp = alloc_halfspace(p1, p2, 0, true);
                 modify_choose_item_table(choose_item_set_cp, half_set_set_cp, considered_half_set_cp, best_index, false);
-            }
-            if(encounter_err==true && ratio<0.2){
-                //printf("enc err\n");
-                end_premature=true;
             }
 
             R_half_set_cp->halfspaces.push_back(hy_cp);
@@ -365,7 +379,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
 
             if(end_premature){
 
-                printf("end premature\n");
+                //printf("end premature\n");
                 break;
             }
         }
@@ -430,6 +444,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
     printf("# of wrong answers:%d\n",num_wrong_answer);
     printf("# of critical wrong answers:%d\n",crit_wrong_answer);
     printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
+    rr_ratio = dot_prod(u, true_point_result)/top_1_score;
+    top_1_found= (rr_ratio>=1);
     return num_questions;
     
 }

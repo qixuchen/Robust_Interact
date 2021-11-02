@@ -275,6 +275,8 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
     printf("# of wrong answers:%d\n",num_wrong_answer);
     printf("# of critical wrong answers:%d\n",crit_wrong_answer);
     printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
+    rr_ratio= dot_prod(u, true_point_result)/top_1_score;
+    top_1_found= (rr_ratio>=1);
     return num_questions;
     
 }
@@ -505,6 +507,8 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum,
     printf("# of wrong answers:%d\n",num_wrong_answer);
     printf("# of critical wrong answers:%d\n",crit_wrong_answer);
     printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
+    rr_ratio = dot_prod(u, true_point_result)/top_1_score;
+    top_1_found= (rr_ratio>=1);
     return num_questions;
     
 }
