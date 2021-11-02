@@ -1,10 +1,11 @@
 #include "../Others/used_function.h"
 #include "../Others/user_mode.h"
-
+#include "partition_func.h"
 
 extern int num_questions;
 extern int crit_wrong_answer;
 extern int num_wrong_answer;
+extern double top_1_score;
 /**
  * @brief Asking user question and return one of the top-k points
  *        Find the top-1 point by sampling
@@ -26,3 +27,5 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k);
 
 
 int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta);
+
+int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta);
