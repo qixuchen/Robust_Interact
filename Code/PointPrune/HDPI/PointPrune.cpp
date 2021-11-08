@@ -171,11 +171,14 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
             
+            double skip_rate = 0.4;
             if(best_p1==p1){
-                user_choice = checking(u,p2,p1,theta,checknum);
+                //user_choice = checking(u,p2,p1,theta,checknum);
+                user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
             }
             else{
-                user_choice = checking(u,p1,p2,theta,checknum);
+                //user_choice = checking(u,p1,p2,theta,checknum);
+                user_choice = checking_varyk(u,p1,p2,theta,checknum,skip_rate);
             }
 
             if (user_choice==p1)
@@ -389,11 +392,14 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum,
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
             
+            double skip_rate = 0.4;
             if(best_p1==p1){
-                user_choice = checking(u,p2,p1,theta,checknum);
+                //user_choice = checking(u,p2,p1,theta,checknum);
+                user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
             }
             else{
-                user_choice = checking(u,p1,p2,theta,checknum);
+                //user_choice = checking(u,p1,p2,theta,checknum);
+                user_choice = checking_varyk(u,p1,p2,theta,checknum, skip_rate);
             }
             //printf("ratio %10f\n",ratio);
             if(user_choice!=best_p2){

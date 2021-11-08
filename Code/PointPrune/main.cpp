@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k =1;
     int checknum=3;
-    double theta=0.07;
+    double theta=0.05;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);

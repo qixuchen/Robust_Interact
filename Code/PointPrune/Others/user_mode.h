@@ -20,5 +20,6 @@ int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, do
 
 point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k);
 
+point_t* checking_varyk(point_t* u, point_t* p1, point_t* p2, double err_rate, int k, double skip_rate);
 
 #endif
