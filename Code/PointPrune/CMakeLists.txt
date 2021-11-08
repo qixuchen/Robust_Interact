@@ -96,6 +96,8 @@ else ()
         HDPI/PointPrune.h
         HDPI/SamplePrune.cpp
         HDPI/SamplePrune.h
+        HDPI/STMD.h
+        HDPI/STMD.cpp
         input/2d.txt
         input/4d.txt
         input/weather.txt

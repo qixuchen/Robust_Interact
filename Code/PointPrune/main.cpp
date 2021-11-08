@@ -5,6 +5,7 @@
 #include "HDPI/HDPI.h"
 #include "HDPI/PointPrune.h"
 #include "HDPI/SamplePrune.h"
+#include "HDPI/STMD.h"
 #include "Others/qhull_build.h"
 #include <vector>
 #include <ctime>
@@ -40,6 +41,10 @@ int main(int argc, char *argv[])
     double SP_rr=0;
     int SP_count = 0;
 
+    double ST=0;
+    double ST_rr=0;
+    int ST_count = 0;
+
     point_set_t *P0 = read_points((char*)"4d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k =1;
@@ -48,6 +53,7 @@ int main(int argc, char *argv[])
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);
+
 
     for(int i=0; i<10; i++){
         // generate the utility vector
@@ -97,6 +103,11 @@ int main(int argc, char *argv[])
         SP += SamplePrune(p_set, u, k, checknum, theta);
         SP_rr += rr_ratio;
         SP_count += top_1_found;
+
+        //Algorithm SamplePrune
+        ST += STMD(p_set, u, k, theta);
+        ST_rr += rr_ratio;
+        ST_count += top_1_found;
     }
     printf("\nIn total\n");
     printf("|%20s |%10s |%8s |%10s\n", "Alg", "# rounds", "rr", "found top1");
@@ -105,6 +116,7 @@ int main(int argc, char *argv[])
     printf("|%20s |%10f |%8f |%8f\n", "PointPrune", PP/10, PP_rr/10, ((double)PP_count)/10);
     printf("|%20s |%10f |%8f |%8f\n", "PointPrune_v2", PP_2/10, PP_2_rr/10, ((double)PP_2_count)/10);
     printf("|%20s |%10f |%8f |%8f\n", "SamplePrune", SP/10, SP_rr/10, ((double)SP_count)/10);
+    printf("|%20s |%10f |%8f |%8f\n", "STMD", ST/10, ST_rr/10, ((double)ST_count)/10);
 
     release_point_set(P, true);
     return 0;
