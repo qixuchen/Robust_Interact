@@ -12,16 +12,22 @@
 int num_questions=0;
 int num_wrong_answer=0;
 int crit_wrong_answer=0;
+double top_1_score = 0;
 
 int main(int argc, char *argv[])
 {
-    point_set_t *P0 = read_points((char*)"4d.txt");
+    point_set_t *P0 = read_points((char*)"nba.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k = 1;
-    double theta=0.01;
+    double theta=0.05;
     int check_num=3;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
+
+    std::vector<point_t *> p_set_1, top;
+    find_top1(p_set, top);
+    skyline_c(top, p_set_1);
+
     point_set_t *P = point_reload(p_set);
 
     // generate the utility vector
@@ -48,7 +54,10 @@ int main(int argc, char *argv[])
 
 
     //Algorithm RH
-    SpacePrune(p_set,u,k,theta, check_num);
+    Random_half(p_set_1,u,k);
+
+    //Alg SpacePrune
+    SpacePrune(p_set_1,u,k,theta, check_num);
 
     release_point_set(P, true);
     return 0;

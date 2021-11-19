@@ -364,8 +364,10 @@ int SpacePrune(std::vector<point_t*> p_set, point_t* u, int k, double theta, int
         //End of phase 2 ==========================================================
         }
     }
-    printf("|%30s |%10d |%10s |\n", "RH", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "SpacePrune", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     printf("---------------------------------------------------------\n");
+    printf("# of wrong answers:%d\n",num_wrong_answer);
+    printf("# of critical wrong answers:%d\n",crit_wrong_answer);
     return num_questions;
 }

@@ -16,7 +16,7 @@
 int main(int argc, char *argv[])
 {
     //reload point
-    point_set_t *P0 = read_points((char*)"2d.txt");
+    point_set_t *P0 = read_points((char*)"car.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k = 1;
     std::vector<point_t *> p_set, p0;
@@ -45,9 +45,9 @@ int main(int argc, char *argv[])
     printf("---------------------------------------------------------\n");
 
     //Algorithm: Active Ranking
-    //Active_Ranking(p_set, u, k);
+    Active_Ranking(p_set, u, k);
     //Algorithm: Preference Learning
-    //Preference_Learning_accuracy(p_set, u, k);
+    Preference_Learning_accuracy(p_set, u, k);
 
     // initial parameters
     int s = 2, maxRound = 1000;
@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
     // the UtilityApprox Algorithm
     utilityapprox(P, u, s, epsilon, maxRound);
 
+    
     release_point_set(P, true);
     return 0;
 }

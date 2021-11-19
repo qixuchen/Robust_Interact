@@ -36,3 +36,8 @@
 All_Top-k/build/
 PointPrune/build/
 InteractiveTopk/build/
+User_study/build/
+User_study/output
+ExistingAlg/output
+ExistingAlg/build
+PointPrune/output/

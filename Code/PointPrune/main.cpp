@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     double ST_rr=0;
     int ST_count = 0;
 
-    point_set_t *P0 = read_points((char*)"4d100k.txt");
+    point_set_t *P0 = read_points((char*)"nba.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k =1;
     int checknum=3;
