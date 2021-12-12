@@ -184,14 +184,12 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
 
 
 
-int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta)
+int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum)
 {
     //reset statistics
     num_questions=0;
-    num_wrong_answer=0;
-    crit_wrong_answer=0;
 
-
+    int k=1;
     int num_points=50;
     std::vector<std::vector<double>> randPoints;
     std::vector<double> shift_point;
@@ -244,7 +242,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
         // double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
         point_t* p1 = choose_item_set[index]->hyper->point1;
         point_t* p2 = choose_item_set[index]->hyper->point2;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+        point_t* user_choice = (show_to_user(P0->points[p1->id],P0->points[p2->id])==1) ? p1 : p2;
+        num_questions ++;
 
 
 
@@ -265,7 +264,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
             }
             p1 = choose_item_set[index]->hyper->point1;
             p2 = choose_item_set[index]->hyper->point2;
-            user_choice = user_rand_err(u,p1,p2,theta);
+            user_choice = (show_to_user(P0->points[p1->id],P0->points[p2->id])==1) ? p1 : p2;
+            num_questions ++;
 
             //Find whether there exist point which is the topk point w.r.t any u in R
             R_half_set->halfspaces.push_back(hy);
@@ -324,13 +324,15 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
 
             double skip_rate = 0.4;
             //printf("%10f\n",ratio);
+
+            // best_p1 < best_p2  
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
+                user_choice = checking_varyk(P0->points[p2->id],P0->points[p1->id],checknum,skip_rate);
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(u,p1,p2,theta,checknum,skip_rate);
+                user_choice = checking_varyk(P0->points[p1->id],P0->points[p2->id],checknum,skip_rate);
             }
             if(user_choice!=best_p2){
                 encounter_err = true;
@@ -437,18 +439,12 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, d
             choose_item * c_i=deepcopy_choose_item(choose_item_set_cp[i]);
             choose_item_set.push_back(c_i);
         }
+    }   
 
-
-    }
-
-    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
-    printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
-    printf("---------------------------------------------------------\n");
-    printf("# of wrong answers:%d\n",num_wrong_answer);
-    printf("# of critical wrong answers:%d\n",crit_wrong_answer);
-    printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
-    rr_ratio = dot_prod(u, true_point_result)/top_1_score;
-    top_1_found= (rr_ratio>=1);
+    // printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
+    // printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
+    // printf("---------------------------------------------------------\n");
+ 
     return num_questions;
     
 }

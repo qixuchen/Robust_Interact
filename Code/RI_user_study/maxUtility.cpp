@@ -366,58 +366,57 @@ point_t* max_utility(FILE *wPtr, point_set_t *P0, point_set_t* original_set, int
     for (int i = 0; i < ext_vec.size(); i++)
         release_point(ext_vec[i]);
 
-    printf("\n--------------------------------------------------------\n");
-    if (cmp_option == RANDOM)
-    {
-        printf("%s %10d \n", "No. of questions asked:", Qcount);
-    }
-    else
-    {
-        printf("%s %10d \n", "No. of questions asked:", Qcount);
-    }
-    printf("--------------------------------------------------------\n");
-    printf("Recommended cars:\n");
-    printf("--------------------------------------------------------\n");
-    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-    printf("--------------------------------------------------------\n");
-    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", original_set->points[result_id]->coord[0], original_set->points[result_id]->coord[1],
-           original_set->points[result_id]->coord[2], original_set->points[result_id]->coord[3]);
-    printf("--------------------------------------------------------\n");
-    printf("Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
-           "how bored you feel when you are asked with %d questions for this round \n"
-           "in order to obtain one of your 20 most favorite cars (Note: 10 denotes\n"
-           "that you feel the most bored and 1 denotes that you feel the least bored.)\n"
-           "You answer: ", Qcount);
-    int sat = 0;
-    while(sat < 1 || sat > 10)
-    {
-        scanf("%d", &sat);
-    }
-    printf("\n\n");
 
-
-    fprintf(wPtr, "--------------------------------------------------------\n");
-    if (cmp_option == RANDOM)
-    {
-        fprintf(wPtr, "|%30s |%10d |\n", "UH-RANDOM", Qcount);
+    if (cmp_option == RANDOM){
+        ask_satisfactory_level(original_set, Qcount, result_id, "UH-RANDOM", wPtr);
     }
-    else
-    {
-        fprintf(wPtr, "|%30s |%10d |\n", "UH-SIMPLEX", Qcount);
+    else{
+        ask_satisfactory_level(original_set, Qcount, result_id, "UH-SIMPLEX", wPtr);
     }
-    fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "Recommended cars:\n");
-    fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-    fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", original_set->points[result_id]->coord[0], original_set->points[result_id]->coord[1],
-           original_set->points[result_id]->coord[2], original_set->points[result_id]->coord[3]);
-    fprintf(wPtr, "---------------------------------------------------------\n");
-    fprintf(wPtr, "Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
-                  "how bored you feel when you are asked with %d questions for this round \n"
-                  "in order to obtain one of your 20 most favorite cars (Note: 10 denotes\n"
-                  "that you feel the most bored and 1 denotes that you feel the least bored.) %d\n\n\n", Qcount, sat);
-
     questions = Qcount;
     return original_set->points[result_id];
 }
+
+
+    // printf("--------------------------------------------------------\n");
+    // printf("Recommended cars:\n");
+    // printf("--------------------------------------------------------\n");
+    // printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    // printf("--------------------------------------------------------\n");
+    // printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", original_set->points[result_id]->coord[0], original_set->points[result_id]->coord[1],
+    //        original_set->points[result_id]->coord[2], original_set->points[result_id]->coord[3]);
+    // printf("--------------------------------------------------------\n");
+    // printf("Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
+    //        "how bored you feel when you are asked with %d questions for this round \n"
+    //        "in order to obtain one of your 20 most favorite cars (Note: 10 denotes\n"
+    //        "that you feel the most bored and 1 denotes that you feel the least bored.)\n"
+    //        "You answer: ", Qcount);
+    // int sat = 0;
+    // while(sat < 1 || sat > 10)
+    // {
+    //     scanf("%d", &sat);
+    // }
+    // printf("\n\n");
+
+
+    // fprintf(wPtr, "--------------------------------------------------------\n");
+    // if (cmp_option == RANDOM)
+    // {
+    //     fprintf(wPtr, "|%30s |%10d |\n", "UH-RANDOM", Qcount);
+    // }
+    // else
+    // {
+    //     fprintf(wPtr, "|%30s |%10d |\n", "UH-SIMPLEX", Qcount);
+    // }
+    // fprintf(wPtr, "--------------------------------------------------------\n");
+    // fprintf(wPtr, "Recommended cars:\n");
+    // fprintf(wPtr, "--------------------------------------------------------\n");
+    // fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    // fprintf(wPtr, "--------------------------------------------------------\n");
+    // fprintf(wPtr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", original_set->points[result_id]->coord[0], original_set->points[result_id]->coord[1],
+    //        original_set->points[result_id]->coord[2], original_set->points[result_id]->coord[3]);
+    // fprintf(wPtr, "---------------------------------------------------------\n");
+    // fprintf(wPtr, "Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
+    //               "how bored you feel when you are asked with %d questions for this round \n"
+    //               "in order to obtain one of your 20 most favorite cars (Note: 10 denotes\n"
+    //               "that you feel the most bored and 1 denotes that you feel the least bored.) %d\n\n\n", Qcount, sat);

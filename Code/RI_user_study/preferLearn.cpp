@@ -580,9 +580,9 @@ hyperplane_t *orthogonal_search(s_node_t *node, point_t *q, hyperplane_t *best)
 //       The stop condition is that cos() should satisfy the given threshold
 //@param original_set       The original dataset
 //@param u                  The real utility vector
-//@param k                  The threshold tok-k
-point_t * Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int k, int &questions)
+point_t * Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int &questions)
 {
+    int k = 1;
     int M, maxQcount = 100, testCount = 0, correctCount = 0;;
     //p_set: randomly choose 1000 points
     std::vector<point_t *> p_set;

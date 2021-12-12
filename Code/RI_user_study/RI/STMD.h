@@ -3,11 +3,8 @@
 #include "partition_func.h"
 #include <math.h>
 #include <algorithm>
-extern int num_questions;
-extern int crit_wrong_answer;
-extern int num_wrong_answer;
-extern double top_1_score;
-extern double rr_ratio;
-extern int top_1_found;
 
-int STMD(std::vector<point_t *> p_set, point_t *u, int k, double theta);
+extern int num_questions;
+
+
+int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta);

@@ -72,8 +72,6 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
 {
     //reset statistics
     num_questions=0;
-    num_wrong_answer=0;
-    crit_wrong_answer=0;
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -119,7 +117,8 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
         // double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
         point_t* p1 = choose_item_set[index]->hyper->point1;
         point_t* p2 = choose_item_set[index]->hyper->point2;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+        point_t* user_choice = (show_to_user(p1,p2)==1) ? p1 : p2;
+        num_questions ++;
 
 
 
@@ -140,7 +139,8 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
             }
             p1 = choose_item_set[index]->hyper->point1;
             p2 = choose_item_set[index]->hyper->point2;
-            user_choice = user_rand_err(u,p1,p2,theta);
+            user_choice = (show_to_user(p1,p2)==1) ? p1 : p2;
+            num_questions ++;
 
             //Find whether there exist point which is the topk point w.r.t any u in R
             R_half_set->halfspaces.push_back(hy);
@@ -167,18 +167,22 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
             // The user preference is indicated in selected_halfspaces: p2 > p1
             point_t *best_p1=NULL, *best_p2=NULL;
             double ratio=0;
-            int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces, best_p1, best_p2, ratio);
+
+
+            int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces, best_p1, best_p2, ratio); 
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
             
             double skip_rate = 0.4;
+
+            //best_p1 < best_p2 according to user's first choice
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
+                user_choice = checking_varyk(p2, p1, checknum, skip_rate);
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(u,p1,p2,theta,checknum,skip_rate);
+                user_choice = checking_varyk(p1, p2, checknum, skip_rate);
             }
 
             if (user_choice==p1)
@@ -275,11 +279,6 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
     printf("|%30s |%10d |%10s |\n", "PointPrune", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
-    printf("# of wrong answers:%d\n",num_wrong_answer);
-    printf("# of critical wrong answers:%d\n",crit_wrong_answer);
-    printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
-    rr_ratio= dot_prod(u, true_point_result)/top_1_score;
-    top_1_found= (rr_ratio>=1);
     return num_questions;
     
 }
@@ -287,25 +286,11 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
 
 
 
-int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta)
+int PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum)
 {
-    // //reset statistics
-    // num_questions=0;
-    // num_wrong_answer=0;
-    // crit_wrong_answer=0;
-    // //p_set_1 contains the points which are not dominated by >=1 points
-    // //p_set_k contains the points which are not dominated by >=k points
-    // //p_top_1 contains the points which are the convex points
-    // std::vector<point_t *> p_top_1;
-    // int dim = p_set[0]->dim;
-    // point_t *uk = alloc_point(dim);
-    // find_top1_sampling(p_set, p_top_1, uk, 0, 0);//use sampling method
-    // release_point(uk);
-
+    int k=1;
     //reset statistics
     num_questions=0;
-    num_wrong_answer=0;
-    crit_wrong_answer=0;
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -353,8 +338,8 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum,
         // double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
         point_t* p1 = choose_item_set[index]->hyper->point1;
         point_t* p2 = choose_item_set[index]->hyper->point2;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
-
+        point_t* user_choice = (show_to_user(P0->points[p1->id],P0->points[p2->id])==1) ? p1 : p2;
+        num_questions ++;
 
 
         //start of phase 1
@@ -374,7 +359,8 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum,
             }
             p1 = choose_item_set[index]->hyper->point1;
             p2 = choose_item_set[index]->hyper->point2;
-            user_choice = user_rand_err(u,p1,p2,theta);
+            user_choice = (show_to_user(P0->points[p1->id],P0->points[p2->id])==1) ? p1 : p2;
+            num_questions ++;
 
             //Find whether there exist point which is the topk point w.r.t any u in R
             R_half_set->halfspaces.push_back(hy);
@@ -409,11 +395,11 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum,
             double skip_rate = 0.4;
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
+                user_choice = checking_varyk(P0->points[p2->id], P0->points[p1->id], checknum, skip_rate);
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(u,p1,p2,theta,checknum, skip_rate);
+                user_choice = checking_varyk(P0->points[p1->id], P0->points[p2->id], checknum, skip_rate);
             }
             //printf("ratio %10f\n",ratio);
             if(user_choice!=best_p2){
@@ -463,7 +449,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum,
 
             if(end_premature){
 
-                printf("end premature\n");
+                // printf("end premature\n");
                 break;
             }
         }
@@ -521,14 +507,9 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum,
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
-    printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
-    printf("---------------------------------------------------------\n");
-    printf("# of wrong answers:%d\n",num_wrong_answer);
-    printf("# of critical wrong answers:%d\n",crit_wrong_answer);
-    printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
-    rr_ratio = dot_prod(u, true_point_result)/top_1_score;
-    top_1_found= (rr_ratio>=1);
+    // printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    // printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
+    // printf("---------------------------------------------------------\n");
     return num_questions;
     
 }

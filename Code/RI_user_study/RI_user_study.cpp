@@ -117,11 +117,10 @@ std::vector<point_t *> scale_up(std::vector<point_t *> p_set)
 int RI_user_study()
 {
     point_set_t *P0 = read_points((char*)"car.txt");
-    int k = 20;
     std::vector<point_t *> p_set, p_1, p_2;
     p_1 = random_choose(P0);
     normalize_set(p_1);
-    skyband(p_1, p_set, k, P0->numberOfPoints);
+    skyband(p_1, p_set, 1, P0->numberOfPoints);
     p_2 = scale_up(p_set);
     point_set_t *P = point_reload(p_set);
     //obatin the point set in different forms
@@ -142,6 +141,12 @@ int RI_user_study()
     point_t* r[7];
     int questions[7];
 
+    int check_num=3;
+    double theta =0.05;
+    HDPI_sampling(wPtr, p_set, P0, questions[3]);
+    PointPrune_v2(wPtr, p_set, P0, check_num);
+    // STMD(wPtr, p_set, P0, theta);
+
     printf("=========================Round 1=========================\n");
     // the UH-Simplex algorithm
     r[6] = max_utility(wPtr, P, P0, SIMPLEX, questions[6]);
@@ -149,11 +154,11 @@ int RI_user_study()
     printf("=========================Round 2=========================\n");
     printf("waiting...\n");
     //Algorithm: Preference Learning
-    r[0] = Preference_Learning(wPtr, p_set, P0, k, questions[0]);
+    r[0] = Preference_Learning(wPtr, p_set, P0, questions[0]);
 
     printf("=========================Round 3=========================\n");
-    //Algorithm: RHa
-    r[2] = RH(wPtr, p_set, P0, k, questions[2]);
+    //Algorithm: RH
+    r[2] = RH(wPtr, p_set, P0, questions[2]);
 
     printf("=========================Round 4=========================\n");
     //the UH-Random algorithm
@@ -161,14 +166,14 @@ int RI_user_study()
 
     printf("=========================Round 5=========================\n");
     //Algorithm: Active Ranking
-    r[1] = Active_Ranking(wPtr, p_2, P0, k, questions[1]);
+    r[1] = Active_Ranking(wPtr, p_2, P0, questions[1]);
 
     printf("=========================Round 6=========================\n");
     //Algorithm HDPI
-    r[3] = HDPI_sampling(wPtr, p_set, P0, k, questions[3]);
+    r[3] = HDPI_sampling(wPtr, p_set, P0, questions[3]);
 
     printf("=========================Round 7=========================\n");
-    r[4] = HDPI_accurate(wPtr, p_set, P0, k, questions[4]);
+    r[4] = HDPI_accurate(wPtr, p_set, P0, questions[4]);
 
     int Rindex[7] = {2, 5, 3, 6, 7, 4, 1};
     printf("Now comes to the comparison section\n");

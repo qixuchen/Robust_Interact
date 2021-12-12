@@ -3,8 +3,10 @@
 
 
 
-int STMD(std::vector<point_t *> p_set, point_t *u, int k, double theta){
+int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta){
 
+    int k = 1;
+    num_questions=0;
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -39,8 +41,10 @@ int STMD(std::vector<point_t *> p_set, point_t *u, int k, double theta){
     point_t* point_result = NULL;
     while (considered_half_set.size() > 1 && point_result== NULL)
     {
+        
+        point_t* user_choice = (show_to_user(P0->points[p1->id],P0->points[p2->id])==1) ? p1 : p2;
         numOfQuestion++;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+
         if (user_choice == p1)
         {
             hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
@@ -99,8 +103,9 @@ int STMD(std::vector<point_t *> p_set, point_t *u, int k, double theta){
     point_result = NULL;
     while (considered_half_set.size() > 1 && point_result== NULL)
     {
+
+        point_t* user_choice = (show_to_user(P0->points[p1->id],P0->points[p2->id])==1) ? p1 : p2;
         numOfQuestion++;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
         if (user_choice == p1)
         {
             hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
@@ -125,14 +130,12 @@ int STMD(std::vector<point_t *> p_set, point_t *u, int k, double theta){
             point_result = check_possible_topk(p_set, R_half_set, k, top_current);
         }
     }
-
-
     point_result = (point_result!=NULL)?point_result:half_set_set[considered_half_set[0]]->represent_point[0];
-    printf("|%30s |%10d |%10s |\n", "STMD", numOfQuestion, "--");
-    printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
-    printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, point_result)/top_1_score;
-    top_1_found= (rr_ratio>=1);
+
+    // printf("|%30s |%10d |%10s |\n", "STMD", numOfQuestion, "--");
+    // printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
+    // printf("---------------------------------------------------------\n");
+    
     return numOfQuestion;
 
 }

@@ -7,10 +7,10 @@
  * @brief Ask user questions and give a ranking
  * @param original_set 		The original dataset
  * @param u 				The linear function
- * @param k 				The threshold top-k
  */
-point_t* Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P0, int k, int &questions)
+point_t* Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P0, int &questions)
 {
+    int k=1;
     int dim = p_set[0]->dim, numOfQuestion = 0;
     point_random(p_set);
 

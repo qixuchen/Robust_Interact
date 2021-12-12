@@ -14,6 +14,13 @@
 
 int show_to_user(point_set_t* P, int p_idx, int q_idx);
 
+int show_to_user_scale(point_set_t* P, int p_idx, int q_idx);
+
+int show_to_user(const point_t* p1, const point_t* p2);
+
+int show_to_user_scale(const point_t* p1, const point_t* p2);
+
+int ask_satisfactory_level(const point_set_t* P, const int num_questions_asked, const int p_result_id, const char *alg_name, FILE *w_ptr);
 
 bool is_same_point(point_t* p1, point_t* p2);
 
