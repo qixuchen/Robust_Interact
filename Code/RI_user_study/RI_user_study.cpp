@@ -27,7 +27,7 @@ void create_final_list(point_t ** returned_point, int r_size, std::vector<point_
                 is_same = true;
                 break;
             }
-            if (!is_same){
+            if(!is_same){
                 final_list.push_back(returned_point[i]);
             }
         }
@@ -38,7 +38,7 @@ std::vector<point_t *> random_choose(point_set_t *p_set)
 {
     std::vector<point_t *> p;
     int count = 0, index = 0, dim = p_set->points[0]->dim;
-    while (count < 1000)
+    while(count < 1000)
     {
         index = rand() % p_set->numberOfPoints;
         if(1000 < p_set->points[index]->coord[0] && p_set->points[index]->coord[0] < 100000
@@ -73,11 +73,9 @@ std::vector<point_t *> random_choose(point_set_t *p_set)
     return p;
 }
 
-void normalize_set(std::vector<point_t *> p_set)
+void normalize_set(std::vector<point_t *> p_set, double *max, double *min)
 {
     int dim = p_set[0]->dim;
-    double max[4];
-    double min[4];
     for (int j = 0; j < dim; j++)
     {
         max[j] = -1;
@@ -136,7 +134,9 @@ int RI_user_study()
     point_set_t *P0 = read_points((char*)"car.txt");
     std::vector<point_t *> p_set, p_1, p_2;
     p_1 = random_choose(P0);
-    normalize_set(p_1);
+    int dim = p_1[0]->dim;
+    double max[dim], min[dim];
+    normalize_set(p_1, max, min);
     skyband(p_1, p_set, 1, P0->numberOfPoints);
     p_2 = scale_up(p_set);
     point_set_t *P = point_reload(p_set);
@@ -174,8 +174,11 @@ int RI_user_study()
     int check_num=3;
     double theta = 0.05;
     // HDPI_sampling(wPtr, p_set, P0, questions[3]);
-    returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0]);
+    printf("========================= Round 1 ==========================\n");
+    returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0], max, min);
     // SamplePrune(wPtr, p_set, P0, check_num);
+
+    printf("========================= Round 2 ==========================\n");
     returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1]);
 
     std::vector<point_t *> final_list;

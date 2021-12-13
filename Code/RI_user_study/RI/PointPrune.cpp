@@ -67,7 +67,7 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
     return best_item_index;
 }
 
-point_t* PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions)
+point_t* PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min)
 {
     //reset statistics
     int k =1, num_questions=0;
@@ -177,11 +177,11 @@ point_t* PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, i
             //best_p1 < best_p2 according to user's first choice
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(P0->points[p2->id],P0->points[p1->id],checknum,skip_rate, num_questions)==1 ? p2 : p1;
+                user_choice = checking_varyk(p2, p1, checknum, skip_rate, num_questions, max, min)==1 ? p2 : p1;
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(P0->points[p1->id],P0->points[p2->id],checknum,skip_rate, num_questions)==1 ? p1 : p2;
+                user_choice = checking_varyk(p1, p2, checknum, skip_rate, num_questions, max, min)==1 ? p1 : p2;
             }
 
             if (user_choice==p1)
@@ -283,7 +283,7 @@ point_t* PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, i
 
 
 
-point_t* PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions)
+point_t* PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min)
 {
     int k=1, num_questions=0;
     //reset statistics
@@ -391,11 +391,11 @@ point_t* PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
             double skip_rate = 0.4;
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(P0->points[p2->id],P0->points[p1->id],checknum,skip_rate, num_questions)==1 ? p2 : p1;
+                user_choice = checking_varyk(p2, p1, checknum, skip_rate, num_questions, max, min)==1 ? p2 : p1;
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(P0->points[p1->id],P0->points[p2->id],checknum,skip_rate, num_questions)==1 ? p1 : p2;
+                user_choice = checking_varyk(p1, p2, checknum, skip_rate, num_questions, max, min)==1 ? p1 : p2;
             }
             //printf("ratio %10f\n",ratio);
             if(user_choice!=best_p2){

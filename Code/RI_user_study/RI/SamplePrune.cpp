@@ -184,7 +184,7 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
 
 
 
-point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions)
+point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min)
 {
     //reset statistics
     int k=1, num_questions=0;
@@ -326,11 +326,11 @@ point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, 
             // best_p1 < best_p2  
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(P0->points[p2->id],P0->points[p1->id],checknum,skip_rate, num_questions)==1 ? p2 : p1;
+                user_choice = checking_varyk(p2,p1,checknum,skip_rate, num_questions, max, min)==1 ? p2 : p1;
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(P0->points[p1->id],P0->points[p2->id],checknum,skip_rate, num_questions)==1 ? p1 : p2;
+                user_choice = checking_varyk(p1,p2,checknum,skip_rate, num_questions, max, min)==1 ? p1 : p2;
             }
             if(user_choice!=best_p2){
                 encounter_err = true;

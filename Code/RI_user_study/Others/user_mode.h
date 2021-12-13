@@ -9,6 +9,6 @@
 #define USER_MODE_H
 
 
-int checking_varyk(point_t* p1, point_t* p2, int k, double skip_rate, int &num_questions);
+int checking_varyk(point_t* p1, point_t* p2, int k, double skip_rate, int &num_questions, double *max, double *min);
 
 #endif
