@@ -184,12 +184,10 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
 
 
 
-int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum)
+point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions)
 {
     //reset statistics
-    num_questions=0;
-
-    int k=1;
+    int k=1, num_questions=0;
     int num_points=50;
     std::vector<std::vector<double>> randPoints;
     std::vector<double> shift_point;
@@ -314,8 +312,8 @@ int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int c
             }
 
             if(best_index<0){
-                printf("Cannot find the best index\n");
-                return -1;
+                printf("ERROR: SpacePrune: Cannot find the best index\n");
+                return NULL;
             }
 
             point_t *p1, *p2, *user_choice;
@@ -328,14 +326,15 @@ int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int c
             // best_p1 < best_p2  
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(P0->points[p2->id],P0->points[p1->id],checknum,skip_rate);
+                user_choice = checking_varyk(P0->points[p2->id],P0->points[p1->id],checknum,skip_rate, num_questions)==1 ? p2 : p1;
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(P0->points[p1->id],P0->points[p2->id],checknum,skip_rate);
+                user_choice = checking_varyk(P0->points[p1->id],P0->points[p2->id],checknum,skip_rate, num_questions)==1 ? p1 : p2;
             }
             if(user_choice!=best_p2){
                 encounter_err = true;
+                printf("error\n"); 
             }
             if(encounter_err==true && prune_ratio<0.2){
                 //printf("enc err\n");
@@ -440,11 +439,8 @@ int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int c
             choose_item_set.push_back(c_i);
         }
     }   
-
-    // printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
-    // printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
-    // printf("---------------------------------------------------------\n");
- 
-    return num_questions;
+    print_result(wPtr, "SpacePrune", num_questions,P0->points[true_point_result->id]);
+    questions = num_questions;
+    return true_point_result;
     
 }

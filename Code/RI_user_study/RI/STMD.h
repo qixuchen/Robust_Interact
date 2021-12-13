@@ -7,4 +7,4 @@
 extern int num_questions;
 
 
-int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta);
+point_t* STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta, int &questions);

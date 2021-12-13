@@ -25,8 +25,4 @@
 #define Precision 0.0000015
 
 
-extern int num_questions;
-
-
-
-int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum);
+point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions);

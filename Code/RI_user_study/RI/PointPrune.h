@@ -1,15 +1,13 @@
 #include "../Others/user_mode.h"
 #include "partition_func.h"
 
-extern int num_questions;
 
 
 
-
-int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta);
+point_t* PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions);
 
 
 /**
  * @brief           PointPrune, with some modifications (e.g., end prematurely) 
  */
-int PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum);
+point_t* PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions);

@@ -3,10 +3,9 @@
 
 
 
-int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta){
-
-    int k = 1;
-    num_questions=0;
+point_t* STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta, int &questions)
+{
+    int k = 1, numOfQuestion = 0;
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -37,7 +36,6 @@ int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta
     halfspace_set_t *R_half_set = R_initial(dim);
     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
     halfspace_t *hy;
-    int numOfQuestion = 0;
     point_t* point_result = NULL;
     while (considered_half_set.size() > 1 && point_result== NULL)
     {
@@ -106,6 +104,7 @@ int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta
 
         point_t* user_choice = (show_to_user(P0->points[p1->id],P0->points[p2->id])==1) ? p1 : p2;
         numOfQuestion++;
+
         if (user_choice == p1)
         {
             hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
@@ -135,7 +134,8 @@ int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta
     // printf("|%30s |%10d |%10s |\n", "STMD", numOfQuestion, "--");
     // printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     // printf("---------------------------------------------------------\n");
-    
-    return numOfQuestion;
+    print_result(wPtr, "STMD", numOfQuestion++, P0->points[point_result->id]);
+    questions = numOfQuestion;
+    return point_result;
 
 }
