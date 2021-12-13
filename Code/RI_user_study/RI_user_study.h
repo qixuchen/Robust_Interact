@@ -9,7 +9,6 @@ extern double top_1_score;
 extern double rr_ratio;
 extern int top_1_found;
 
-
 int RI_user_study();
 
 

@@ -123,6 +123,8 @@ add_executable(User_study
         Others/used_function.h
         Others/user_mode.cpp
         Others/user_mode.h
+        Others/user_study_func.cpp
+        Others/user_study_func.h
         Qhull/frame.cpp
         Qhull/frame.h
         Qhull/geom.cpp

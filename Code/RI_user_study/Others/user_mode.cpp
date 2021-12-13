@@ -12,13 +12,13 @@
  * @return point_t*     The checking result
  */
 
-point_t* checking_varyk(point_t* p1, point_t* p2, int k, double skip_rate){
+int checking_varyk(point_t* p1, point_t* p2, int k, double skip_rate, int &num_questions){
     int p1_count=1, p2_count=0; //p1_count set to 1 since it is preferred in the first round
     point_t *result_this_round;
     int num_asked=0;
     
     if((double) rand()/RAND_MAX < skip_rate){ //skip checking with prob skip_rate
-        return p1;
+        return 1;
     }
 
     while (p1_count<=k/2 && p2_count<=k/2 && num_asked<k){
@@ -34,5 +34,5 @@ point_t* checking_varyk(point_t* p1, point_t* p2, int k, double skip_rate){
         num_asked++;
     }
 
-    return p1_count>k/2 ? p1 : p2;
+    return p1_count>k/2 ? 1 : 2;
 }

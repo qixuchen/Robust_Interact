@@ -17,6 +17,23 @@
 #include <sys/time.h>
 
 
+void create_final_list(point_t ** returned_point, int r_size, std::vector<point_t *> &final_list){
+    final_list.push_back(returned_point[0]);
+    for(int i=0; i<r_size; i++)
+    {
+        bool is_same=false;
+        for(int j=0; j<final_list.size(); j++){
+            if(is_same_point(returned_point[i],final_list[j])){
+                is_same = true;
+                break;
+            }
+            if (!is_same){
+                final_list.push_back(returned_point[i]);
+            }
+        }
+    }
+}
+
 std::vector<point_t *> random_choose(point_set_t *p_set)
 {
     std::vector<point_t *> p;
@@ -138,101 +155,68 @@ int RI_user_study()
 
     FILE *wPtr;
     wPtr = (FILE *)fopen("../output/result.txt", "w");
-    point_t* r[7];
-    int questions[7];
+
+
+    int r_size = 2;
+    point_t* returned_car[r_size];
+    int questions_asked[r_size], dissat_level[r_size], hit[r_size];
+
+    //initialize dissatisfactory level to -1;
+    for(int i=0; i<r_size; i++){ 
+        dissat_level[i]=-1;
+    }
+
+    //initialize hit to false;
+    for(int i=0; i<r_size; i++){ 
+        hit[i]=0;
+    }
 
     int check_num=3;
-    double theta =0.05;
-    HDPI_sampling(wPtr, p_set, P0, questions[3]);
-    PointPrune_v2(wPtr, p_set, P0, check_num);
-    // STMD(wPtr, p_set, P0, theta);
+    double theta = 0.05;
+    // HDPI_sampling(wPtr, p_set, P0, questions[3]);
+    returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0]);
+    // SamplePrune(wPtr, p_set, P0, check_num);
+    returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1]);
 
-    printf("=========================Round 1=========================\n");
-    // the UH-Simplex algorithm
-    r[6] = max_utility(wPtr, P, P0, SIMPLEX, questions[6]);
+    std::vector<point_t *> final_list;
+    create_final_list(returned_car, r_size, final_list);
 
-    printf("=========================Round 2=========================\n");
-    printf("waiting...\n");
-    //Algorithm: Preference Learning
-    r[0] = Preference_Learning(wPtr, p_set, P0, questions[0]);
+    printf("===========================================================\n");
+    printf("\n");
+    printf("End of part 1\n");
+    printf("\n");
+    printf("===========================================================\n");
+    printf("\n");
+    printf("Below, you will see %d cars recommeded by one of the previous algorithms\n", (int) final_list.size());
+    printf("===========================================================\n");
+    display_final_list(P0,final_list);
+    int best_car = ask_favorite_item(final_list.size());
 
-    printf("=========================Round 3=========================\n");
-    //Algorithm: RH
-    r[2] = RH(wPtr, p_set, P0, questions[2]);
+    // set the hit of the best car to true;
+    for(int i=0;i<r_size;i++){
+        if(is_same_point(returned_car[i],final_list[best_car])){
+            hit[i] = 1;
+        }
+    }
 
-    printf("=========================Round 4=========================\n");
-    //the UH-Random algorithm
-    r[5] = max_utility(wPtr, P, P0, RANDOM, questions[5]);
+    // set the dissat level of the best car to 0;
+    for(int i=0;i<r_size;i++){
+        if(is_same_point(returned_car[i],final_list[best_car])){
+            dissat_level[i] = 0;
+        }
+    }
 
-    printf("=========================Round 5=========================\n");
-    //Algorithm: Active Ranking
-    r[1] = Active_Ranking(wPtr, p_2, P0, questions[1]);
+    for(int i=0;i<r_size;i++){
+        if(dissat_level[i]<0){
+            // ask the dissat level
+            int dissat_score = ask_dissat_score(P0,returned_car[i]);
 
-    printf("=========================Round 6=========================\n");
-    //Algorithm HDPI
-    r[3] = HDPI_sampling(wPtr, p_set, P0, questions[3]);
-
-    printf("=========================Round 7=========================\n");
-    r[4] = HDPI_accurate(wPtr, p_set, P0, questions[4]);
-
-    int Rindex[7] = {2, 5, 3, 6, 7, 4, 1};
-    printf("Now comes to the comparison section\n");
-    for(int i = 2; i < 6; i++)
-    {
-        for(int j = i + 1; j< 7; j++)
-        {
-            printf("=========================== Round %d ===========================\n", Rindex[i]);
-            fprintf(wPtr, "=========================== Round %d ===========================\n", Rindex[i]);
-            printf("No. of questions asked: %d \n", questions[i]);
-            fprintf(wPtr, "No. of questions asked: %d \n", questions[i]);
-            printf("Recommended cars:\n");
-            fprintf(wPtr, "Recommended cars:\n");
-            printf("--------------------------------------------------------\n");
-            fprintf(wPtr, "--------------------------------------------------------\n");
-            printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-            fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-            printf("---------------------------------------------------------\n");
-            fprintf(wPtr, "---------------------------------------------------------\n");
-            printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[i]->id]->coord[0], P0->points[r[i]->id]->coord[1],
-                    P0->points[r[i]->id]->coord[2], P0->points[r[i]->id]->coord[3]);
-            fprintf(wPtr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[i]->id]->coord[0], P0->points[r[i]->id]->coord[1],
-                    P0->points[r[i]->id]->coord[2], P0->points[r[i]->id]->coord[3]);
-            printf("---------------------------------------------------------\n");
-            fprintf(wPtr, "---------------------------------------------------------\n");
-            printf("=========================== Round %d ===========================\n", Rindex[j]);
-            fprintf(wPtr, "=========================== Round %d ===========================\n", Rindex[j]);
-            printf("No. of questions asked: %d \n", questions[j]);
-            fprintf(wPtr, "No. of questions asked: %d \n", questions[j]);
-            printf("Recommended cars:\n");
-            fprintf(wPtr, "Recommended cars:\n");
-            printf("--------------------------------------------------------\n");
-            fprintf(wPtr, "--------------------------------------------------------\n");
-            printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-            fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-            printf("---------------------------------------------------------\n");
-            fprintf(wPtr, "---------------------------------------------------------\n");
-            printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[j]->id]->coord[0], P0->points[r[j]->id]->coord[1],
-                    P0->points[r[j]->id]->coord[2], P0->points[r[j]->id]->coord[3]);
-            fprintf(wPtr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[j]->id]->coord[0], P0->points[r[j]->id]->coord[1],
-                    P0->points[r[j]->id]->coord[2], P0->points[r[j]->id]->coord[3]);
-            printf("---------------------------------------------------------\n");
-            fprintf(wPtr, "---------------------------------------------------------\n");
-            printf("Which round are you satisfied more? \n"
-                   "Please enter:\n"
-                   "  (1) 1 for Round %d \n"
-                   "  (2) 2 for Round %d \n"
-                   "  (3) 3 for both Round %d and Round %d.\n"
-                   "Note that all car(s) returned by each round must be one of your 20 most favorite cars\n"
-                   "in our used car database. Please answer these based on two criteria at the same time:\n"
-                   "(a) No. of questions asked and (b) The recommended car(s)\n"
-                   "You answer: ", Rindex[i], Rindex[j], Rindex[i], Rindex[j]);
-            int sat = 4;
-            while(sat!= 1 && sat!= 2 && sat!= 3)
-            {
-                scanf("%d", &sat);
+            // update  the dissat score of the same car
+            for(int j=0; j<r_size; j++){
+                if(is_same_point(returned_car[i], returned_car[j])){
+                    dissat_level[j]=dissat_score;
+                }
             }
-            fprintf(wPtr, "Which round are you satisfied more?  %d\n\n", sat);
-            printf("\n\n");
         }
     }
 
@@ -240,5 +224,115 @@ int RI_user_study()
     fprintf(wPtr, "\n");
     fclose(wPtr);
 
+    // write results to files
+    FILE *q_file, *h_file, *d_file;
+    q_file = (FILE *)fopen("../output/questions.txt", "w");
+    h_file = (FILE *)fopen("../output/hit.txt", "w");
+    d_file = (FILE *)fopen("../output/dissat.txt", "w");
+
+    record_to_file(q_file, questions_asked, r_size);
+    record_to_file(h_file, hit, r_size);
+    record_to_file(d_file, dissat_level, r_size);
+
+    fclose(q_file);
+    fclose(h_file);
+    fclose(d_file);
+
+
+
     return 0;
 }
+
+
+
+    // point_t* r[7];
+    // int questions[7];
+
+    // printf("=========================Round 1=========================\n");
+    // // the UH-Simplex algorithm
+    // r[6] = max_utility(wPtr, P, P0, SIMPLEX, questions[6]);
+
+    // printf("=========================Round 2=========================\n");
+    // printf("waiting...\n");
+    // //Algorithm: Preference Learning
+    // r[0] = Preference_Learning(wPtr, p_set, P0, questions[0]);
+
+    // printf("=========================Round 3=========================\n");
+    // //Algorithm: RH
+    // r[2] = RH(wPtr, p_set, P0, questions[2]);
+
+    // printf("=========================Round 4=========================\n");
+    // //the UH-Random algorithm
+    // r[5] = max_utility(wPtr, P, P0, RANDOM, questions[5]);
+
+    // printf("=========================Round 5=========================\n");
+    // //Algorithm: Active Ranking
+    // r[1] = Active_Ranking(wPtr, p_2, P0, questions[1]);
+
+    // printf("=========================Round 6=========================\n");
+    // //Algorithm HDPI
+    // r[3] = HDPI_sampling(wPtr, p_set, P0, questions[3]);
+
+    // printf("=========================Round 7=========================\n");
+    // r[4] = HDPI_accurate(wPtr, p_set, P0, questions[4]);
+
+    // int Rindex[7] = {2, 5, 3, 6, 7, 4, 1};
+    // printf("Now comes to the comparison section\n");
+    // for(int i = 2; i < 6; i++)
+    // {
+    //     for(int j = i + 1; j< 7; j++)
+    //     {
+    //         printf("=========================== Round %d ===========================\n", Rindex[i]);
+    //         fprintf(wPtr, "=========================== Round %d ===========================\n", Rindex[i]);
+    //         printf("No. of questions asked: %d \n", questions[i]);
+    //         fprintf(wPtr, "No. of questions asked: %d \n", questions[i]);
+    //         printf("Recommended cars:\n");
+    //         fprintf(wPtr, "Recommended cars:\n");
+    //         printf("--------------------------------------------------------\n");
+    //         fprintf(wPtr, "--------------------------------------------------------\n");
+    //         printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    //         fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    //         printf("---------------------------------------------------------\n");
+    //         fprintf(wPtr, "---------------------------------------------------------\n");
+    //         printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[i]->id]->coord[0], P0->points[r[i]->id]->coord[1],
+    //                 P0->points[r[i]->id]->coord[2], P0->points[r[i]->id]->coord[3]);
+    //         fprintf(wPtr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[i]->id]->coord[0], P0->points[r[i]->id]->coord[1],
+    //                 P0->points[r[i]->id]->coord[2], P0->points[r[i]->id]->coord[3]);
+    //         printf("---------------------------------------------------------\n");
+    //         fprintf(wPtr, "---------------------------------------------------------\n");
+    //         printf("=========================== Round %d ===========================\n", Rindex[j]);
+    //         fprintf(wPtr, "=========================== Round %d ===========================\n", Rindex[j]);
+    //         printf("No. of questions asked: %d \n", questions[j]);
+    //         fprintf(wPtr, "No. of questions asked: %d \n", questions[j]);
+    //         printf("Recommended cars:\n");
+    //         fprintf(wPtr, "Recommended cars:\n");
+    //         printf("--------------------------------------------------------\n");
+    //         fprintf(wPtr, "--------------------------------------------------------\n");
+    //         printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    //         fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    //         printf("---------------------------------------------------------\n");
+    //         fprintf(wPtr, "---------------------------------------------------------\n");
+    //         printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[j]->id]->coord[0], P0->points[r[j]->id]->coord[1],
+    //                 P0->points[r[j]->id]->coord[2], P0->points[r[j]->id]->coord[3]);
+    //         fprintf(wPtr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[r[j]->id]->coord[0], P0->points[r[j]->id]->coord[1],
+    //                 P0->points[r[j]->id]->coord[2], P0->points[r[j]->id]->coord[3]);
+    //         printf("---------------------------------------------------------\n");
+    //         fprintf(wPtr, "---------------------------------------------------------\n");
+    //         printf("Which round are you satisfied more? \n"
+    //                "Please enter:\n"
+    //                "  (1) 1 for Round %d \n"
+    //                "  (2) 2 for Round %d \n"
+    //                "  (3) 3 for both Round %d and Round %d.\n"
+    //                "Note that all car(s) returned by each round must be one of your 20 most favorite cars\n"
+    //                "in our used car database. Please answer these based on two criteria at the same time:\n"
+    //                "(a) No. of questions asked and (b) The recommended car(s)\n"
+    //                "You answer: ", Rindex[i], Rindex[j], Rindex[i], Rindex[j]);
+    //         int sat = 4;
+    //         while(sat!= 1 && sat!= 2 && sat!= 3)
+    //         {
+    //             scanf("%d", &sat);
+    //         }
+    //         fprintf(wPtr, "Which round are you satisfied more?  %d\n\n", sat);
+    //         printf("\n\n");
+    //     }
+    // }

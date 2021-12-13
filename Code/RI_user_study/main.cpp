@@ -1,8 +1,6 @@
 #include "RI_user_study.h"
 #include <ctime>
 #include <stdlib.h>
-int num_questions=0;
-
 
 int main(int argc, char *argv[])
 {
