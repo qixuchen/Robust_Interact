@@ -368,10 +368,10 @@ point_t* max_utility(FILE *wPtr, point_set_t *P0, point_set_t* original_set, int
 
 
     if (cmp_option == RANDOM){
-        ask_satisfactory_level(original_set, Qcount, result_id, "UH-RANDOM", wPtr);
+        print_result(wPtr, "UH-RANDOM", Qcount, original_set->points[result_id]);
     }
     else{
-        ask_satisfactory_level(original_set, Qcount, result_id, "UH-SIMPLEX", wPtr);
+        print_result(wPtr, "UH-SIMPLEX", Qcount, original_set->points[result_id]);
     }
     questions = Qcount;
     return original_set->points[result_id];

@@ -765,45 +765,10 @@ point_t * Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, p
         release_hyperplane(hh);
         h_set.pop_back();
     }
-
-    printf("\n--------------------------------------------------------\n");
-    printf("%s %10d \n", "No. of questions asked:", 2*testCount);
-    printf("--------------------------------------------------------\n");
-    printf("Recommended cars:\n");
-    printf("--------------------------------------------------------\n");
-    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-    printf("---------------------------------------------------------\n");
+    
     int i = rand()%k;
-    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[top_current[i]->id]->coord[0], P0->points[top_current[i]->id]->coord[1],
-               P0->points[top_current[i]->id]->coord[2], P0->points[top_current[i]->id]->coord[3]);
-    printf("---------------------------------------------------------\n");
-    printf("Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
-           "how bored you feel when you are asked with %d questions for this round \n"
-           "in order to obtain one of your 20 most favorite cars (Note: 10 denotes\n"
-           "that you feel the most bored and 1 denotes that you feel the least bored.)\n"
-           "You answer: ", 2*testCount);
-    int sat = 0;
-    while(sat < 1 || sat > 10)
-    {
-        scanf("%d", &sat);
-    }
-    printf("\n\n");
 
-
-    fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "|%30s |%10d |\n", "Preference_learning", 2*testCount);
-    fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "Recommended cars:\n");
-    fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-    fprintf(wPtr, "---------------------------------------------------------\n");
-    fprintf(wPtr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P0->points[top_current[i]->id]->coord[0], P0->points[top_current[i]->id]->coord[1],
-               P0->points[top_current[i]->id]->coord[2], P0->points[top_current[i]->id]->coord[3]);
-    fprintf(wPtr, "---------------------------------------------------------\n");
-    fprintf(wPtr, "Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
-                  "how bored you feel when you are asked with %d questions for this round \n"
-                  "in order to obtain one of your 20 most favorite cars (Note: 10 denotes\n"
-                  "that you feel the most bored and 1 denotes that you feel the least bored.) %d\n\n\n", 2*testCount, sat);
+    print_result(wPtr, "Preference-learning", 2*testCount, P0->points[top_current[i]->id]);
 
     questions = 2*testCount;
     return top_current[i];

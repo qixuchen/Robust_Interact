@@ -27,9 +27,10 @@ void create_final_list(point_t ** returned_point, int r_size, std::vector<point_
                 is_same = true;
                 break;
             }
-            if(!is_same){
-                final_list.push_back(returned_point[i]);
-            }
+            
+        }
+        if(!is_same){
+            final_list.push_back(returned_point[i]);
         }
     }
 }
@@ -175,25 +176,52 @@ int RI_user_study()
     double theta = 0.05;
     // HDPI_sampling(wPtr, p_set, P0, questions[3]);
     printf("========================= Round 1 ==========================\n");
+    // Algorithm PointPrune
     returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0], max, min);
-    // SamplePrune(wPtr, p_set, P0, check_num);
 
-    printf("========================= Round 2 ==========================\n");
-    returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1]);
+    // printf("========================= Round 2 ==========================\n");
+    // //Algorithm HRI
+    // returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1]);
+
+    // printf("========================= Round 3 ==========================\n");
+    // // Algorithm SpacePrune
+    // returned_car[2] = SamplePrune(wPtr, p_set, P0, check_num, questions_asked[2], max, min);
+
+    // // HDPI_sampling(wPtr, p_set, P0, questions[3]);
+    // printf("========================= Round 4 ==========================\n");
+    // returned_car[3] = HDPI_accurate(wPtr, p_set, P0, questions_asked[3]);
+
+    // printf("========================= Round 5 =========================\n");
+    // printf("waiting...\n");
+    // //Algorithm: Preference Learning
+    // returned_car[4] = Preference_Learning(wPtr, p_set, P0, questions_asked[4]);
+
+    // printf("=========================Round 6=========================\n");
+    // // the UH-Simplex algorithm
+    // returned_car[5] = max_utility(wPtr, P, P0, SIMPLEX, questions_asked[5]);
+
+    printf("=========================Round 7=========================\n");
+    //Algorithm: Active Ranking
+    returned_car[1] = Active_Ranking(wPtr, p_2, P0, questions_asked[2]);
+
+
 
     std::vector<point_t *> final_list;
     create_final_list(returned_car, r_size, final_list);
 
-    printf("===========================================================\n");
-    printf("\n");
-    printf("End of part 1\n");
-    printf("\n");
-    printf("===========================================================\n");
-    printf("\n");
-    printf("Below, you will see %d cars recommeded by one of the previous algorithms\n", (int) final_list.size());
-    printf("===========================================================\n");
-    display_final_list(P0,final_list);
-    int best_car = ask_favorite_item(final_list.size());
+    int best_car = 0;
+    if(final_list.size()>1){ // ask for user's favorite car if more than 1 car is in the final list
+        printf("===========================================================\n");
+        printf("\n");
+        printf("End of part 1\n");
+        printf("\n");
+        printf("===========================================================\n");
+        printf("\n");
+        printf("Below, you will see %d cars recommeded by one of the previous algorithms\n", (int) final_list.size());
+        printf("===========================================================\n");
+        display_final_list(P0,final_list);
+        best_car = ask_favorite_item(final_list.size());
+    }
 
     // set the hit of the best car to true;
     for(int i=0;i<r_size;i++){
@@ -228,18 +256,24 @@ int RI_user_study()
     fclose(wPtr);
 
     // write results to files
-    FILE *q_file, *h_file, *d_file;
+    FILE *q_file, *h_file, *d_file, *e_file;
     q_file = (FILE *)fopen("../output/questions.txt", "w");
     h_file = (FILE *)fopen("../output/hit.txt", "w");
     d_file = (FILE *)fopen("../output/dissat.txt", "w");
+    e_file = (FILE *)fopen("../output/error.txt", "w");
 
     record_to_file(q_file, questions_asked, r_size);
     record_to_file(h_file, hit, r_size);
     record_to_file(d_file, dissat_level, r_size);
 
+    fprintf(e_file, "%d ", num_checking);
+    fprintf(e_file, "%d ", num_wrong_checking);
+    fprintf(e_file, "\n");
+
     fclose(q_file);
     fclose(h_file);
     fclose(d_file);
+    fclose(e_file);
 
 
 

@@ -47,10 +47,21 @@ int checking_varyk(point_t* p1, point_t* p2, int k, double skip_rate, int &num_q
             p2_count++;
         }
         num_asked++;
+
+        // update total num of checkings
+        num_checking++;
     }
 
     release_point(scaled_p1);
     release_point(scaled_p2);
+
+    // update number of wrong interactions
+    if(p1_count>k/2){
+        num_wrong_checking+=p2_count;
+    }
+    else{
+        num_wrong_checking+=p1_count;
+    }
 
     return p1_count>k/2 ? 1 : 2;
 }

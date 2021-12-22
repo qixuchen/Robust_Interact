@@ -134,7 +134,7 @@ point_t* STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double 
     // printf("|%30s |%10d |%10s |\n", "STMD", numOfQuestion, "--");
     // printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     // printf("---------------------------------------------------------\n");
-    print_result(wPtr, "STMD", numOfQuestion++, P0->points[point_result->id]);
+    print_result(wPtr, "STMD", numOfQuestion, P0->points[point_result->id]);
     questions = numOfQuestion;
     return point_result;
 

@@ -149,10 +149,10 @@ void display_final_list(const point_set_t* P, const std::vector<point_t*> final_
  */
 int ask_favorite_item(int l_size){
     int favorite = 0;
-    printf("Please give a number from 1 to %d (i.e., 1, 2, .., %d) to indicate \n"
-            "which car you like the most in the recommended cars listed above \n"
+    printf("Please give a number from 1 to %d to indicate which car\n"
+            "you like the most in the recommended cars listed above \n"
             "(e.g., 2 means car No. 2 is your favorite car)\n"
-            "You answer: ", favorite, favorite);
+            "You answer: ", l_size);
     while(favorite <1 || favorite > l_size){
         scanf("%d", &favorite);
     }
@@ -168,9 +168,10 @@ int ask_favorite_item(int l_size){
  * @return int 
  */
 int ask_dissat_score(const point_set_t* P, point_t* car){
+    printf("\n");
     printf("Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
             "how **dissatisfied** you feel for the following car recommended to you \n"
-            "(1 indicate the least dissatisfied and 10 indicate the most dissatisfied):\n");
+            "(1 indicates the least dissatisfied and 10 indicates the most dissatisfied):\n");
     printf("--------------------------------------------------------\n");
     printf("Recommended cars:\n");
     printf("--------------------------------------------------------\n");

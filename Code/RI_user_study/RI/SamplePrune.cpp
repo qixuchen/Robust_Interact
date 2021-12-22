@@ -334,7 +334,6 @@ point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, 
             }
             if(user_choice!=best_p2){
                 encounter_err = true;
-                printf("error\n"); 
             }
             if(encounter_err==true && prune_ratio<0.2){
                 //printf("enc err\n");

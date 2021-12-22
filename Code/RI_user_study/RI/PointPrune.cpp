@@ -501,7 +501,7 @@ point_t* PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
         }
 
     }
-    print_result(wPtr, "PointPrune_v2", num_questions,P0->points[true_point_result->id]);
+    print_result(wPtr, "PointPrune_v2", num_questions, P0->points[true_point_result->id]);
     questions = num_questions;
     return true_point_result;
 }

@@ -2,6 +2,9 @@
 #include <ctime>
 #include <stdlib.h>
 
+int num_checking = 0;
+int num_wrong_checking = 0;
+
 int main(int argc, char *argv[])
 {
     // the main method for the demo system
