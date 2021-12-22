@@ -8,6 +8,7 @@ int show_to_user(point_set_t* P, int p_idx, int q_idx)
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
+        printf("\n\n");
         printf("Please choose the car you favor more:\n");
         printf("--------------------------------------------------------\n");
         printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
@@ -31,6 +32,7 @@ int show_to_user_scale(point_set_t* P, int p_idx, int q_idx)
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
+        printf("\n\n");
         printf("Please choose the car you favor more:\n");
         printf("--------------------------------------------------------\n");
         printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
@@ -56,6 +58,7 @@ int show_to_user(const point_t* p1, const point_t* p2)
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
+        printf("\n\n");
         printf("Please choose the car you favor more:\n");
         printf("--------------------------------------------------------\n");
         printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
@@ -78,6 +81,7 @@ int show_to_user_scale(const point_t* p1, const point_t* p2)
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
+        printf("\n\n");
         printf("Please choose the car you favor more:\n");
         printf("--------------------------------------------------------\n");
         printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
@@ -100,7 +104,7 @@ void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, c
     printf("\n--------------------------------------------------------\n");
     printf("%s %10d \n", "No. of questions asked:", num_of_question);
     printf("--------------------------------------------------------\n");
-    printf("Recommended cars:\n");
+    printf("Recommended car:\n");
     printf("--------------------------------------------------------\n");
     printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
     printf("---------------------------------------------------------\n");
@@ -113,7 +117,7 @@ void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, c
     fprintf(wPtr, "--------------------------------------------------------\n");
     fprintf(wPtr, "|%30s |%10d |\n", alg_name, num_of_question);
     fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "Recommended cars:\n");
+    fprintf(wPtr, "Recommended car:\n");
     fprintf(wPtr, "--------------------------------------------------------\n");
     fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
     fprintf(wPtr,"---------------------------------------------------------\n");
@@ -128,14 +132,15 @@ void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, c
  * 
  * @param final_list 
  */
-void display_final_list(const point_set_t* P, const std::vector<point_t*> final_list){
+void display_final_list(const point_set_t* P, const std::vector<int> final_list){
     for(int i=0; i<final_list.size(); i++){
+        printf("\n\n");
         printf("Recommended car No. %d:\n", i+1);
         printf("--------------------------------------------------------\n");
         printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
         printf("---------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[final_list[i]->id]->coord[0], P->points[final_list[i]->id]->coord[1],
-                    P->points[final_list[i]->id]->coord[2], P->points[final_list[i]->id]->coord[3]);
+        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[final_list[i]]->coord[0], P->points[final_list[i]]->coord[1],
+                    P->points[final_list[i]]->coord[2], P->points[final_list[i]]->coord[3]);
         printf("---------------------------------------------------------\n");
     }
 }
@@ -167,18 +172,18 @@ int ask_favorite_item(int l_size){
  * @param car 
  * @return int 
  */
-int ask_dissat_score(const point_set_t* P, point_t* car){
+int ask_dissat_score(const point_set_t* P, int car_id){
     printf("\n");
-    printf("Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate \n"
-            "how **dissatisfied** you feel for the following car recommended to you \n"
-            "(1 indicates the least dissatisfied and 10 indicates the most dissatisfied):\n");
+    printf("Please give a number from 1 to 10 (i.e., 1, 2, .., 10) to indicate how \n"
+            " **dissatisfied** you feel for the following car recommended to you. \n"
+            "(1 means the least dissatisfied and 10 means the most dissatisfied): \n");
     printf("--------------------------------------------------------\n");
     printf("Recommended cars:\n");
     printf("--------------------------------------------------------\n");
     printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
     printf("---------------------------------------------------------\n");
-    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[car->id]->coord[0], P->points[car->id]->coord[1],
-                P->points[car->id]->coord[2], P->points[car->id]->coord[3]);
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[car_id]->coord[0], P->points[car_id]->coord[1],
+                P->points[car_id]->coord[2], P->points[car_id]->coord[3]);
     printf("---------------------------------------------------------\n");
     int dissat = 0;
     while(dissat < 1 || dissat > 10)
@@ -252,3 +257,4 @@ void record_to_file(FILE *wPtr, int *records, int r_size){
     }
     fprintf(wPtr, "\n");
 }
+

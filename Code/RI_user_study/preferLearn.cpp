@@ -580,7 +580,7 @@ hyperplane_t *orthogonal_search(s_node_t *node, point_t *q, hyperplane_t *best)
 //       The stop condition is that cos() should satisfy the given threshold
 //@param original_set       The original dataset
 //@param u                  The real utility vector
-point_t * Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int &questions)
+int Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int &questions)
 {
     int k = 1;
     int M, maxQcount = 100, testCount = 0, correctCount = 0;;
@@ -765,11 +765,11 @@ point_t * Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, p
         release_hyperplane(hh);
         h_set.pop_back();
     }
-    
+
     int i = rand()%k;
 
     print_result(wPtr, "Preference-learning", 2*testCount, P0->points[top_current[i]->id]);
 
     questions = 2*testCount;
-    return top_current[i];
+    return top_current[i]->id;
 }

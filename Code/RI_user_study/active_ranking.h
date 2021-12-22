@@ -6,4 +6,4 @@
  * @param original_set 		The original dataset
  * @param u 				The linear function
  */
-point_t* Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P0, int &questions);
+int Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P0, int &questions);

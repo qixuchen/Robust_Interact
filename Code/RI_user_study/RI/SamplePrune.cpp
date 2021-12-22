@@ -184,7 +184,7 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
 
 
 
-point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min)
+int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min)
 {
     //reset statistics
     int k=1, num_questions=0;
@@ -313,7 +313,7 @@ point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, 
 
             if(best_index<0){
                 printf("ERROR: SpacePrune: Cannot find the best index\n");
-                return NULL;
+                return -1;
             }
 
             point_t *p1, *p2, *user_choice;
@@ -440,6 +440,6 @@ point_t* SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, 
     }   
     print_result(wPtr, "SpacePrune", num_questions,P0->points[true_point_result->id]);
     questions = num_questions;
-    return true_point_result;
+    return true_point_result->id;
     
 }

@@ -23,7 +23,7 @@ point_t* find_estimate(std::vector<point_t*> V);
 //       The stop condition is that cos() should satisfy the given threshold
 //@param original_set       The original dataset
 //@param u                  The real utility vector
-point_t* Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int &questions);
+int Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int &questions);
 
 
 #endif

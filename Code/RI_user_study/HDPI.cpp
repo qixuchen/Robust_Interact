@@ -8,7 +8,7 @@
  * @param p_set 		 The original dataset
  * @param u 			 The linear function
  */
-point_t* HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions)
+int HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions)
 {
     int k=1;
     //p_set_1 contains the points which are not dominated by >=1 points
@@ -75,7 +75,7 @@ point_t* HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
         {
             print_result(wPtr, "HDPI_sampling", numOfQuestion, P0->points[p_result->id]);
             questions = numOfQuestion;
-            return p_result;
+            return p_result->id;
         }
         if(considered_half_set.size() > 1)
             opt = show_to_user(P0, choose_item_set[index]->hyper->point1->id, choose_item_set[index]->hyper->point2->id);
@@ -84,7 +84,7 @@ point_t* HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
     point_t* p_result = half_set_set[considered_half_set[0]]->represent_point[0];
     print_result(wPtr, "HDPI_sampling", numOfQuestion, P0->points[p_result->id]);
     questions = numOfQuestion;
-    return p_result; 
+    return p_result->id; 
 }
 
 /**
@@ -94,7 +94,7 @@ point_t* HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
  * @param p_set 		 The original dataset
  * @param u 			 The linear function
  */
-point_t* HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions)
+int HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions)
 {
     int k=1;
     //p_set_1 contains the points which are not dominated by >=1 points
@@ -159,7 +159,7 @@ point_t* HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
         {
             print_result(wPtr, "HDPI_accurate", numOfQuestion, P0->points[p_result->id]);
             questions = numOfQuestion;
-            return p_result; 
+            return p_result->id; 
         }
         if(considered_half_set.size() > 1)
             opt = show_to_user(P0, choose_item_set[index]->hyper->point1->id, choose_item_set[index]->hyper->point2->id);
@@ -168,5 +168,5 @@ point_t* HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
     point_t* p_result = half_set_set[considered_half_set[0]]->represent_point[0];
     print_result(wPtr, "HDPI_accurate", numOfQuestion, P0->points[p_result->id]);
     questions = numOfQuestion;
-    return p_result; 
+    return p_result->id; 
 }

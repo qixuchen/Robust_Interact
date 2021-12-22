@@ -8,7 +8,7 @@
  * @param p_set 		 The original dataset
  * @param u 			 The linear function
  */
-point_t* HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions);
+int HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions);
 
 /**
  * @brief Asking user question and return one of the top-k point
@@ -17,4 +17,4 @@ point_t* HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0
  * @param p_set 		 The original dataset
  * @param u 			 The linear function
  */
-point_t* HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions);
+int HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions);

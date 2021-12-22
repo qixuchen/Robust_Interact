@@ -8,7 +8,7 @@
  * @param original_set 		The original dataset
  * @param u 				The linear function
  */
-point_t* Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P0, int &questions)
+int Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P0, int &questions)
 {
     int k=1;
     int dim = p_set[0]->dim, numOfQuestion = 0;
@@ -46,13 +46,13 @@ point_t* Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P
                 if (relation == 0)
                 {
                     numOfQuestion++;
-                    printf("%d\n", numOfQuestion);
+                    // printf("%d\n", numOfQuestion);
                     if(numOfQuestion>100)
                     {
                         int i = rand()%k;
                         print_result(wPtr, "Active-Ranking", numOfQuestion, P0->points[current_use[i]->id]);
                         questions = numOfQuestion;
-                        return current_use[i];
+                        return current_use[i]->id;
                     }
                     int option = show_to_user(P0, p_set[i]->id, current_use[j]->id);
 
@@ -93,5 +93,5 @@ point_t* Active_Ranking(FILE *wPtr, std::vector<point_t *> p_set, point_set_t* P
     int i = rand()%k;
     print_result(wPtr, "Active-Ranking", numOfQuestion, P0->points[current_use[i]->id]);
     questions = numOfQuestion;
-    return current_use[i];
+    return current_use[i]->id;
 }

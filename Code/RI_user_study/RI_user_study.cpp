@@ -16,14 +16,23 @@
 #include <ctime>
 #include <sys/time.h>
 
+void enter_to_continue(){
+    printf("\nPress enter to continue\n");
 
-void create_final_list(point_t ** returned_point, int r_size, std::vector<point_t *> &final_list){
+    char line[1024];
+    fgets(line, 1024, stdin);
+
+    char enter = 0;
+    while (enter != '\n') { enter = getchar(); }
+}
+
+void create_final_list(int *returned_point, int r_size, std::vector<int> &final_list){
     final_list.push_back(returned_point[0]);
     for(int i=0; i<r_size; i++)
     {
         bool is_same=false;
         for(int j=0; j<final_list.size(); j++){
-            if(is_same_point(returned_point[i],final_list[j])){
+            if(returned_point[i] == final_list[j]){
                 is_same = true;
                 break;
             }
@@ -159,8 +168,7 @@ int RI_user_study()
 
 
     int r_size = 2;
-    point_t* returned_car[r_size];
-    int questions_asked[r_size], dissat_level[r_size], hit[r_size];
+    int returned_car[r_size], questions_asked[r_size], dissat_level[r_size], hit[r_size];
 
     //initialize dissatisfactory level to -1;
     for(int i=0; i<r_size; i++){ 
@@ -179,9 +187,11 @@ int RI_user_study()
     // Algorithm PointPrune
     returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0], max, min);
 
-    // printf("========================= Round 2 ==========================\n");
-    // //Algorithm HRI
-    // returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1]);
+    enter_to_continue();
+
+    printf("========================= Round 2 ==========================\n");
+    //Algorithm HRI
+    returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1]);
 
     // printf("========================= Round 3 ==========================\n");
     // // Algorithm SpacePrune
@@ -200,43 +210,60 @@ int RI_user_study()
     // // the UH-Simplex algorithm
     // returned_car[5] = max_utility(wPtr, P, P0, SIMPLEX, questions_asked[5]);
 
-    printf("=========================Round 7=========================\n");
-    //Algorithm: Active Ranking
-    returned_car[1] = Active_Ranking(wPtr, p_2, P0, questions_asked[2]);
+    // printf("=========================Round 7=========================\n");
+    // //Algorithm: Active Ranking
+    // returned_car[1] = Active_Ranking(wPtr, p_2, P0, questions_asked[2]);
 
 
 
-    std::vector<point_t *> final_list;
+    printf("===========================================================\n");
+    printf("\n");
+    printf("End of part 1\n");
+    printf("\n");
+    enter_to_continue();
+
+    std::vector<int> final_list;
     create_final_list(returned_car, r_size, final_list);
 
     int best_car = 0;
     if(final_list.size()>1){ // ask for user's favorite car if more than 1 car is in the final list
         printf("===========================================================\n");
         printf("\n");
-        printf("End of part 1\n");
+        printf("Begin of part 2\n");
         printf("\n");
         printf("===========================================================\n");
+        printf("In part 2, you come down to a final list that consists of cars recommended\n");
+        printf("by previous algorithms. Now you need to decide your final choice of car.\n");
         printf("\n");
-        printf("Below, you will see %d cars recommeded by one of the previous algorithms\n", (int) final_list.size());
+        printf("This is a big decision in your life and you want to spend the money wisely.\n");
+        printf("\n\n");
+        printf("Below, you will see %d cars recommeded by previous algorithms.\n", (int) final_list.size());
         printf("===========================================================\n");
-        display_final_list(P0,final_list);
+        enter_to_continue();
+        display_final_list(P0, final_list);
         best_car = ask_favorite_item(final_list.size());
     }
 
     // set the hit of the best car to true;
     for(int i=0;i<r_size;i++){
-        if(is_same_point(returned_car[i],final_list[best_car])){
+        if(returned_car[i]==final_list[best_car]){
             hit[i] = 1;
         }
     }
 
     // set the dissat level of the best car to 0;
     for(int i=0;i<r_size;i++){
-        if(is_same_point(returned_car[i],final_list[best_car])){
+        if(returned_car[i]==final_list[best_car]){
             dissat_level[i] = 0;
         }
     }
 
+    if(final_list.size()>1){
+        printf("\n\n===========================================================\n\n");
+        printf("For other cars in the final list, please also tell us how \n");
+        printf("**dissatisfied** you felt compared with your final choice.\n");
+        printf("\n\n");
+    }
     for(int i=0;i<r_size;i++){
         if(dissat_level[i]<0){
             // ask the dissat level
@@ -244,7 +271,7 @@ int RI_user_study()
 
             // update  the dissat score of the same car
             for(int j=0; j<r_size; j++){
-                if(is_same_point(returned_car[i], returned_car[j])){
+                if(returned_car[i]==returned_car[j]){
                     dissat_level[j]=dissat_score;
                 }
             }

@@ -303,7 +303,7 @@ update_ext_vec(point_set_t *P, point_set_t* original_set, vector<int> &C_idx, in
  *                       -HYPER_PLANE
  *                       -CONICAL_HULL
  */
-point_t* max_utility(FILE *wPtr, point_set_t *P0, point_set_t* original_set, int cmp_option, int &questions)
+int max_utility(FILE *wPtr, point_set_t *P0, point_set_t* original_set, int cmp_option, int &questions)
 {
     int s = 2, stop_option = EXACT_BOUND, prune_option = RTREE, dom_option = HYPER_PLANE;
     point_set_t *P = skyline_point(P0);
@@ -374,7 +374,7 @@ point_t* max_utility(FILE *wPtr, point_set_t *P0, point_set_t* original_set, int
         print_result(wPtr, "UH-SIMPLEX", Qcount, original_set->points[result_id]);
     }
     questions = Qcount;
-    return original_set->points[result_id];
+    return result_id;
 }
 
 
