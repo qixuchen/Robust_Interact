@@ -6,18 +6,18 @@ int show_to_user(point_set_t* P, int p_idx, int q_idx)
 
     int option = 0;
     // ask the user for the better car among two given options
+    printf("\n\n");
+    printf("Please choose the car you favor more:\n");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", P->points[p_idx]->coord[0], P->points[p_idx]->coord[1], P->points[p_idx]->coord[2], P->points[p_idx]->coord[3]);
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", P->points[q_idx]->coord[0], P->points[q_idx]->coord[1], P->points[q_idx]->coord[2], P->points[q_idx]->coord[3]);
+    printf("--------------------------------------------------------");
     while (option != 1 && option != 2)
     {
-        printf("\n\n");
-        printf("Please choose the car you favor more:\n");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", P->points[p_idx]->coord[0], P->points[p_idx]->coord[1], P->points[p_idx]->coord[2], P->points[p_idx]->coord[3]);
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", P->points[q_idx]->coord[0], P->points[q_idx]->coord[1], P->points[q_idx]->coord[2], P->points[q_idx]->coord[3]);
-        printf("--------------------------------------------------------\n");
-        printf("Your choice: ");
+        printf("\nYour choice (1 or 2): ");
         scanf("%d", &option);
     }
 
@@ -30,20 +30,20 @@ int show_to_user_scale(point_set_t* P, int p_idx, int q_idx)
     double scale = (double)(90 + (rand()%10)) / 100; //generate a random number from 0.91-0.99
     int option = 0;
     // ask the user for the better car among two given options
+    printf("\n\n");
+    printf("Please choose the car you favor more:\n");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", P->points[p_idx]->coord[0] * scale, 
+                P->points[p_idx]->coord[1] * scale, P->points[p_idx]->coord[2] * scale, P->points[p_idx]->coord[3] * scale);
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", P->points[q_idx]->coord[0] * scale, 
+                P->points[q_idx]->coord[1] * scale, P->points[q_idx]->coord[2] * scale, P->points[q_idx]->coord[3] * scale);
+    printf("--------------------------------------------------------");
     while (option != 1 && option != 2)
     {
-        printf("\n\n");
-        printf("Please choose the car you favor more:\n");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", P->points[p_idx]->coord[0] * scale, 
-                    P->points[p_idx]->coord[1] * scale, P->points[p_idx]->coord[2] * scale, P->points[p_idx]->coord[3] * scale);
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", P->points[q_idx]->coord[0] * scale, 
-                    P->points[q_idx]->coord[1] * scale, P->points[q_idx]->coord[2] * scale, P->points[q_idx]->coord[3] * scale);
-        printf("--------------------------------------------------------\n");
-        printf("Your choice: ");
+        printf("\nYour choice (1 or 2): ");
         scanf("%d", &option);
     }
 
@@ -55,19 +55,19 @@ int show_to_user(const point_t* p1, const point_t* p2)
 {
 
     int option = 0;
+    printf("\n\n");
+    printf("Please choose the car you favor more:\n");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", p1->coord[0], p1->coord[1], p1->coord[2], p1->coord[3]);
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", p2->coord[0], p2->coord[1], p2->coord[2], p2->coord[3]);
+    printf("--------------------------------------------------------");
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
-        printf("\n\n");
-        printf("Please choose the car you favor more:\n");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", p1->coord[0], p1->coord[1], p1->coord[2], p1->coord[3]);
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", p2->coord[0], p2->coord[1], p2->coord[2], p2->coord[3]);
-        printf("--------------------------------------------------------\n");
-        printf("Your choice: ");
+        printf("\nYour choice (1 or 2): ");
         scanf("%d", &option);
     }
 
@@ -78,21 +78,21 @@ int show_to_user_scale(const point_t* p1, const point_t* p2)
 {
     double scale = (double)(90 + (rand()%10)) / 100; //generate a random number from 0.91-0.99
     int option = 0;
+    printf("\n\n");
+    printf("Please choose the car you favor more:\n");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", p1->coord[0] * scale,
+                p1->coord[1] * scale, p1->coord[2] * scale, p1->coord[3] * scale);
+    printf("--------------------------------------------------------\n");
+    printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", p2->coord[0] * scale, 
+                p2->coord[1] * scale, p2->coord[2] * scale, p2->coord[3] * scale);
+    printf("--------------------------------------------------------");
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
-        printf("\n\n");
-        printf("Please choose the car you favor more:\n");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 1", p1->coord[0] * scale,
-                    p1->coord[1] * scale, p1->coord[2] * scale, p1->coord[3] * scale);
-        printf("--------------------------------------------------------\n");
-        printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Option 2", p2->coord[0] * scale, 
-                    p2->coord[1] * scale, p2->coord[2] * scale, p2->coord[3] * scale);
-        printf("--------------------------------------------------------\n");
-        printf("Your choice: ");
+        printf("\nYour choice (1 or 2): ");
         scanf("%d", &option);
     }
 
@@ -101,12 +101,13 @@ int show_to_user_scale(const point_t* p1, const point_t* p2)
 
 void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, const point* p){
     // print result to user
+    printf("\n==========Recommendation of the algorithm ================\n");
     printf("\n--------------------------------------------------------\n");
     printf("%s %10d \n", "No. of questions asked:", num_of_question);
     printf("--------------------------------------------------------\n");
     printf("Recommended car:\n");
     printf("--------------------------------------------------------\n");
-    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
     printf("---------------------------------------------------------\n");
     printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", p->coord[0],p->coord[1],
                 p->coord[2], p->coord[3]);
@@ -119,7 +120,7 @@ void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, c
     fprintf(wPtr, "--------------------------------------------------------\n");
     fprintf(wPtr, "Recommended car:\n");
     fprintf(wPtr, "--------------------------------------------------------\n");
-    fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    fprintf(wPtr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
     fprintf(wPtr,"---------------------------------------------------------\n");
     fprintf(wPtr,"|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", p->coord[0], p->coord[1],
                p->coord[2], p->coord[3]);
@@ -137,7 +138,7 @@ void display_final_list(const point_set_t* P, const std::vector<int> final_list)
         printf("\n\n");
         printf("Recommended car No. %d:\n", i+1);
         printf("--------------------------------------------------------\n");
-        printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+        printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
         printf("---------------------------------------------------------\n");
         printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[final_list[i]]->coord[0], P->points[final_list[i]]->coord[1],
                     P->points[final_list[i]]->coord[2], P->points[final_list[i]]->coord[3]);
@@ -156,9 +157,9 @@ int ask_favorite_item(int l_size){
     int favorite = 0;
     printf("Please give a number from 1 to %d to indicate which car\n"
             "you like the most in the recommended cars listed above \n"
-            "(e.g., 2 means car No. 2 is your favorite car)\n"
-            "You answer: ", l_size);
+            "(e.g., 2 means car No. 2 is your favorite car)", l_size);
     while(favorite <1 || favorite > l_size){
+        printf("\nYou answer: ");
         scanf("%d", &favorite);
     }
     return favorite-1;
@@ -178,19 +179,18 @@ int ask_dissat_score(const point_set_t* P, int car_id){
             " **dissatisfied** you feel for the following car recommended to you. \n"
             "(1 means the least dissatisfied and 10 means the most dissatisfied): \n");
     printf("--------------------------------------------------------\n");
-    printf("Recommended cars:\n");
+    printf("Recommended car:\n");
     printf("--------------------------------------------------------\n");
-    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
     printf("---------------------------------------------------------\n");
     printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[car_id]->coord[0], P->points[car_id]->coord[1],
                 P->points[car_id]->coord[2], P->points[car_id]->coord[3]);
-    printf("---------------------------------------------------------\n");
+    printf("---------------------------------------------------------");
     int dissat = 0;
     while(dissat < 1 || dissat > 10)
     {
-        printf("You answer: ");
+        printf("\nYou answer (from 1 to 10): ");
         scanf("%d", &dissat);
-        printf("\n");
     }
     printf("\n\n");
     return dissat;
@@ -214,7 +214,7 @@ int ask_satisfactory_level(const point_set_t* P, const int num_questions_asked, 
     printf("--------------------------------------------------------\n");
     printf("Recommended cars:\n");
     printf("--------------------------------------------------------\n");
-    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    printf("|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
     printf("---------------------------------------------------------\n");
     printf("|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[p_result_id]->coord[0], P->points[p_result_id]->coord[1],
                 P->points[p_result_id]->coord[2], P->points[p_result_id]->coord[3]);
@@ -236,7 +236,7 @@ int ask_satisfactory_level(const point_set_t* P, const int num_questions_asked, 
     fprintf(w_ptr, "--------------------------------------------------------\n");
     fprintf(w_ptr, "Recommended cars:\n");
     fprintf(w_ptr, "--------------------------------------------------------\n");
-    fprintf(w_ptr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "PowerPS", "Used KM");
+    fprintf(w_ptr, "|%10s|%10s|%10s|%10s|%10s|\n", " ", "Price(USD)", "Year", "Power(PS)", "Used KM");
     fprintf(w_ptr, "---------------------------------------------------------\n");
     fprintf(w_ptr, "|%10s|%10.0f|%10.0f|%10.0f|%10.0f|\n", "Car", P->points[p_result_id]->coord[0], P->points[p_result_id]->coord[1],
                 P->points[p_result_id]->coord[2], P->points[p_result_id]->coord[3]);
