@@ -82,23 +82,25 @@ int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta
         new_p_set.push_back(p_set_1[util_scores[i].first]);
     }
     
-    release_halfspace_set(R_half_set);
-    half_set_set.clear();
-    considered_half_set.clear();
-    choose_item_points.clear();
-    choose_item_set.clear();    
+    if(new_size>1){    // if new_size <=1, simply return point_result
+        point_result = NULL;
+        release_halfspace_set(R_half_set);
+        half_set_set.clear();
+        considered_half_set.clear();
+        choose_item_points.clear();
+        choose_item_set.clear();    
 
-    construct_halfspace_set(new_p_set, choose_item_points, half_set_set, considered_half_set);
+        construct_halfspace_set(new_p_set, choose_item_points, half_set_set, considered_half_set);
 
-    index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
-    p1 = choose_item_set[index]->hyper->point1;
-    p2 = choose_item_set[index]->hyper->point2;
+        index = build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
+        p1 = choose_item_set[index]->hyper->point1;
+        p2 = choose_item_set[index]->hyper->point2;
 
-    //initialization
-    R_half_set = R_initial(dim);
-    get_extreme_pts_refine_halfspaces_alg1(R_half_set);
-
-    point_result = NULL;
+        //initialization
+        R_half_set = R_initial(dim);
+        get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+    }
+    
     while (considered_half_set.size() > 1 && point_result== NULL)
     {
 
