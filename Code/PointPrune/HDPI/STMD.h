@@ -10,4 +10,4 @@ extern double top_1_score;
 extern double rr_ratio;
 extern int top_1_found;
 
-int STMD(std::vector<point_t *> p_set, point_t *u, int k, double theta);
+int STMD(std::vector<point_t *> p_set, point_t *u, double theta);

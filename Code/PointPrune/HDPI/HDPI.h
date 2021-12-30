@@ -15,7 +15,7 @@ extern int top_1_found;
  * @param u 			 The linear function
  * @param k 			 The parameter
  */
-int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k, double theta);
+int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, double theta);
 
 /**
  * @brief Asking user question and return one of the top-k point
@@ -24,5 +24,5 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k, double theta)
  * @param u 			 The linear function
  * @param k 			 The parameter
  */
-int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k, double theta);
+int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta);
 

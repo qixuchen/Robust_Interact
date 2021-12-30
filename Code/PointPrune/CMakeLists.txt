@@ -98,9 +98,6 @@ else ()
         HDPI/SamplePrune.h
         HDPI/STMD.h
         HDPI/STMD.cpp
-        input/2d.txt
-        input/4d.txt
-        input/weather.txt
         Others/data_struct.h
         Others/data_utility.cpp
         Others/data_utility.h
@@ -118,10 +115,6 @@ else ()
         Others/used_function.h
         Others/user_mode.cpp
         Others/user_mode.h
-        output/ext_pt.txt
-        output/hyperplane_data.txt
-        output/point.txt
-        output/top.txt
         Qhull/geom.cpp
         Qhull/geom.h
         Qhull/geom2.cpp

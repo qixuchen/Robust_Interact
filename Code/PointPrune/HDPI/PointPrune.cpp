@@ -68,8 +68,9 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
 }
 
 
-int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta)
+int PointPrune(std::vector<point_t *> p_set, point_t *u, int checknum, double theta)
 {
+    int k = 1;
     //reset statistics
     num_questions=0;
     num_wrong_answer=0;
@@ -287,8 +288,9 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, do
 
 
 
-int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta)
+int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double theta)
 {
+    int k = 1;
     // //reset statistics
     // num_questions=0;
     // num_wrong_answer=0;

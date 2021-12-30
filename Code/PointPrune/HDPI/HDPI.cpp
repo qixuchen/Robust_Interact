@@ -9,8 +9,9 @@
  * @param u 			 The linear function
  * @param k 			 The parameter
  */
-int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k, double theta)
+int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, double theta)
 {
+    int k = 1;
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -99,8 +100,9 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, int k, double theta)
  * @param u 			 The linear function
  * @param k 			 The parameter
  */
-int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, int k, double theta)
+int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
 {
+    int k = 1;
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points

@@ -34,4 +34,4 @@ extern int top_1_found;
 
 
 
-int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta);
+int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double theta);

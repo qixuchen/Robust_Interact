@@ -184,13 +184,13 @@ void polytope_sampling(halfspace_set_t* R, int num_point, std::vector<std::vecto
 
 
 
-int SamplePrune(std::vector<point_t *> p_set, point_t *u, int k, int checknum, double theta)
+int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double theta)
 {
+    int k=1;
     //reset statistics
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
-
 
     int num_points=50;
     std::vector<std::vector<double>> randPoints;
