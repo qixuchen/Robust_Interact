@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     int k = 1;
     int checknum=3;
     double theta=0.05;
-    int num_repeat = 20;
+    int num_repeat = 100;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);
@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
         double epsilon = (top_1_score - top_2_score) / top_1_score;
 
         // //Algorithm HDPI_sampling (11.35, 0.78)
-        // HD_s += HDPI_sampling(p_set, u, theta);
-        // HD_s_rr += rr_ratio;
-        // HD_s_count += top_1_found;
+        HD_s += HDPI_sampling(p_set, u, theta);
+        HD_s_rr += rr_ratio;
+        HD_s_count += top_1_found;
 
         // //Algorithm HDPI_accurate (11.38, 0.77)
         // HD_a += HDPI_accurate(p_set, u, theta);
@@ -115,14 +115,14 @@ int main(int argc, char *argv[])
         // PP_count += top_1_found;
 
         //Algorithm PointPrune_v2 (0.4, 20, 0.9)
-        // PP_2 += PointPrune_v2(p_set, u, checknum, theta);
-        // PP_2_rr += rr_ratio;
-        // PP_2_count += top_1_found;
+        PP_2 += PointPrune_v2(p_set, u, checknum, theta);
+        PP_2_rr += rr_ratio;
+        PP_2_count += top_1_found;
 
         //Algorithm SamplePrune (0.4, 21.2 ,0.93)
-        // SP += SamplePrune(p_set, u, checknum, theta);
-        // SP_rr += rr_ratio;
-        // SP_count += top_1_found;
+        SP += SamplePrune(p_set, u, checknum, theta);
+        SP_rr += rr_ratio;
+        SP_count += top_1_found;
 
         // // Algorithm STMD (2, 17.2, 0.89)
         // ST += STMD(p_set, u, theta);
@@ -140,9 +140,9 @@ int main(int argc, char *argv[])
         // PL_count += top_1_found;
 
         // // Algorithm Active_Ranking
-        AR += Active_Ranking(p_set, u, theta);
-        AR_rr += rr_ratio;
-        AR_count += top_1_found;
+        // AR += Active_Ranking(p_set, u, theta);
+        // AR_rr += rr_ratio;
+        // AR_count += top_1_found;
 
     }
     printf("\nIn total\n");

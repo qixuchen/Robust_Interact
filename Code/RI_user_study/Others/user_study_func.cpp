@@ -109,7 +109,7 @@ int show_to_user_scale(const point_t* p1, const point_t* p2)
 
 void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, const point* p, int alg_num){
     // print result to user
-    printf("\n===========Recommendation of algorithm %d =================\n", alg_num);
+    printf("\n=========== Recommendation of algorithm %d =================\n", alg_num);
     printf("\n--------------------------------------------------------\n");
     printf("%s %10d \n", "No. of questions asked:", num_of_question);
     printf("--------------------------------------------------------\n");

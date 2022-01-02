@@ -188,7 +188,7 @@ int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int c
 {
     //reset statistics
     int k=1, num_questions=0;
-    int num_points=50;
+    int num_points=100;
     std::vector<std::vector<double>> randPoints;
     std::vector<double> shift_point;
 
@@ -320,7 +320,7 @@ int SamplePrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int c
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
 
-            double skip_rate = 0.4;
+            double skip_rate = 0.5;
             //printf("%10f\n",ratio);
 
             // best_p1 < best_p2  

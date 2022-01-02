@@ -173,7 +173,7 @@ int RI_user_study()
     wPtr = (FILE *)fopen("../output/result.txt", "w");
 
 
-    int r_size = 7;
+    int r_size = 8;
     int returned_car[r_size], questions_asked[r_size], dissat_level[r_size], hit[r_size];
 
     //initialize dissatisfactory level to -1;
@@ -191,7 +191,7 @@ int RI_user_study()
         "                                     Beginning of Part 1\n"
         "\n"
         "===============================================================================================\n\n"
-        "In Part 1, there are 7 algorithms and each will ask you a list of questions.\n\n"
+        "In Part 1, there are 8 algorithms and each will ask you a list of questions.\n\n"
         "In each question, you will be presented 2 options of cars and you need to pick the one that you\n"
         "favor more. For example, enter 1 if you think car 1 is more preferred to car 2.\n\n"
         "Each car is described with the following 4 atrributes:\n\n"
@@ -208,28 +208,25 @@ int RI_user_study()
     printf("========================= Algorithm 1 ==========================\n");
     // Algorithm PointPrune
     returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0], max, min, 1);
-
     printf("\n==================== End of  Algorithm 1 =======================\n");
     enter_to_continue();
 
     printf("\n========================= Algorithm 2 ==========================\n");
     //Algorithm HRI
     returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1], 2);
-
+    // returned_car[1] = PointPrune_samek(wPtr, p_set, P0, check_num, questions_asked[1], max, min, 2);
     printf("\n==================== End of  Algorithm 2 =======================\n");
     enter_to_continue();
 
     printf("========================= Algorithm 3 ==========================\n");
     // Algorithm SpacePrune
     returned_car[2] = SamplePrune(wPtr, p_set, P0, check_num, questions_asked[2], max, min, 3);
-
     printf("\n==================== End of  Algorithm 3 =======================\n");
     enter_to_continue();
 
-    // HDPI_sampling(wPtr, p_set, P0, questions[3]);
     printf("========================= Algorithm 4 ==========================\n");
-    returned_car[3] = HDPI_accurate(wPtr, p_set, P0, questions_asked[3], 4);
-
+    // Algorithm PointPrune (collect user error rate)
+    returned_car[3] = PointPrune_samek(wPtr, p_set, P0, check_num, questions_asked[3], max, min, 4);
     printf("\n==================== End of  Algorithm 4 =======================\n");
     enter_to_continue();
 
@@ -238,22 +235,25 @@ int RI_user_study()
     printf("waiting...\n");
     //Algorithm: Preference Learning
     returned_car[4] = Preference_Learning(wPtr, p_set, P0, questions_asked[4], 5);
-    
     printf("\n==================== End of  Algorithm 5 =======================\n");
     enter_to_continue();
 
     printf("=========================Algorithm 6=========================\n");
     // the UH-Simplex algorithm
     returned_car[5] = max_utility(wPtr, P, P0, SIMPLEX, questions_asked[5], 6);
-    
     printf("\n==================== End of  Algorithm 6 =======================\n");
     enter_to_continue();
 
-    printf("=========================Algorithm 7=========================\n");
-    //Algorithm: Active Ranking
-    returned_car[6] = Active_Ranking(wPtr, p_2, P0, questions_asked[6], 7);
-    
+    // Algorithm HDPI
+    printf("========================= Algorithm 7 ==========================\n");
+    returned_car[6] = HDPI_accurate(wPtr, p_set, P0, questions_asked[6], 7);
     printf("\n==================== End of  Algorithm 7 =======================\n");
+    enter_to_continue();
+
+    printf("======================== Algorithm 8 =========================\n");
+    //Algorithm: Active Ranking
+    returned_car[7] = Active_Ranking(wPtr, p_2, P0, questions_asked[7], 8);
+    printf("\n==================== End of  Algorithm 8 =======================\n");
     enter_to_continue();
 
 

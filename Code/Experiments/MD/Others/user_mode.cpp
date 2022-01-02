@@ -60,7 +60,7 @@ point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
 int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate, int k){
     int p1_count=1, p2_count=0; //p1_count set to 1 since it is preferred in the first round
     int result_this_round;
-    int num_asked=0;
+    int num_asked=1;
     while (p1_count<=k/2 && p2_count<=k/2 && num_asked<k){
         result_this_round = user_rand_err(p_set, u, p1, p2, err_rate); 
         if(result_this_round==p1){
@@ -91,7 +91,7 @@ int checking(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, do
 point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k){
     int p1_count=1, p2_count=0; //p1_count set to 1 since it is preferred in the first round
     point_t *result_this_round;
-    int num_asked=0;
+    int num_asked=1;
     while (p1_count<=k/2 && p2_count<=k/2 && num_asked<k){
         result_this_round = user_rand_err(u, p1, p2, err_rate); 
         if(result_this_round==p1){
@@ -128,7 +128,7 @@ point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k){
 point_t* checking_varyk(point_t* u, point_t* p1, point_t* p2, double err_rate, int k, double skip_rate){
     int p1_count=1, p2_count=0; //p1_count set to 1 since it is preferred in the first round
     point_t *result_this_round;
-    int num_asked=0;
+    int num_asked=1;
     
     if((double) rand()/RAND_MAX < skip_rate){ //skip checking with prob skip_rate
         point_t* true_res = dot_prod(u, p1) > dot_prod(u,p2)? p1: p2;
