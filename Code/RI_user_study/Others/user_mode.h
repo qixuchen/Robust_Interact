@@ -13,4 +13,6 @@ extern int num_wrong_checking;
 
 int checking_varyk(point_t* p1, point_t* p2, int k, double skip_rate, int &num_questions, double *max, double *min);
 
+
+int checking_samek(point_t* p1, point_t* p2, int k, double skip_rate, int &num_questions, double *max, double *min);
 #endif

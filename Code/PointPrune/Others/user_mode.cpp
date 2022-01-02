@@ -128,7 +128,7 @@ point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k){
 point_t* checking_varyk(point_t* u, point_t* p1, point_t* p2, double err_rate, int k, double skip_rate){
     int p1_count=1, p2_count=0; //p1_count set to 1 since it is preferred in the first round
     point_t *result_this_round;
-    int num_asked=0;
+    int num_asked=1;
     
     if((double) rand()/RAND_MAX < skip_rate){ //skip checking with prob skip_rate
         point_t* true_res = dot_prod(u, p1) > dot_prod(u,p2)? p1: p2;
