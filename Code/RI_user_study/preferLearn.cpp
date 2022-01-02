@@ -580,10 +580,10 @@ hyperplane_t *orthogonal_search(s_node_t *node, point_t *q, hyperplane_t *best)
 //       The stop condition is that cos() should satisfy the given threshold
 //@param original_set       The original dataset
 //@param u                  The real utility vector
-int Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int &questions)
+int Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_set_t *P0, int &questions, int alg_num)
 {
     int k = 1;
-    int M, maxQcount = 100, testCount = 0, correctCount = 0;;
+    int M, maxQcount =50, testCount = 0, correctCount = 0;;
     //p_set: randomly choose 1000 points
     std::vector<point_t *> p_set;
     if (original_set.size() < 1000)
@@ -744,7 +744,7 @@ int Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_s
                 correctCount++;
             }
             double accuracy = ((double) correctCount) / testCount;
-            printf("TotalQ:%d, TestQ: %d, Accuracy: %lf\n", i + 1, testCount, accuracy);
+            //printf("TotalQ:%d, TestQ: %d, Accuracy: %lf\n", i + 1, testCount, accuracy);
             if (testCount >= 5 && accuracy > 0.75)
             {
                 break;
@@ -768,7 +768,7 @@ int Preference_Learning(FILE *wPtr, std::vector<point_t *> original_set, point_s
 
     int i = rand()%k;
 
-    print_result(wPtr, "Preference-learning", 2*testCount, P0->points[top_current[i]->id]);
+    print_result(wPtr, "Preference-learning", 2*testCount, P0->points[top_current[i]->id], alg_num);
 
     questions = 2*testCount;
     return top_current[i]->id;

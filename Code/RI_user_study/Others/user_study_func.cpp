@@ -17,8 +17,10 @@ int show_to_user(point_set_t* P, int p_idx, int q_idx)
     printf("--------------------------------------------------------");
     while (option != 1 && option != 2)
     {
+        char buf[BUF_SIZE];
         printf("\nYour choice (1 or 2): ");
-        scanf("%d", &option);
+        fgets(buf, BUF_SIZE, stdin);
+        option = atoi(buf);
     }
 
     return option;
@@ -43,8 +45,10 @@ int show_to_user_scale(point_set_t* P, int p_idx, int q_idx)
     printf("--------------------------------------------------------");
     while (option != 1 && option != 2)
     {
+        char buf[BUF_SIZE];
         printf("\nYour choice (1 or 2): ");
-        scanf("%d", &option);
+        fgets(buf, BUF_SIZE, stdin);
+        option = atoi(buf);
     }
 
     return option;
@@ -67,8 +71,10 @@ int show_to_user(const point_t* p1, const point_t* p2)
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
+        char buf[BUF_SIZE];
         printf("\nYour choice (1 or 2): ");
-        scanf("%d", &option);
+        fgets(buf, BUF_SIZE, stdin);
+        option = atoi(buf);
     }
 
     return option;
@@ -92,16 +98,18 @@ int show_to_user_scale(const point_t* p1, const point_t* p2)
     // ask the user for the better car among two given options
     while (option != 1 && option != 2)
     {
+        char buf[BUF_SIZE];
         printf("\nYour choice (1 or 2): ");
-        scanf("%d", &option);
+        fgets(buf, BUF_SIZE, stdin);
+        option = atoi(buf);
     }
 
     return option;
 }
 
-void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, const point* p){
+void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, const point* p, int alg_num){
     // print result to user
-    printf("\n==========Recommendation of the algorithm ================\n");
+    printf("\n===========Recommendation of algorithm %d =================\n", alg_num);
     printf("\n--------------------------------------------------------\n");
     printf("%s %10d \n", "No. of questions asked:", num_of_question);
     printf("--------------------------------------------------------\n");
@@ -159,8 +167,10 @@ int ask_favorite_item(int l_size){
             "you like the most in the recommended cars listed above \n"
             "(e.g., 2 means car No. 2 is your favorite car)", l_size);
     while(favorite <1 || favorite > l_size){
+        char buf[BUF_SIZE];
         printf("\nYou answer: ");
-        scanf("%d", &favorite);
+        fgets(buf, BUF_SIZE, stdin);
+        favorite = atoi(buf);
     }
     return favorite-1;
 }
@@ -189,8 +199,10 @@ int ask_dissat_score(const point_set_t* P, int car_id){
     int dissat = 0;
     while(dissat < 1 || dissat > 10)
     {
+        char buf[BUF_SIZE];
         printf("\nYou answer (from 1 to 10): ");
-        scanf("%d", &dissat);
+        fgets(buf, BUF_SIZE, stdin);
+        dissat = atoi(buf);
     }
     printf("\n\n");
     return dissat;
@@ -227,7 +239,10 @@ int ask_satisfactory_level(const point_set_t* P, const int num_questions_asked, 
     int sat = 0;
     while(sat < 1 || sat > 10)
     {
-        scanf("%d", &sat);
+        char buf[BUF_SIZE];
+        printf("\nYou answer (from 1 to 10): ");
+        fgets(buf, BUF_SIZE, stdin);
+        sat = atoi(buf);
     }
     printf("\n\n");
 

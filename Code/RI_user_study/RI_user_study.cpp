@@ -22,8 +22,9 @@
 void enter_to_continue(){
     printf("\nPress enter to continue\n");
 
-    char line[1024];
-    fgets(line, 1024, stdin);
+    // char line[1024];
+    // fgets(line, 1024, stdin);
+    fflush(stdin);
 
     char enter = 0;
     while (enter != '\n') { enter = getchar(); }
@@ -164,15 +165,15 @@ int RI_user_study()
            "\n"
            "In our research project, we want to study the performance of several recommendation algorithms \n"
            "to help you make a good decision.\n"
-           "This survey consists of 2 parts. Based on your answers in part 1, there is a small chance that \n"
-           "part 2 is skipped.\n\n" );
-
+           "This survey consists of 2 parts. Based on your answers in Part 1, there is a small chance that \n"
+           "Part 2 is skipped.\n\n" );
+    enter_to_continue();
 
     FILE *wPtr;
     wPtr = (FILE *)fopen("../output/result.txt", "w");
 
 
-    int r_size = 2;
+    int r_size = 7;
     int returned_car[r_size], questions_asked[r_size], dissat_level[r_size], hit[r_size];
 
     //initialize dissatisfactory level to -1;
@@ -187,14 +188,14 @@ int RI_user_study()
 
     printf("===============================================================================================\n"
         "\n"
-        "                                     Beginning of part 1\n"
+        "                                     Beginning of Part 1\n"
         "\n"
         "===============================================================================================\n\n"
-        "In part 1, there are 7 algorithms and each will ask you a list of questions.\n\n"
-        "In each question, you will be presented 2 option of cars and you need to pick the one that you\n"
-        "favor more. For example, enter 1 if you think car 1 is more preferred than car 2.\n\n"
-        "Each car is described by the following 4 atrributes:\n\n"
-       "    Price               Range from 1049-95400 USD\n"
+        "In Part 1, there are 7 algorithms and each will ask you a list of questions.\n\n"
+        "In each question, you will be presented 2 options of cars and you need to pick the one that you\n"
+        "favor more. For example, enter 1 if you think car 1 is more preferred to car 2.\n\n"
+        "Each car is described with the following 4 atrributes:\n\n"
+       "    Price               Range from USD 1049-95400\n"
        "    Year                Range from 2002-2015\n"
        "    Power               Range from 52-575 PS\n"
        "    Used kilometer      Range from 10000-125000 km\n\n\n");
@@ -206,44 +207,60 @@ int RI_user_study()
 
     printf("========================= Algorithm 1 ==========================\n");
     // Algorithm PointPrune
-    returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0], max, min);
+    returned_car[0] = PointPrune_v2(wPtr, p_set, P0, check_num, questions_asked[0], max, min, 1);
 
     printf("\n==================== End of  Algorithm 1 =======================\n");
     enter_to_continue();
 
     printf("\n========================= Algorithm 2 ==========================\n");
     //Algorithm HRI
-    returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1]);
+    returned_car[1] = STMD(wPtr, p_set, P0, theta, questions_asked[1], 2);
 
     printf("\n==================== End of  Algorithm 2 =======================\n");
     enter_to_continue();
 
-    // printf("========================= Algorithm 3 ==========================\n");
-    // // Algorithm SpacePrune
-    // returned_car[2] = SamplePrune(wPtr, p_set, P0, check_num, questions_asked[2], max, min);
+    printf("========================= Algorithm 3 ==========================\n");
+    // Algorithm SpacePrune
+    returned_car[2] = SamplePrune(wPtr, p_set, P0, check_num, questions_asked[2], max, min, 3);
 
-    // // HDPI_sampling(wPtr, p_set, P0, questions[3]);
-    // printf("========================= Algorithm 4 ==========================\n");
-    // returned_car[3] = HDPI_accurate(wPtr, p_set, P0, questions_asked[3]);
+    printf("\n==================== End of  Algorithm 3 =======================\n");
+    enter_to_continue();
 
-    // printf("========================= Algorithm 5 =========================\n");
-    // printf("waiting...\n");
-    // //Algorithm: Preference Learning
-    // returned_car[4] = Preference_Learning(wPtr, p_set, P0, questions_asked[4]);
+    // HDPI_sampling(wPtr, p_set, P0, questions[3]);
+    printf("========================= Algorithm 4 ==========================\n");
+    returned_car[3] = HDPI_accurate(wPtr, p_set, P0, questions_asked[3], 4);
 
-    // printf("=========================Algorithm 6=========================\n");
-    // // the UH-Simplex algorithm
-    // returned_car[5] = max_utility(wPtr, P, P0, SIMPLEX, questions_asked[5]);
+    printf("\n==================== End of  Algorithm 4 =======================\n");
+    enter_to_continue();
 
-    // printf("=========================Algorithm 7=========================\n");
-    // //Algorithm: Active Ranking
-    // returned_car[1] = Active_Ranking(wPtr, p_2, P0, questions_asked[2]);
+
+    printf("========================= Algorithm 5 =========================\n");
+    printf("waiting...\n");
+    //Algorithm: Preference Learning
+    returned_car[4] = Preference_Learning(wPtr, p_set, P0, questions_asked[4], 5);
+    
+    printf("\n==================== End of  Algorithm 5 =======================\n");
+    enter_to_continue();
+
+    printf("=========================Algorithm 6=========================\n");
+    // the UH-Simplex algorithm
+    returned_car[5] = max_utility(wPtr, P, P0, SIMPLEX, questions_asked[5], 6);
+    
+    printf("\n==================== End of  Algorithm 6 =======================\n");
+    enter_to_continue();
+
+    printf("=========================Algorithm 7=========================\n");
+    //Algorithm: Active Ranking
+    returned_car[6] = Active_Ranking(wPtr, p_2, P0, questions_asked[6], 7);
+    
+    printf("\n==================== End of  Algorithm 7 =======================\n");
+    enter_to_continue();
 
 
 
     printf("===============================================================================================\n"
         "\n"
-        "                                     End of part 1\n"
+        "                                     End of Part 1\n"
         "\n"
         "===============================================================================================\n");
 
@@ -254,15 +271,16 @@ int RI_user_study()
     if(final_list.size()>1){ // ask for user's favorite car if more than 1 car is in the final list
         printf("===============================================================================================\n"
         "\n"
-        "                                  Beginning of part 2\n"
+        "                                  Beginning of Part 2\n"
         "\n"
         "===============================================================================================\n");
-        printf("In part 2, you come down to a final list that consists of cars recommended by previous algorithms.\n");
+        printf("In Part 2, you come down to a final list that consists of cars recommended by previous algorithms.\n");
         printf("Now you need to decide your final choice of car.\n");
         printf("\n");
-        printf("Again, This is a big decision in your life and you want to spend the money wisely.\n");
+        printf("Again, this is a big decision in your life and you want to spend the money wisely.\n");
         printf("\n\n");
         printf("Below, you will see %d cars recommeneded by previous algorithms.\n", (int) final_list.size());
+        printf("We have already removed duplicated recommendations for you.\n");
         printf("===============================================================================================\n");
         enter_to_continue();
         display_final_list(P0, final_list);
@@ -330,7 +348,7 @@ int RI_user_study()
     if(final_list.size()>1){
         printf("===============================================================================================\n"
         "\n"
-        "                                     End of part 2\n"
+        "                                     End of Part 2\n"
         "\n"
         "===============================================================================================\n\n");
     }

@@ -3,7 +3,7 @@
 
 
 
-int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta, int &questions)
+int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta, int &questions, int alg_num)
 {
     int k = 1, numOfQuestion = 0;
     //p_set_1 contains the points which are not dominated by >=1 points
@@ -136,7 +136,7 @@ int STMD(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, double theta
     // printf("|%30s |%10d |%10s |\n", "STMD", numOfQuestion, "--");
     // printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     // printf("---------------------------------------------------------\n");
-    print_result(wPtr, "STMD", numOfQuestion, P0->points[point_result->id]);
+    print_result(wPtr, "STMD", numOfQuestion, P0->points[point_result->id], alg_num);
     questions = numOfQuestion;
     return point_result->id;
 

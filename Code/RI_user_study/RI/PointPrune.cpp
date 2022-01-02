@@ -67,7 +67,7 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
     return best_item_index;
 }
 
-int PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min)
+int PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min, int alg_num)
 {
     //reset statistics
     int k =1, num_questions=0;
@@ -275,7 +275,7 @@ int PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int ch
 
     }
 
-    print_result(wPtr, "PointPrune", num_questions, P0->points[true_point_result->id]);
+    print_result(wPtr, "PointPrune", num_questions, P0->points[true_point_result->id], alg_num);
     questions = num_questions;
     return true_point_result->id;
     
@@ -284,7 +284,7 @@ int PointPrune(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int ch
 
 
 
-int PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min)
+int PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int checknum, int &questions, double *max, double *min, int alg_num)
 {
     int k=1, num_questions=0;
     //reset statistics
@@ -502,7 +502,7 @@ int PointPrune_v2(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int
         }
 
     }
-    print_result(wPtr, "PointPrune_v2", num_questions, P0->points[true_point_result->id]);
+    print_result(wPtr, "PointPrune_v2", num_questions, P0->points[true_point_result->id], alg_num);
     questions = num_questions;
     return true_point_result->id;
 }

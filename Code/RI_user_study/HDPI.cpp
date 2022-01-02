@@ -8,7 +8,7 @@
  * @param p_set 		 The original dataset
  * @param u 			 The linear function
  */
-int HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions)
+int HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions, int alg_num)
 {
     int k=1;
     //p_set_1 contains the points which are not dominated by >=1 points
@@ -73,7 +73,7 @@ int HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int
         //printf("question %d ext_num %lu top_size %lu \n", numOfQuestion, R_half_set->ext_pts.size(), top_current.size());
         if (p_result!=NULL)
         {
-            print_result(wPtr, "HDPI_sampling", numOfQuestion, P0->points[p_result->id]);
+            print_result(wPtr, "HDPI_sampling", numOfQuestion, P0->points[p_result->id], alg_num);
             questions = numOfQuestion;
             return p_result->id;
         }
@@ -82,7 +82,7 @@ int HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int
     }
 
     point_t* p_result = half_set_set[considered_half_set[0]]->represent_point[0];
-    print_result(wPtr, "HDPI_sampling", numOfQuestion, P0->points[p_result->id]);
+    print_result(wPtr, "HDPI_sampling", numOfQuestion, P0->points[p_result->id], alg_num);
     questions = numOfQuestion;
     return p_result->id; 
 }
@@ -94,7 +94,7 @@ int HDPI_sampling(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int
  * @param p_set 		 The original dataset
  * @param u 			 The linear function
  */
-int HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions)
+int HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int &questions,int alg_num)
 {
     int k=1;
     //p_set_1 contains the points which are not dominated by >=1 points
@@ -157,7 +157,7 @@ int HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int
         //printf("question %d ext_num %lu top_size %lu \n", numOfQuestion, R_half_set->ext_pts.size(), top_current.size());
         if (p_result != NULL)
         {
-            print_result(wPtr, "HDPI_accurate", numOfQuestion, P0->points[p_result->id]);
+            print_result(wPtr, "HDPI_accurate", numOfQuestion, P0->points[p_result->id], alg_num);
             questions = numOfQuestion;
             return p_result->id; 
         }
@@ -166,7 +166,7 @@ int HDPI_accurate(FILE *wPtr, std::vector<point_t *> p_set, point_set_t *P0, int
     }
 
     point_t* p_result = half_set_set[considered_half_set[0]]->represent_point[0];
-    print_result(wPtr, "HDPI_accurate", numOfQuestion, P0->points[p_result->id]);
+    print_result(wPtr, "HDPI_accurate", numOfQuestion, P0->points[p_result->id], alg_num);
     questions = numOfQuestion;
     return p_result->id; 
 }

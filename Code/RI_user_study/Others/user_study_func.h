@@ -12,6 +12,8 @@
 #ifndef USER_STUDY_FUNC
 #define USER_STUDY_FUNC
 
+#define BUF_SIZE 1024
+
 int show_to_user(point_set_t* P, int p_idx, int q_idx);
 
 int show_to_user_scale(point_set_t* P, int p_idx, int q_idx);
@@ -20,7 +22,7 @@ int show_to_user(const point_t* p1, const point_t* p2);
 
 int show_to_user_scale(const point_t* p1, const point_t* p2);
 
-void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, const point* p);
+void print_result(FILE* wPtr, const char *alg_name, const int num_of_question, const point* p, int alg_num);
 
 void display_final_list(const point_set_t* P, const std::vector<int> final_list);
 

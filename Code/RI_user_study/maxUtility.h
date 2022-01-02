@@ -50,6 +50,6 @@ vector<int> generate_S(point_set_t* P, vector<int>& C_idx, int s, int current_be
  *                       -HYPER_PLANE
  *                       -CONICAL_HULL
  */
-int max_utility(FILE *wPtr, point_set_t *P0, point_set_t* original_set, int cmp_option, int &questions);
+int max_utility(FILE *wPtr, point_set_t *P0, point_set_t* original_set, int cmp_option, int &questions, int alg_num);
 
 #endif
