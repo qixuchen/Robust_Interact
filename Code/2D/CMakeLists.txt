@@ -18,6 +18,8 @@ add_definitions(${CMAKE_CXX_FLAGS} "-g")
 add_executable(2D
         ST2D/ST2D.h
         ST2D/ST2D.cpp
+        Median_Hull/medianhull.cpp
+        Median_Hull/medianhull.h
         Others/user_mode.cpp
         Others/user_mode.h
         Others/data_struct.h

@@ -150,6 +150,24 @@ int check_situation_accelerate(hyperplane_t* hyper, halfspace_set_t* half_set, i
  */
 int check_situation_positive(hyperplane_t* hyper, halfspace_set_t* half_set);
 
+//@brief Check whether the half_set is on the positive side of the hyperplane
+//		 Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
+//@param hyper 		The hyperplane
+//@param ext_pts	All the extreme points
+//@return The relation	1: half_set on the positive side of the hyperplane
+//						0: half_set on the negative side of the hyperplane/intersects with the hyperplane
+//						-2: Error for check situation
+int check_situation_positive(hyperplane_t *hyper, vector<point_t *> ext_pts);
+
+
+/**
+ * @brief Used to prune points which are not able to be the top-k based on the ext_pts
+ * @param p_set 			The dataset containing all the points
+ * @param ext_pts 		    All the extreme points
+ * @param k                 The threshold top-k
+ */
+void find_possible_top_k(std::vector<point_t *> &p_set, vector<point_t *> ext_pts, int k);
+
 /*
  * @brief Find points which could be the top-k points for any utility vector in half_set
  *        Not accurate. It needs to be used with function check_possible_top_k()

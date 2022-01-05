@@ -72,5 +72,7 @@ int ST2D(std::vector<point_t *> p_convh, point_t *u, int k, double theta){
     printf("|%30s |%10d |%10s |\n", "ST2D", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", p_convh[L]->id);
     printf("---------------------------------------------------------\n");
+    rr_ratio = dot_prod(u, p_convh[L])/top_1_score;
+    top_1_found= (rr_ratio>=1);
     return num_questions;
 }
