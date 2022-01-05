@@ -10,11 +10,13 @@
 #include <sys/time.h>
 
 int num_wrong_answer=0;
+int crit_wrong_answer=0;
+int num_questions=0;
 
 int main(int argc, char *argv[]){
 
-    double theta=0.1;
-    int k = 1;
+    double theta=0.05;
+    int k = 3;
     
     srand(time(0));  // Initialize random number generator.
     point_set_t *P = read_points((char*)"2d5K.txt");
