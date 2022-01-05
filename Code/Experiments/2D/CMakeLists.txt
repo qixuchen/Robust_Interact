@@ -106,6 +106,13 @@ else ()
         HDPI/STMD.h
         HDPI/STMD.cpp
 
+        UtilityApprox/UtilityApprox.cpp
+        UtilityApprox/UtilityApprox.h
+        Preference_Learning/preferLearn.cpp
+        Preference_Learning/preferLearn.h
+        Active_Ranking/active_ranking.cpp
+        Active_Ranking/active_ranking.h
+
         Others/user_mode.cpp
         Others/user_mode.h
         Others/data_struct.h
@@ -117,6 +124,10 @@ else ()
         Others/operation.h
         Others/pruning.cpp
         Others/pruning.h
+        Others/Array.cc
+        Others/Array.hh
+        Others/QuadProg++.cc
+        Others/QuadProg++.hh
         Others/qhull_build.cpp
         Others/qhull_build.h
         Others/read_write.cpp

@@ -7,9 +7,13 @@
 #include "ST2D/ST2D.h"
 #include "2DPI/2dPI.h"
 #include "Median_Hull/medianhull.h"
+#include "HDPI/HDPI.h"
 #include "HDPI/PointPrune.h"
 #include "HDPI/SamplePrune.h"
 #include "HDPI/STMD.h"
+#include "UtilityApprox/UtilityApprox.h"
+#include "Preference_Learning/preferLearn.h"
+#include "Active_Ranking/active_ranking.h"
 #include <vector>
 #include <ctime>
 #include <sys/time.h>
@@ -25,7 +29,7 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
-    int num_repeat = 100;
+    int num_repeat = 200;
 
     double twoRI=0;
     double twoRI_rr=0;
@@ -39,6 +43,14 @@ int main(int argc, char *argv[]){
     double DPI_rr=0;
     int DPI_count = 0;
 
+    double HD_s=0;
+    double HD_s_rr=0;
+    int HD_s_count = 0;
+
+    double HD_a=0;
+    double HD_a_rr=0;
+    int HD_a_count = 0;
+
     double PP_2=0;
     double PP_2_rr=0;
     int PP_2_count = 0;
@@ -50,6 +62,18 @@ int main(int argc, char *argv[]){
     double ST=0;
     double ST_rr=0;
     int ST_count = 0;
+
+    double UA=0;
+    double UA_rr=0;
+    int UA_count = 0;
+
+    double PL=0;
+    double PL_rr=0;
+    int PL_count = 0;
+
+    double AR=0;
+    double AR_rr=0;
+    int AR_count = 0;
 
 
     // std::vector<point_t *> p_set;
@@ -81,15 +105,15 @@ int main(int argc, char *argv[]){
         }
 
 
-        find_top_k(u, P0, top_current, 1);
+        find_top_k(u, P0, top_current, 2);
         printf("---------------------------------------------------------\n");
         printf("|%30s |%10s |%10s |\n", "Ground Truth", "--", "--");
         printf("|%30s |%8s%2d |%10d |\n", "Point", "top -", 1, top_current[0]->id);
         printf("---------------------------------------------------------\n");
 
         top_1_score = dot_prod(u,top_current[0]);
-        // double top_2_score = dot_prod(u,top_current[1]);
-        // double epsilon = (top_1_score - top_2_score) / top_1_score;
+        double top_2_score = dot_prod(u,top_current[1]);
+        double epsilon = (top_1_score - top_2_score) / top_1_score;
 
         // the 2RI algorithm
         twoRI += ST2D(p_convh, u, checknum, theta);
@@ -114,20 +138,45 @@ int main(int argc, char *argv[]){
         // p_set.clear();
         // point_reload(P, p_set);
 
-        //Algorithm PointPrune_v2 (0.4, 20, 0.9)
-        PP_2 += PointPrune_v2(p_set, u, checknum, theta);
-        PP_2_rr += rr_ratio;
-        PP_2_count += top_1_found;
+        // //Algorithm HDPI_sampling (11.35, 0.78)
+        // HD_s += HDPI_sampling(p_set, u, theta);
+        // HD_s_rr += rr_ratio;
+        // HD_s_count += top_1_found;
 
-        //Algorithm SamplePrune (0.4, 21.2 ,0.93)
-        SP += SamplePrune(p_set, u, checknum, theta);
-        SP_rr += rr_ratio;
-        SP_count += top_1_found;
+        //Algorithm HDPI_accurate (11.38, 0.77)
+        HD_a += HDPI_accurate(p_set, u, theta);
+        HD_a_rr += rr_ratio;
+        HD_a_count += top_1_found;
 
-        // Algorithm HRI (2, 17.2, 0.89)
-        ST += STMD(p_set, u, theta);
-        ST_rr += rr_ratio;
-        ST_count += top_1_found;
+        // //Algorithm PointPrune_v2 (0.4, 20, 0.9)
+        // PP_2 += PointPrune_v2(p_set, u, checknum, theta);
+        // PP_2_rr += rr_ratio;
+        // PP_2_count += top_1_found;
+
+        // //Algorithm SamplePrune (0.4, 21.2 ,0.93)
+        // SP += SamplePrune(p_set, u, checknum, theta);
+        // SP_rr += rr_ratio;
+        // SP_count += top_1_found;
+
+        // // Algorithm HRI (2, 17.2, 0.89)
+        // ST += STMD(p_set, u, theta);
+        // ST_rr += rr_ratio;
+        // ST_count += top_1_found;
+
+        // Algorithm UtilityApprox
+        // UA += utilityapprox(P, u , 2, epsilon, 100, theta);
+        // UA_rr += rr_ratio;
+        // UA_count += top_1_found;
+
+        // // Algorithm Preference_learning
+        // PL += Preference_Learning_accuracy(p_set, u, theta);
+        // PL_rr += rr_ratio;
+        // PL_count += top_1_found;
+
+        // // Algorithm Active_Ranking
+        // AR += Active_Ranking(p_set, u, theta);
+        // AR_rr += rr_ratio;
+        // AR_count += top_1_found;
 
 
 
@@ -141,9 +190,14 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "2RI", twoRI/num_repeat, twoRI_rr/num_repeat, ((double)twoRI_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Median", med/num_repeat, med_rr/num_repeat, ((double)med_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "2DPI", DPI/num_repeat, DPI_rr/num_repeat, ((double)DPI_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "HDPI-Sampling", HD_s/num_repeat, HD_s_rr/num_repeat, ((double)HD_s_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "HDPI-Accurate", HD_a/num_repeat, HD_a_rr/num_repeat, ((double)HD_a_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "PointPrune_v2", PP_2/num_repeat, PP_2_rr/num_repeat, ((double)PP_2_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "SamplePrune", SP/num_repeat, SP_rr/num_repeat, ((double)SP_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "STMD", ST/num_repeat, ST_rr/num_repeat, ((double)ST_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "UtilityApprox", UA/num_repeat, UA_rr/num_repeat, ((double)UA_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "Preference_Learning", PL/num_repeat, PL_rr/num_repeat, ((double)PL_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat);
     release_point_set(P, true);
     return 0;
 
