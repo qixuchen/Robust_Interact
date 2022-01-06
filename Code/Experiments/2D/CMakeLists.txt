@@ -112,6 +112,8 @@ else ()
         Preference_Learning/preferLearn.h
         Active_Ranking/active_ranking.cpp
         Active_Ranking/active_ranking.h
+        UH/maxUtility.cpp
+        UH/maxUtility.h
 
         Others/user_mode.cpp
         Others/user_mode.h
@@ -124,6 +126,8 @@ else ()
         Others/operation.h
         Others/pruning.cpp
         Others/pruning.h
+        Others/rtree.cpp
+        Others/rtree.h
         Others/Array.cc
         Others/Array.hh
         Others/QuadProg++.cc

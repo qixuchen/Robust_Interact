@@ -14,6 +14,7 @@
 #include "UtilityApprox/UtilityApprox.h"
 #include "Preference_Learning/preferLearn.h"
 #include "Active_Ranking/active_ranking.h"
+#include "UH/maxUtility.h"
 #include <vector>
 #include <ctime>
 #include <sys/time.h>
@@ -29,7 +30,7 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
-    int num_repeat = 200;
+    int num_repeat = 10;
 
     double twoRI=0;
     double twoRI_rr=0;
@@ -66,6 +67,10 @@ int main(int argc, char *argv[]){
     double UA=0;
     double UA_rr=0;
     int UA_count = 0;
+    
+    double UH=0;
+    double UH_rr=0;
+    int UH_count = 0;
 
     double PL=0;
     double PL_rr=0;
@@ -163,6 +168,13 @@ int main(int argc, char *argv[]){
         // ST_rr += rr_ratio;
         // ST_count += top_1_found;
 
+        // the UH-Simplex algorithm
+        int s = 2, maxRound = 1000, cmp_option = SIMPLEX;
+        int prune_option = RTREE, dom_option = HYPER_PLANE, stop_option = EXACT_BOUND;
+        UH += max_utility(P, u, s, epsilon, maxRound, cmp_option, stop_option, prune_option, dom_option, theta);
+        UH_rr += rr_ratio;
+        UH_count += top_1_found;
+
         // Algorithm UtilityApprox
         // UA += utilityapprox(P, u , 2, epsilon, 100, theta);
         // UA_rr += rr_ratio;
@@ -198,6 +210,7 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "UtilityApprox", UA/num_repeat, UA_rr/num_repeat, ((double)UA_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Preference_Learning", PL/num_repeat, PL_rr/num_repeat, ((double)PL_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
     release_point_set(P, true);
     return 0;
 

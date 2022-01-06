@@ -41,6 +41,14 @@ int halfspace(FILE* rPtr, FILE* wPtr);
  */
 vector<point_t*> get_extreme_pts(vector<point_t*>& ext_vec);
 
+
+// use the seqentail way for maintaining the candidate set
+void sql_pruning(point_set_t* P, vector<int>& C_idx, vector<point_t*>& ext_vec, double& rr, int stop_option, int dom_option);
+
+// use the branch-and-bound skyline (BBS) algorithm for maintaining the candidate set
+void rtree_pruning(point_set_t* P, vector<int>& C_idx, vector<point_t*>& ext_vec, double& rr,  int stop_option, int dom_option);
+
+
 /**
  * @brief Used to check whether the hyperplane is on one side of the bounding sphere of the halfspace set
  *        Not the relation between the hyperplanes and the halfspace set
