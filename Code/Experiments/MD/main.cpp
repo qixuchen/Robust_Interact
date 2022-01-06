@@ -9,6 +9,7 @@
 #include "UtilityApprox/UtilityApprox.h"
 #include "Preference_Learning/preferLearn.h"
 #include "Active_Ranking/active_ranking.h"
+#include "UH/maxUtility.h"
 #include "Others/qhull_build.h"
 #include <vector>
 #include <ctime>
@@ -53,6 +54,10 @@ int main(int argc, char *argv[])
     double UA_rr=0;
     int UA_count = 0;
 
+    double UH=0;
+    double UH_rr=0;
+    int UH_count = 0;
+
     double PL=0;
     double PL_rr=0;
     int PL_count = 0;
@@ -61,12 +66,12 @@ int main(int argc, char *argv[])
     double AR_rr=0;
     int AR_count = 0;
 
-    point_set_t *P0 = read_points((char*)"4d.txt");
+    point_set_t *P0 = read_points((char*)"4d100.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k = 1;
     int checknum=3;
     double theta=0.05;
-    int num_repeat = 100;
+    int num_repeat = 10;
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);
@@ -99,32 +104,26 @@ int main(int argc, char *argv[])
         double epsilon = (top_1_score - top_2_score) / top_1_score;
 
         // //Algorithm HDPI_sampling (11.35, 0.78)
-        HD_s += HDPI_sampling(p_set, u, theta);
-        HD_s_rr += rr_ratio;
-        HD_s_count += top_1_found;
+        // HD_s += HDPI_sampling(p_set, u, theta);
+        // HD_s_rr += rr_ratio;
+        // HD_s_count += top_1_found;
 
-        // //Algorithm HDPI_accurate (11.38, 0.77)
-        // HD_a += HDPI_accurate(p_set, u, theta);
-        // HD_a_rr += rr_ratio;
-        // HD_a_count += top_1_found;
+        //Algorithm HDPI_accurate (11.38, 0.77)
+        HD_a += HDPI_accurate(p_set, u, theta);
+        HD_a_rr += rr_ratio;
+        HD_a_count += top_1_found;
 
-        // //Algorithm PointPrune  (0.4, 20.5, 0.88)
-        // //                        (0.1, 25, 0.94)
-        // PP += PointPrune(p_set, u, checknum, theta);
-        // PP_rr += rr_ratio;
-        // PP_count += top_1_found;
+        // // Algorithm PointPrune_v2 (0.4, 20, 0.9)
+        // PP_2 += PointPrune_v2(p_set, u, checknum, theta);
+        // PP_2_rr += rr_ratio;
+        // PP_2_count += top_1_found;
 
-        //Algorithm PointPrune_v2 (0.4, 20, 0.9)
-        PP_2 += PointPrune_v2(p_set, u, checknum, theta);
-        PP_2_rr += rr_ratio;
-        PP_2_count += top_1_found;
+        // //Algorithm SamplePrune (0.4, 21.2 ,0.93)
+        // SP += SamplePrune(p_set, u, checknum, theta);
+        // SP_rr += rr_ratio;
+        // SP_count += top_1_found;
 
-        //Algorithm SamplePrune (0.4, 21.2 ,0.93)
-        SP += SamplePrune(p_set, u, checknum, theta);
-        SP_rr += rr_ratio;
-        SP_count += top_1_found;
-
-        // // Algorithm STMD (2, 17.2, 0.89)
+        // // // Algorithm STMD (2, 17.2, 0.89)
         // ST += STMD(p_set, u, theta);
         // ST_rr += rr_ratio;
         // ST_count += top_1_found;
@@ -133,11 +132,18 @@ int main(int argc, char *argv[])
         // UA += utilityapprox(P, u , 2, epsilon, 100, theta);
         // UA_rr += rr_ratio;
         // UA_count += top_1_found;
+        
+        // the UH-Simplex algorithm
+        int s = 2, maxRound = 1000, cmp_option = SIMPLEX;
+        int prune_option = RTREE, dom_option = HYPER_PLANE, stop_option = EXACT_BOUND;
+        UH += max_utility(P, u, s, epsilon, maxRound, cmp_option, stop_option, prune_option, dom_option, theta);
+        UH_rr += rr_ratio;
+        UH_count += top_1_found;
 
-        // // Algorithm Preference_learning
-        // PL += Preference_Learning_accuracy(p_set, u, theta);
-        // PL_rr += rr_ratio;
-        // PL_count += top_1_found;
+        // // // Algorithm Preference_learning
+        // // PL += Preference_Learning_accuracy(p_set, u, theta);
+        // // PL_rr += rr_ratio;
+        // // PL_count += top_1_found;
 
         // // Algorithm Active_Ranking
         // AR += Active_Ranking(p_set, u, theta);
@@ -156,6 +162,7 @@ int main(int argc, char *argv[])
     printf("|%20s |%10f |%8f |%8f\n", "UtilityApprox", UA/num_repeat, UA_rr/num_repeat, ((double)UA_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Preference_Learning", PL/num_repeat, PL_rr/num_repeat, ((double)PL_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
     release_point_set(P, true);
     return 0;
 }

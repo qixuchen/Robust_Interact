@@ -15,7 +15,8 @@ extern "C" {
 #include "../Qhull/libqhull.h"
 #include "../Qhull/qhull_a.h"
 #include "../Qhull/io.h"
-
+#include "lp.h"
+#include "rtree.h"
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
@@ -1090,4 +1091,282 @@ double get_rrbound_exact(vector<point_t *> ext_pts)
 
     max *= ext_pts[0]->dim;
     return max < 1 ? max : 1;
+}
+
+
+
+// use the seqentail way for maintaining the candidate set
+// P: the input car set
+// C_idx: the indexes of the current candidate favorite car in P
+// ext_vec: the set of extreme vecotr
+// rr: the upper bound of the regret ratio
+// stop_option: the stopping condition, which can be NO_BOUND, EXACT_BOUND and APPROX_BOUND
+// dom_option: the skyline options, which can be SQL or RTREE
+void sql_pruning(point_set_t *P, vector<int> &C_idx, vector<point_t *> &ext_vec, double &rr, int stop_option, int dom_option)
+{
+    int dim = P->points[0]->dim;
+
+    vector<point_t *> ext_pts;
+    vector<point_t *> hyperplanes;
+    hyperplane_t *hp = NULL;
+
+    if (dom_option == HYPER_PLANE)
+    {
+        ext_pts = get_extreme_pts(ext_vec); // in Hyperplane Pruning, we need the set of extreme points of R
+    }
+    else
+    {
+        // in Conical Pruning, we need bounding hyperplanes for the conical hull
+        get_hyperplanes(ext_vec, hp, hyperplanes);
+        if (stop_option !=
+            NO_BOUND)
+        { // if an upper bound on the regret ratio is needed, we need the set of extreme points of R
+            ext_pts = get_extreme_pts(ext_vec);
+        }
+    }
+
+    // get the upper bound of the regret ratio based on (the extreme ponits of) R
+    if (stop_option == EXACT_BOUND)
+    {
+        rr = get_rrbound_exact(ext_pts);
+    }
+    else if (stop_option == APPROX_BOUND)
+    {
+        rr = get_rrbound_approx(ext_pts);
+    }
+    else
+    {
+        rr = 1;
+    }
+
+    //printf("extreme vectors:\n");
+    //for(int i = 0; i < ext_vec.size(); i++)
+    //	print_point(ext_vec[i]);
+    //printf("hyperplanes:\n");
+    //for(int i = 0; i < hyperplanes.size(); i++)
+    //	print_point(hyperplanes[i]);
+    //printf("H: offset - %lf\n", hp->offset);
+    //print_point(hp->normal);
+
+
+    // run the adapted squential skyline algorihtm
+    int *sl = new int[C_idx.size()];
+    int index = 0;
+
+    for (int i = 0; i < C_idx.size(); ++i)
+    {
+
+        int dominated = 0;
+        point_t *pt = P->points[C_idx[i]];
+
+        // check if pt is dominated by the skyline so far
+        for (int j = 0; j < index && !dominated; ++j)
+        {
+
+            if (dom(P->points[sl[j]], pt, ext_pts, hp, hyperplanes, ext_vec, dom_option))
+            {
+                dominated = 1;
+            }
+        }
+
+        if (!dominated)
+        {
+            // eliminate any points in current skyline that it dominates
+            int m = index;
+            index = 0;
+            for (int j = 0; j < m; ++j)
+            {
+
+                if (!dom(pt, P->points[sl[j]], ext_pts, hp, hyperplanes, ext_vec, dom_option))
+                {
+                    sl[index++] = sl[j];
+                }
+            }
+
+            // add this point as well
+            sl[index++] = C_idx[i];
+        }
+    }
+
+    C_idx.clear();
+    for (int i = 0; i < index; i++)
+        C_idx.push_back(sl[i]);
+
+    delete[] sl;
+
+    if (dom_option == HYPER_PLANE)
+    {
+        for (int i = 0; i < ext_pts.size(); i++)
+            release_point(ext_pts[i]);
+    }
+    else
+    {
+        release_hyperplane(hp);
+        for (int i = 0; i < hyperplanes.size(); i++)
+            release_point(hyperplanes[i]);
+    }
+
+}
+
+// use the branch-and-bound skyline (BBS) algorithm for maintaining the candidate set
+// P: the input car set
+// C_idx: the indexes of the current candidate favorite car in P
+// ext_vec: the set of extreme vecotr
+// rr: the upper bound of the regret ratio
+// stop_option: the stopping condition, which can be NO_BOUND, EXACT_BOUND and APPROX_BOUND
+// dom_option: the skyline options, which can be SQL or RTREE
+void rtree_pruning(point_set_t *P, vector<int> &C_idx, vector<point_t *> &ext_vec, double &rr, int stop_option,
+                   int dom_option)
+{
+    vector<point_t *> ext_pts;
+    vector<point_t *> hyperplanes;
+    hyperplane_t *hp = NULL;
+
+    if (dom_option == HYPER_PLANE)
+    {
+        ext_pts = get_extreme_pts(ext_vec); // in Hyperplane Pruning, we need the set of extreme points of R
+    }
+    else
+    {
+        // in Conical Pruning, we need bounding hyperplanes for the conical hull
+        get_hyperplanes(ext_vec, hp, hyperplanes);
+        if (stop_option !=
+            NO_BOUND)
+        { // if a upper bound on the regret ratio is needed, we need the set of extreme points of R
+            ext_pts = get_extreme_pts(ext_vec);
+        }
+    }
+
+    // get the upper bound of the regret ratio based on (the extreme ponits of) R
+    if (stop_option == EXACT_BOUND)
+    {
+        rr = get_rrbound_exact(ext_pts);
+    }
+    else if (stop_option == APPROX_BOUND)
+    {
+        rr = get_rrbound_approx(ext_pts);
+    }
+    else
+    {
+        rr = 1;
+    }
+
+    // parameters for building the R-trees
+    rtree_info *aInfo;
+    aInfo = (rtree_info *) malloc(sizeof(rtree_info));
+    memset(aInfo, 0, sizeof(rtree_info));
+    aInfo->m = 18;
+    aInfo->M = 36;
+    aInfo->dim = P->points[0]->dim;
+    aInfo->reinsert_p = 27;
+    aInfo->no_histogram = C_idx.size();
+
+    // construct R-tree
+    node_type *root = contructRtree(P, C_idx, aInfo);
+
+    priority_queue<node_type *, vector<node_type *>, nodeCmp> heap;
+
+    heap.push(root);
+
+    int *sl = new int[C_idx.size()];
+    int index = 0;
+    int dim = aInfo->dim;
+
+    // run the adapted BBS algorihtm
+    while (!heap.empty())
+    {
+        node_type *n = heap.top();
+        heap.pop();
+
+        if (n->attribute != LEAF)
+        {
+
+            int dominated = 0;
+
+            point_t *TRpt = alloc_point(dim);
+            for (int i = 0; i < dim; i++)
+                TRpt->coord[i] = n->b[i];
+
+            // check if TRpt is dominated by the skyline so far
+            for (int j = 0; j < index && !dominated; ++j)
+            {
+
+                if (dom(P->points[sl[j]], TRpt, ext_pts, hp, hyperplanes, ext_vec, dom_option))
+                {
+                    dominated = 1;
+                }
+
+            }
+
+
+            if (!dominated)
+            {
+
+                for (int i = 0; i < aInfo->M - n->vacancy; i++)
+                {
+                    //int child_dominated = 0;
+                    //for (int i = 0; i < dim; i++)
+                    //	TRpt->coord[i] = n->ptr[i]->b[i];
+
+                    //for (int j = 0; j < index && !dominated; ++j)
+                    //	if (hyperplane_dom(P->points[ sl[j] ], TRpt, ext_pts))
+                    //		child_dominated = 1;
+                    //
+                    //if(!child_dominated)
+                    heap.push(n->ptr[i]);
+                }
+            }
+
+        }
+        else
+        {
+            int idx = n->id;
+            //S = updateS(id, C, S, V);
+
+            int dominated = 0;
+            for (int j = 0; j < index && !dominated; ++j)
+            {
+                if (dom(P->points[sl[j]], P->points[C_idx[idx]], ext_pts, hp, hyperplanes, ext_vec, dom_option))
+                {
+                    dominated = 1;
+                }
+            }
+            if (dominated)
+            {
+                continue;
+            }
+
+            // eliminate any points in current skyline that it dominates
+            int m = index;
+            index = 0;
+            for (int j = 0; j < m; ++j)
+            {
+                if (!dom(P->points[C_idx[idx]], P->points[sl[j]], ext_pts, hp, hyperplanes, ext_vec, dom_option))
+                {
+                    sl[index++] = sl[j];
+                }
+            }
+
+            // add this point as well
+            sl[index++] = C_idx[idx];
+        }
+    }
+
+    // clean up
+    C_idx.clear();
+    for (int i = 0; i < index; i++)
+        C_idx.push_back(sl[i]);
+    delete[] sl;
+    free(aInfo);
+    if (dom_option == HYPER_PLANE)
+    {
+        for (int i = 0; i < ext_pts.size(); i++)
+            release_point(ext_pts[i]);
+    }
+    else
+    {
+        release_hyperplane(hp);
+        for (int i = 0; i < hyperplanes.size(); i++)
+            release_point(hyperplanes[i]);
+    }
 }

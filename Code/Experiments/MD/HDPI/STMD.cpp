@@ -76,7 +76,8 @@ int STMD(std::vector<point_t *> p_set, point_t *u, double theta){
                                                     return a.second>b.second;});
 
     std::vector<point_t *> new_p_set;
-    int new_size = floor(2*p_set_1.size() * theta);
+    double beta = 2;
+    int new_size = floor(beta*p_set_1.size() * theta);
     for(int i = 0; i < new_size; i++){
         new_p_set.push_back(p_set_1[util_scores[i].first]);
     }

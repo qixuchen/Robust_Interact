@@ -104,6 +104,8 @@ else ()
         Preference_Learning/preferLearn.h
         Active_Ranking/active_ranking.cpp
         Active_Ranking/active_ranking.h
+        UH/maxUtility.cpp
+        UH/maxUtility.h
         Others/data_struct.h
         Others/data_utility.cpp
         Others/data_utility.h
@@ -121,6 +123,8 @@ else ()
         Others/QuadProg++.hh
         Others/read_write.cpp
         Others/read_write.h
+        Others/rtree.cpp
+        Others/rtree.h
         Others/used_function.cpp
         Others/used_function.h
         Others/user_mode.cpp

@@ -888,6 +888,63 @@ halfspace_set_t *R_initial(int dim)
     return R_half_set;
 }
 
+
+
+//@brief Check the relation between the hyperplane and the half_set
+//		 Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
+//@param hyper 		The hyperplane
+//@param half_set	The half_set/Intersection of the halfspace
+//@return The relation	1: half_set on the positive side of the hyperplane
+//						-1: half_set on the negative side of the hyperplane
+//						0: half_set intersects with the hyperplane
+//						-2: Error for check situation
+int check_situation(hyperplane_t* hyper, vector<point_t *> ext_pts)
+{
+    int M = ext_pts.size();
+    if (M < 1)
+    {
+        printf("%s\n", "None of the ext_pts in the set.");
+        return -2;
+    }
+    int D = ext_pts[0]->dim;
+    int posi = 0, nega = 0;
+    for (int i = 0; i < M; i++)
+    {
+        double sum = 0;
+        for (int j = 0; j < D; j++)
+        {
+            //printf("hyper %lf %lf \n", hyper->normal->coord[j], half_set->ext_pts[i]->coord[j]);
+            sum += (hyper->normal->coord[j] * ext_pts[i]->coord[j]);
+        }
+        if (sum > Precision)
+        {
+            posi++;
+        }
+        else if (sum < -Precision)
+        {
+            nega++;
+        }
+
+        if (posi > 0 && nega > 0)
+        {
+            return 0;
+        }
+    }
+    if (posi > 0)
+    {
+        return 1;
+    }
+    else if (nega > 0)
+    {
+        return -1;
+    }
+    //printf("%s\n", "Error for check situation.");
+    return -2;
+}
+
+
+
+
 /*
  * @brief Print the information of the chosen choose_item
  * @param choose_item_set 	The choose_item table
@@ -996,6 +1053,9 @@ int check_situation_accelerate(hyperplane_t *hyper, halfspace_set_t *half_set, i
     return 0;
 }
 
+
+
+
 /*
  * @brief Check whether the half_set is on the positive side of the hyperplane
  *        Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
@@ -1029,6 +1089,80 @@ int check_situation_positive(hyperplane_t *hyper, halfspace_set_t *half_set)
     }
     return 1;
 }
+
+
+
+//@brief Check whether the half_set is on the positive side of the hyperplane
+//		 Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
+//@param hyper 		The hyperplane
+//@param ext_pts	All the extreme points
+//@return The relation	1: half_set on the positive side of the hyperplane
+//						0: half_set on the negative side of the hyperplane/intersects with the hyperplane
+//						-2: Error for check situation
+int check_situation_positive(hyperplane_t *hyper, vector<point_t *> ext_pts)
+{
+    int M = ext_pts.size();
+    if (M < 1)
+    {
+        printf("%s\n", "None of the ext_pts in the set.");
+        return -2;
+    }
+    int D = ext_pts[0]->dim;
+    for (int i = 0; i < M; i++)
+    {
+        double sum = 0;
+        for (int j = 0; j < D; j++)
+        {
+            sum += (hyper->normal->coord[j] * ext_pts[i]->coord[j]);
+        }
+        if (sum < -Precision / 2)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/**
+ * @brief Used to prune points which are not able to be the top-k based on the ext_pts
+ * @param p_set 			The dataset containing all the points
+ * @param ext_pts 		    All the extreme points
+ * @param k                 The threshold top-k
+ */
+void find_possible_top_k(std::vector<point_t *> &p_set, vector<point_t *> ext_pts, int k)
+{
+    int M = p_set.size();
+    int dim = p_set[0]->dim;
+    int index = 0;
+    for (int i = 0; i < M; i++)
+    {
+        int num = 0;
+        bool is_delete = false;
+        for (int j = 0; j < p_set.size(); j++)
+        {
+            if (!is_same_point(p_set[index], p_set[j]))
+            {
+                hyperplane_t *h = alloc_hyperplane(p_set[j], p_set[index], 0);
+                if (check_situation_positive(h, ext_pts) == 1)
+                {
+                    num++;
+                }
+                release_hyperplane(h);
+            }
+            if (num >= k)
+            {
+                is_delete = true;
+                p_set.erase(p_set.begin() + index);
+                break;
+            }
+        }
+        if (!is_delete)
+        {
+            index++;
+        }
+    }
+}
+
 
 /*
  * @brief Find points which could be the top-k points for any utility vector in half_set

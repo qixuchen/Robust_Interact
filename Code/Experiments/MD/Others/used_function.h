@@ -117,6 +117,20 @@ void skyline_c(std::vector<point_t *> p_set, std::vector<point_t *> &return_poin
  */
 halfspace_set_t* R_initial(int dim);
 
+
+
+//@brief Check the relation between the hyperplane and the half_set
+//		 Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
+//@param hyper 		The hyperplane
+//@param half_set	The half_set/Intersection of the halfspace
+//@return The relation	1: half_set on the positive side of the hyperplane
+//						-1: half_set on the negative side of the hyperplane
+//						0: half_set intersects with the hyperplane
+//						-2: Error for check situation
+int check_situation(hyperplane_t* hyper, vector<point_t *> ext_pts);
+
+
+
 /*
  * @brief Print the information of the chosen choose_item
  * @param choose_item_set 	The choose_item table
@@ -139,6 +153,8 @@ int print_choose_item_situation(std::vector<choose_item*> choose_item_set, int i
  */
 int check_situation_accelerate(hyperplane_t* hyper, halfspace_set_t* half_set, int method);
 
+
+
 /*
  * @brief Check whether the half_set is on the positive side of the hyperplane
  *        Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
@@ -149,6 +165,16 @@ int check_situation_accelerate(hyperplane_t* hyper, halfspace_set_t* half_set, i
  *                      -2: Error for check situation
  */
 int check_situation_positive(hyperplane_t* hyper, halfspace_set_t* half_set);
+
+//@brief Check whether the half_set is on the positive side of the hyperplane
+//		 Since the extreme points of the half_set can not be accurate enough, we set "Precision" to solve the error
+//@param hyper 		The hyperplane
+//@param ext_pts	All the extreme points
+//@return The relation	1: half_set on the positive side of the hyperplane
+//						0: half_set on the negative side of the hyperplane/intersects with the hyperplane
+//						-2: Error for check situation
+int check_situation_positive(hyperplane_t *hyper, vector<point_t *> ext_pts);
+
 
 /*
  * @brief Find points which could be the top-k points for any utility vector in half_set
@@ -161,6 +187,14 @@ int check_situation_positive(hyperplane_t* hyper, halfspace_set_t* half_set);
  */
 bool find_possible_topk(std::vector<point_t*> p_set, halfspace_set_t* half_set, int k, std::vector<point_t*> &top_current);
 
+
+/**
+ * @brief Used to prune points which are not able to be the top-k based on the ext_pts
+ * @param p_set 			The dataset containing all the points
+ * @param ext_pts 		    All the extreme points
+ * @param k                 The threshold top-k
+ */
+void find_possible_top_k(std::vector<point_t *> &p_set, vector<point_t *> ext_pts, int k);
 
 /*
  * @brief Used to check whether there is a top-k points w.r.t any utility vector in half_set
