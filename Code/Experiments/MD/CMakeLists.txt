@@ -106,6 +106,9 @@ else ()
         Active_Ranking/active_ranking.h
         UH/maxUtility.cpp
         UH/maxUtility.h
+        RH/alg_one.cpp
+        RH/alg_one.h
+        
         Others/data_struct.h
         Others/data_utility.cpp
         Others/data_utility.h

@@ -201,11 +201,14 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
-    std::vector<point_t *> p_top_1;
+    std::vector<point_t *> p_top_1, p_set_1, top;
     int dim = p_set[0]->dim;
-    point_t *uk = alloc_point(dim);
-    find_top1_sampling(p_set, p_top_1, uk, 0, 0);//use sampling method
-    release_point(uk);
+    // point_t *uk = alloc_point(dim);
+    // find_top1_sampling(p_set, p_top_1, uk, 0, 0);//use sampling method
+    // release_point(uk);
+    find_top1(p_set, top);
+    skyline_c(top, p_set_1);
+    
     //half_set_set          contains all the partitions(intersection of halfspaces)
     //considered_half_set   contains all the possible partitions considered
     //choose_item_points    contains all the points used to construct hyperplanes(questions) (set C in the paper)
@@ -220,7 +223,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     halfspace_set_t *R_half_set = R_initial(dim);
     get_extreme_pts_refine_halfspaces_alg1(R_half_set_cp);
     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
-    construct_halfspace_set_with_copy(p_top_1, choose_item_points, choose_item_points_cp, half_set_set, 
+    construct_halfspace_set_with_copy(p_set_1, choose_item_points, choose_item_points_cp, half_set_set, 
                                     half_set_set_cp, considered_half_set, considered_half_set_cp);
 
     build_choose_item_table(half_set_set, choose_item_points, choose_item_set);
@@ -322,7 +325,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
 
-            double skip_rate = 0.4;
+            double skip_rate = 0.2;
             //printf("%10f\n",ratio);
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);

@@ -310,8 +310,9 @@ int Hull(point_set_t *P, point_t *u, int s, int maxRound)
 }
 
 // Algorithm Median
-int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, int k, double theta)
+int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta)
 {
+    int k = 1;
     timeval t1, t2;
     gettimeofday(&t1, 0);
     int dim = vertices[0]->dim;
@@ -390,14 +391,15 @@ int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, int 
 }
 
 // Algorithm Hull
-int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, int k)
+int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta)
 {
+    int k = 1;
     timeval t1, t2;
     gettimeofday(&t1, 0);
     int dim = vertices[0]->dim;
     if (dim != 2)
     {
-        printf("median requires dim = 2\n");
+        printf("Hull requires dim = 2\n");
         exit(0);
     }
     double Qcount = 0;
@@ -439,9 +441,8 @@ int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, int k)
                 count_change = 0;
             }
         }
-        double v1 = dot_prod(u, vertices[idx1]);
-        double v2 = dot_prod(u, vertices[idx2]);
-        if (v1 > v2)
+        point_t* user_choice = user_rand_err(u, vertices[idx1], vertices[idx2], theta);
+        if (user_choice == vertices[idx1])
         {
             delete_id = vertices[idx2]->id;
             halfspace_t *h = alloc_halfspace(vertices[idx2], vertices[idx1], 0, true);
@@ -471,5 +472,7 @@ int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, int k)
     printf("|%30s |%10.0lf |%10s |\n", "Hull-Adapt", Qcount, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", vertices[current_best]->id);
     printf("---------------------------------------------------------\n");
+    rr_ratio = dot_prod(u, vertices[current_best])/top_1_score;
+    top_1_found= (rr_ratio>=1);
     return Qcount;
 }

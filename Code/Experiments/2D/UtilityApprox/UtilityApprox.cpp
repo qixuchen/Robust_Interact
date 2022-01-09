@@ -122,8 +122,16 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     for (i = 1; i < D; ++i)
         if (u->coord[i] > u->coord[istar])
         {
-            istar = i;
+            if((double) rand()/RAND_MAX > theta){
+                istar = i;
+            }
         }
+        else{
+            if((double) rand()/RAND_MAX <= theta){
+                istar = i;
+            }
+        }
+
 
     //if (VERBOSE)
     //printf("istar = %d\n", istar);

@@ -27,9 +27,9 @@ int Median(point_set_t *P, point_t *u, int maxRound);
 int Hull(point_set_t *P, point_t *u, int s, int maxRound);
 
 // Algorithm Median-Adapt
-int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, int k, double theta);
+int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta);
 
 // Algorithm Hull-Adapt
-int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, int k);
+int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta);
 
 #endif

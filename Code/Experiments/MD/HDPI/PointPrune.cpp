@@ -408,7 +408,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
             
-            double skip_rate = 0.4;
+            double skip_rate = 0.2;
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
                 user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
@@ -465,7 +465,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
             if(end_premature){
 
-                printf("end premature\n");
+                // printf("end premature\n");
                 break;
             }
         }

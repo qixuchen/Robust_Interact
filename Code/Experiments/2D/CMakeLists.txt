@@ -114,6 +114,8 @@ else ()
         Active_Ranking/active_ranking.h
         UH/maxUtility.cpp
         UH/maxUtility.h
+        RH/alg_one.cpp
+        RH/alg_one.h
 
         Others/user_mode.cpp
         Others/user_mode.h
