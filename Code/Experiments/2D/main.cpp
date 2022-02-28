@@ -28,62 +28,76 @@ double top_1_score = 0;
 double rr_ratio=0;
 int top_1_found=0;
 
+int i1_p1;
+int i1_p2;
+int i2_p1;
+int i2_p2;
+int i3_p1;
+int i3_p2;
+
 int main(int argc, char *argv[]){
 
-    double twoRI=0;
-    double twoRI_rr=0;
+    int i1_p1_sum = 0;
+    int i1_p2_sum = 0;
+    int i2_p1_sum = 0;
+    int i2_p2_sum = 0;
+    int i3_p1_sum = 0;
+    int i3_p2_sum = 0;
+
+    double twoRI = 0;
+    double twoRI_rr = 0;
     int twoRI_count = 0;
     
-    double med=0;
-    double med_rr=0;
+    double med = 0;
+    double med_rr = 0;
     int med_count = 0;
 
-    double Hull=0;
-    double Hull_rr=0;
+    double Hull = 0;
+    double Hull_rr = 0;
     int Hull_count = 0;
 
-    double DPI=0;
-    double DPI_rr=0;
+    double DPI = 0;
+    double DPI_rr = 0;
     int DPI_count = 0;
 
-    double HD_s=0;
-    double HD_s_rr=0;
+    double HD_s = 0;
+    double HD_s_rr = 0;
     int HD_s_count = 0;
 
-    double HD_a=0;
-    double HD_a_rr=0;
+    double HD_a = 0;
+    double HD_a_rr = 0;
     int HD_a_count = 0;
 
-    double PP_2=0;
-    double PP_2_rr=0;
+    double PP_2 = 0;
+    double PP_2_rr = 0;
     int PP_2_count = 0;
 
-    double SP=0;
-    double SP_rr=0;
+    double SP = 0;
+    double SP_rr = 0;
     int SP_count = 0;
 
-    double ST=0;
-    double ST_rr=0;
+    double ST = 0;
+    double ST_rr = 0;
     int ST_count = 0;
 
-    double UA=0;
-    double UA_rr=0;
+    double UA = 0;
+    double UA_rr = 0;
     int UA_count = 0;
     
-    double UH=0;
-    double UH_rr=0;
+    double UH = 0;
+    double UH_rr = 0;
     int UH_count = 0;
 
-    double PL=0;
-    double PL_rr=0;
+    double PL = 0;
+    double PL_rr = 0;
     int PL_count = 0;
 
-    double AR=0;
-    double AR_rr=0;
+    double AR = 0;
+    double AR_rr = 0;
     int AR_count = 0;
 
-    double RH=0;
-    double RH_rr=0;
+    double RH = 0;
+    double RH_rr= 0 ;
     int RH_count = 0;
 
     // std::vector<point_t *> p_set;
@@ -105,11 +119,11 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
-    int num_repeat = 10;
+    int num_repeat = 40;
 
-    auto start = std::chrono::system_clock::now();
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
+    // auto start = std::chrono::system_clock::now();
+    // auto end = std::chrono::system_clock::now();
+    // std::chrono::duration<double> elapsed_seconds = end-start;
 
     for(int i=0; i<num_repeat; i++){
         double sum = 0;
@@ -136,6 +150,9 @@ int main(int argc, char *argv[]){
         int maxRound = 1000;
 
         // start = std::chrono::system_clock::now();
+
+        // *************************************
+        // Beginning of algs
 
         // if(dim==2){ // 2d algs
         // // the 2RI algorithm
@@ -177,15 +194,29 @@ int main(int argc, char *argv[]){
         // HD_a_rr += rr_ratio;
         // HD_a_count += top_1_found;
 
-        // //Algorithm PointPrune_v2 (0.4, 20, 0.9)
-        // PP_2 += PointPrune_v2(p_set, u, checknum, theta);
-        // PP_2_rr += rr_ratio;
-        // PP_2_count += top_1_found;
+        //Algorithm PointPrune_v2 (0.4, 20, 0.9)
+        PP_2 += PointPrune_v2(p_set, u, checknum, theta);
+        PP_2_rr += rr_ratio;
+        PP_2_count += top_1_found;
+        i1_p1_sum += i1_p1;
+        i1_p2_sum += i1_p2;
+        i2_p1_sum += i2_p1;
+        i2_p2_sum += i2_p2;
+        i3_p1_sum += i3_p1;
+        i3_p2_sum += i3_p2;
 
         //Algorithm SamplePrune (0.4, 21.2 ,0.93)
-        SP += SamplePrune(p_set, u, checknum, theta);
-        SP_rr += rr_ratio;
-        SP_count += top_1_found;
+        // SP += SamplePrune(p_set, u, checknum, theta);
+        // SP_rr += rr_ratio;
+        // SP_count += top_1_found;
+        // i1_p1_sum += i1_p1;
+        // i1_p2_sum += i1_p2;
+        // i2_p1_sum += i2_p1;
+        // i2_p2_sum += i2_p2;
+        // i3_p1_sum += i3_p1;
+        // i3_p2_sum += i3_p2;
+
+
 
         // // Algorithm HRI (2, 17.2, 0.89)
         // ST += STMD(p_set, u, theta);
@@ -246,6 +277,10 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "RH", RH/num_repeat, RH_rr/num_repeat, ((double)RH_count)/num_repeat);
+
+    printf("|%10s |%8f |%10s |%8f\n", "i1_p1_sum", ((double)i1_p1_sum)/num_repeat, "i1_p2_sum", ((double)i1_p2_sum)/num_repeat);
+    printf("|%10s |%8f |%10s |%8f\n", "i2_p1_sum", ((double)i2_p1_sum)/num_repeat, "i2_p2_sum", ((double)i2_p2_sum)/num_repeat);
+    printf("|%10s |%8f |%10s |%8f\n", "i3_p1_sum", ((double)i3_p1_sum)/num_repeat, "i3_p2_sum", ((double)i3_p2_sum)/num_repeat);
     release_point_set(P, true);
     return 0;
 

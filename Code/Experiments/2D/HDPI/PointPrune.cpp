@@ -291,23 +291,21 @@ int PointPrune(std::vector<point_t *> p_set, point_t *u, int checknum, double th
 int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double theta)
 {
     int k = 1;
-    // //reset statistics
-    // num_questions=0;
-    // num_wrong_answer=0;
-    // crit_wrong_answer=0;
-    // //p_set_1 contains the points which are not dominated by >=1 points
-    // //p_set_k contains the points which are not dominated by >=k points
-    // //p_top_1 contains the points which are the convex points
-    // std::vector<point_t *> p_top_1;
-    // int dim = p_set[0]->dim;
-    // point_t *uk = alloc_point(dim);
-    // find_top1_sampling(p_set, p_top_1, uk, 0, 0);//use sampling method
-    // release_point(uk);
 
     //reset statistics
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
+
+    
+    int iter_num = 0;
+    i1_p1 = 0;
+    i1_p2 = 0;
+    i2_p1 = 0;
+    i2_p2 = 0;
+    i3_p1 = 0;
+    i3_p2 = 0;
+
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -345,6 +343,8 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
+        iter_num++;
+        int cur_quest_num = num_questions;
 
         point_result = NULL;
         //index: the index of the chosen hyperplane(question)
@@ -395,8 +395,24 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
         }
+
+        if(iter_num==1){
+            i1_p1 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==2){
+            i2_p1 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==3){
+            i3_p1 += num_questions-cur_quest_num;
+        }
         //=================================================================================================================================
         //End of phase 1
+
+
+        //start of phase 2
+        //==========================================================================================================================================
+
+        cur_quest_num = num_questions;
 
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
@@ -470,6 +486,18 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             }
         }
 
+        
+        if(iter_num==1){
+            i1_p2 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==2){
+            i2_p2 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==3){
+            i3_p2 += num_questions-cur_quest_num;
+        }
+
+
         if(true_point_result!=NULL){
             break;
         }
@@ -519,7 +547,8 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             choose_item * c_i=deepcopy_choose_item(choose_item_set_cp[i]);
             choose_item_set.push_back(c_i);
         }
-
+        //=================================================================================================================================
+        //End of phase 2
 
     }
 

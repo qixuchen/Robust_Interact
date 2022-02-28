@@ -193,6 +193,13 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     crit_wrong_answer=0;
 
 
+    int iter_num = 0;
+    i1_p1 = 0;
+    i1_p2 = 0;
+    i2_p1 = 0;
+    i2_p2 = 0;
+    i3_p1 = 0;
+    i3_p2 = 0;
 
 
 
@@ -240,6 +247,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
+        iter_num++;
+        int cur_quest_num = num_questions;
 
         point_result = NULL;
         //index: the index of the chosen hyperplane(question)
@@ -256,6 +265,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
 
         //start of phase 1
         //==========================================================================================================================================
+
 
         while (point_result==NULL)
         {
@@ -290,8 +300,24 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
         }
+
+        if(iter_num==1){
+            i1_p1 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==2){
+            i2_p1 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==3){
+            i3_p1 += num_questions-cur_quest_num;
+        }
         //=================================================================================================================================
         //End of phase 1
+
+
+        //start of phase 2
+        //==========================================================================================================================================
+
+        cur_quest_num = num_questions;
 
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
@@ -393,6 +419,18 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             }
         }
 
+
+        if(iter_num==1){
+            i1_p2 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==2){
+            i2_p2 += num_questions-cur_quest_num;
+        }
+        else if(iter_num==3){
+            i3_p2 += num_questions-cur_quest_num;
+        }
+
+
         if(true_point_result!=NULL){
             break;
         }
@@ -445,6 +483,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         }
 
 
+        //=================================================================================================================================
+        //End of phase 2
     }
 
     printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
