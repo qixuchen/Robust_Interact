@@ -32,6 +32,11 @@ extern double top_1_score;
 extern double rr_ratio;
 extern int top_1_found;
 
-
+extern int i1_p1;
+extern int i1_p2;
+extern int i2_p1;
+extern int i2_p2;
+extern int i3_p1;
+extern int i3_p2;
 
 int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double theta);

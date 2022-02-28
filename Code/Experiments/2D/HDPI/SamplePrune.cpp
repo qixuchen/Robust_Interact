@@ -192,7 +192,12 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     num_wrong_answer=0;
     crit_wrong_answer=0;
 
-    int num_points=50;
+
+
+
+
+
+    int num_points=160;
     std::vector<std::vector<double>> randPoints;
     std::vector<double> shift_point;
 

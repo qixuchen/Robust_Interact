@@ -91,7 +91,7 @@ int main(int argc, char *argv[]){
     // point_set_t *P = point_reload(p_set);
 
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P0 = read_points((char*)"island.txt");
+    point_set_t *P0 = read_points((char*)"4d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh;
     skyband(P0, p_set, 1);
@@ -105,9 +105,11 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
-    int num_repeat = 200;
+    int num_repeat = 10;
 
-    // auto start = std::chrono::system_clock::now();
+    auto start = std::chrono::system_clock::now();
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
 
     for(int i=0; i<num_repeat; i++){
         double sum = 0;
@@ -131,8 +133,11 @@ int main(int argc, char *argv[]){
         double top_2_score = dot_prod(u,top_current[1]);
         double epsilon = (top_1_score - top_2_score) / top_1_score;
 
-         int maxRound = 1000;
+        int maxRound = 1000;
 
+        // start = std::chrono::system_clock::now();
+
+        // if(dim==2){ // 2d algs
         // // the 2RI algorithm
         // twoRI += ST2D(p_convh, u, checknum, theta);
         // twoRI_rr += rr_ratio;
@@ -144,10 +149,10 @@ int main(int argc, char *argv[]){
         // med_rr += rr_ratio;
         // med_count += top_1_found;
 
-        // the Hull algorithm
-        Hull += Hull_Adapt(p_set, u, maxRound, theta);
-        Hull_rr += rr_ratio;
-        Hull_count += top_1_found;
+        // // the Hull algorithm
+        // Hull += Hull_Adapt(p_set, u, maxRound, theta);
+        // Hull_rr += rr_ratio;
+        // Hull_count += top_1_found;
 
         // // the 2DPI algorithm
         // for (int i = 0; i < p_set.size(); i++)
@@ -159,6 +164,8 @@ int main(int argc, char *argv[]){
         //     p_set[i]->dim = dim;
         // p_set.clear();
         // point_reload(P, p_set);
+        
+        // }
 
         // //Algorithm HDPI_sampling (11.35, 0.78)
         // HD_s += HDPI_sampling(p_set, u, theta);
@@ -175,10 +182,10 @@ int main(int argc, char *argv[]){
         // PP_2_rr += rr_ratio;
         // PP_2_count += top_1_found;
 
-        // //Algorithm SamplePrune (0.4, 21.2 ,0.93)
-        // SP += SamplePrune(p_set, u, checknum, theta);
-        // SP_rr += rr_ratio;
-        // SP_count += top_1_found;
+        //Algorithm SamplePrune (0.4, 21.2 ,0.93)
+        SP += SamplePrune(p_set, u, checknum, theta);
+        SP_rr += rr_ratio;
+        SP_count += top_1_found;
 
         // // Algorithm HRI (2, 17.2, 0.89)
         // ST += STMD(p_set, u, theta);
@@ -213,12 +220,15 @@ int main(int argc, char *argv[]){
         // RH_count += top_1_found;
 
 
+
+
+        // end = std::chrono::system_clock::now();
+        // elapsed_seconds += end-start;
+
+
     }
 
-
-    // auto end = std::chrono::system_clock::now();
-    // std::chrono::duration<double> elapsed_seconds = end-start;
-    // printf("%8f\n",  elapsed_seconds.count()/ twoRI );
+    // printf("%8f\n",  elapsed_seconds.count()/ SP );
     
     printf("\nIn total\n");
     printf("|%20s |%10s |%8s |%10s\n", "Alg", "# rounds", "rr", "found top1");
