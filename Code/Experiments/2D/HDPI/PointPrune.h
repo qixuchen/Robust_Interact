@@ -16,9 +16,6 @@ extern int i2_p2;
 extern int i3_p1;
 extern int i3_p2;
 
-int PointPrune(std::vector<point_t *> p_set, point_t *u, int checknum, double theta);
-
-
 /**
  * @brief           PointPrune, with some modifications (e.g., end prematurely) 
  */

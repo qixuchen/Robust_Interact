@@ -111,6 +111,8 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
     int dim = p_set[0]->dim;
     find_top1(p_set, top);
     skyline_c(top, p_set_1);
+    // printf("%d\n", top.size());
+    // printf("%d\n", p_set_1.size());
     //half_set_set          contains all the partitions(intersection of halfspaces)
     //considered_half_set   contains all the possible partitions considered
     //choose_item_points    contains all the points used to construct hyperplanes(questions) (set C in the paper)

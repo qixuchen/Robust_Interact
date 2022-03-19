@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <ctime>
+#include <cmath>
 #include <sys/time.h>
 
 int num_wrong_answer=0;
@@ -35,6 +36,15 @@ int i2_p2;
 int i3_p1;
 int i3_p2;
 
+double compute_std(int* round_array, int n){
+    double sum = 0, var_sum = 0;
+    for(int i = 0; i < n; i++) sum += round_array[i];
+    double mean = sum/n;
+    for(int i = 0; i < n; i++) var_sum += (round_array[i]-mean)*(round_array[i]-mean);
+    return sqrt(var_sum/n);
+}
+
+
 int main(int argc, char *argv[]){
 
     int i1_p1_sum = 0;
@@ -43,6 +53,9 @@ int main(int argc, char *argv[]){
     int i2_p2_sum = 0;
     int i3_p1_sum = 0;
     int i3_p2_sum = 0;
+
+    int round_array[100];
+    double i2_count, i3_count;
 
     double twoRI = 0;
     double twoRI_rr = 0;
@@ -184,37 +197,56 @@ int main(int argc, char *argv[]){
         
         // }
 
-        // //Algorithm HDPI_sampling (11.35, 0.78)
+        // //Algorithm HDPI_sampling
         // HD_s += HDPI_sampling(p_set, u, theta);
         // HD_s_rr += rr_ratio;
         // HD_s_count += top_1_found;
 
-        // //Algorithm HDPI_accurate (11.38, 0.77)
+        // //Algorithm HDPI_accurate
         // HD_a += HDPI_accurate(p_set, u, theta);
         // HD_a_rr += rr_ratio;
         // HD_a_count += top_1_found;
 
-        //Algorithm PointPrune_v2 (0.4, 20, 0.9)
-        PP_2 += PointPrune_v2(p_set, u, checknum, theta);
-        PP_2_rr += rr_ratio;
-        PP_2_count += top_1_found;
-        i1_p1_sum += i1_p1;
-        i1_p2_sum += i1_p2;
-        i2_p1_sum += i2_p1;
-        i2_p2_sum += i2_p2;
-        i3_p1_sum += i3_p1;
-        i3_p2_sum += i3_p2;
+        // //Algorithm PointPrune_v2 
+        // round_array[i] = PointPrune_v2(p_set, u, checknum, theta);
+        // PP_2 += round_array[i];
+        // PP_2_rr += rr_ratio;
+        // PP_2_count += top_1_found;
 
-        //Algorithm SamplePrune (0.4, 21.2 ,0.93)
-        // SP += SamplePrune(p_set, u, checknum, theta);
-        // SP_rr += rr_ratio;
-        // SP_count += top_1_found;
+
+
         // i1_p1_sum += i1_p1;
         // i1_p2_sum += i1_p2;
         // i2_p1_sum += i2_p1;
         // i2_p2_sum += i2_p2;
         // i3_p1_sum += i3_p1;
         // i3_p2_sum += i3_p2;
+        // if(i2_p1>0){
+        //     i2_count += 1;
+        // }
+        // if(i3_p1>0){
+        //     i3_count += 1;
+        // }
+
+        // Algorithm SamplePrune 
+        round_array[i] = SamplePrune(p_set, u, checknum, theta);
+        SP += round_array[i];
+        SP_rr += rr_ratio;
+        SP_count += top_1_found;
+
+
+        // i1_p1_sum += i1_p1;
+        // i1_p2_sum += i1_p2;
+        // i2_p1_sum += i2_p1;
+        // i2_p2_sum += i2_p2;
+        // i3_p1_sum += i3_p1;
+        // i3_p2_sum += i3_p2;
+        // if(i2_p1>0){
+        //     i2_count += 1;
+        // }
+        // if(i3_p1>0){
+        //     i3_count += 1;
+        // }
 
 
 
@@ -278,9 +310,12 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "RH", RH/num_repeat, RH_rr/num_repeat, ((double)RH_count)/num_repeat);
 
-    printf("|%10s |%8f |%10s |%8f\n", "i1_p1_sum", ((double)i1_p1_sum)/num_repeat, "i1_p2_sum", ((double)i1_p2_sum)/num_repeat);
-    printf("|%10s |%8f |%10s |%8f\n", "i2_p1_sum", ((double)i2_p1_sum)/num_repeat, "i2_p2_sum", ((double)i2_p2_sum)/num_repeat);
-    printf("|%10s |%8f |%10s |%8f\n", "i3_p1_sum", ((double)i3_p1_sum)/num_repeat, "i3_p2_sum", ((double)i3_p2_sum)/num_repeat);
+    // printf("|%10s |%8f \n", "std", compute_std(round_array, num_repeat));
+    // printf("|%10s |%8f |%10s |%8f\n", "i2_percent", i2_count/num_repeat, "i3_percent", i3_count/num_repeat);
+
+    // printf("|%10s |%8f |%10s |%8f\n", "i1_p1_sum", ((double)i1_p1_sum)/num_repeat, "i1_p2_sum", ((double)i1_p2_sum)/num_repeat);
+    // printf("|%10s |%8f |%10s |%8f\n", "i2_p1_sum", ((double)i2_p1_sum)/num_repeat, "i2_p2_sum", ((double)i2_p2_sum)/num_repeat);
+    // printf("|%10s |%8f |%10s |%8f\n", "i3_p1_sum", ((double)i3_p1_sum)/num_repeat, "i3_p2_sum", ((double)i3_p2_sum)/num_repeat);
     release_point_set(P, true);
     return 0;
 

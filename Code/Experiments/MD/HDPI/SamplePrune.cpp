@@ -325,7 +325,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
 
-            double skip_rate = 0.2;
+            double skip_rate = 0;
             //printf("%10f\n",ratio);
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);

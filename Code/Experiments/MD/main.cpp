@@ -73,18 +73,16 @@ int main(int argc, char *argv[])
     double AR_rr=0;
     int AR_count = 0;
 
-    point_set_t *P0 = read_points((char*)"4d1M.txt");
+    point_set_t *P0 = read_points((char*)"4d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     int k = 1;
     int checknum=3;
-    double theta=0.05;
-    int num_repeat =200;
+    double theta=0.01;
+    int num_repeat =100;
 
     std::vector<point_t *> p_set, p0;
     skyband(P0, p_set, k);
     point_set_t *P = point_reload(p_set);
-
-    // auto start = std::chrono::system_clock::now();
 
     for(int i=0; i<num_repeat; i++){
         // generate the utility vector
@@ -112,11 +110,9 @@ int main(int argc, char *argv[])
         top_1_score = dot_prod(u,top_current[0]);
         top_2_score = dot_prod(u,top_current[1]);
         double epsilon = (top_1_score - top_2_score) / top_1_score;
+        
+        // auto start = std::chrono::system_clock::now();
 
-        // //Algorithm HDPI_sampling (11.35, 0.78)
-        // HD_s += HDPI_sampling(p_set, u, theta);
-        // HD_s_rr += rr_ratio;
-        // HD_s_count += top_1_found;
 
         // // Algorithm HDPI_accurate (11.38, 0.77)
         // HD_a += HDPI_accurate(p_set, u, theta);
@@ -142,7 +138,8 @@ int main(int argc, char *argv[])
         // UA += utilityapprox(P, u , 2, epsilon, 100, theta);
         // UA_rr += rr_ratio;
         // UA_count += top_1_found;
-        
+                
+                
         // // the UH-Simplex algorithm
         // int s = 2, maxRound = 1000, cmp_option = SIMPLEX;
         // int prune_option = RTREE, dom_option = HYPER_PLANE, stop_option = EXACT_BOUND;
@@ -155,20 +152,22 @@ int main(int argc, char *argv[])
         // PL_rr += rr_ratio;
         // PL_count += top_1_found;
 
-        // // Algorithm Active_Ranking
-        // AR += Active_Ranking(p_set, u, theta);
-        // AR_rr += rr_ratio;
-        // AR_count += top_1_found;
+        // Algorithm Active_Ranking
+        AR += Active_Ranking(p_set, u, theta);
+        AR_rr += rr_ratio;
+        AR_count += top_1_found;
 
-        // Algorithm RH
-        RH += Random_half(p_set, u, theta);
-        RH_rr += rr_ratio;
-        RH_count += top_1_found;
+        // // Algorithm RH
+        // RH += Random_half(p_set, u, theta);
+        // RH_rr += rr_ratio;
+        // RH_count += top_1_found;
+        
+        // auto end = std::chrono::system_clock::now();
+        // std::chrono::duration<double> elapsed_seconds = end-start;
+        // printf("%8f\n",  elapsed_seconds.count()/ HD_a );
+
+        printf("%d\n", i);
     }
-
-    // auto end = std::chrono::system_clock::now();
-    // std::chrono::duration<double> elapsed_seconds = end-start;
-    // printf("%8f\n",  elapsed_seconds.count()/ RH );
 
     printf("\nIn total\n");
     printf("|%20s |%10s |%8s |%10s\n", "Alg", "# rounds", "rr", "found top1");
