@@ -262,7 +262,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
             if(end_premature){
 
-                printf("end premature\n");
+                // printf("end premature\n");
                 break;
             }
         }
