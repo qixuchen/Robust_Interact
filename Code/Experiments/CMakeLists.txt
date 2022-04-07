@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(2D)
+project(RI)
 
 
 enable_testing()
@@ -87,7 +87,7 @@ else ()
 
   add_definitions(${CMAKE_CXX_FLAGS} "-g")
 
-  add_executable(2D
+  add_executable(RI
         ST2D/ST2D.h
         ST2D/ST2D.cpp
         Median_Hull/medianhull.cpp
@@ -99,12 +99,10 @@ else ()
         HDPI/HDPI.h
         HDPI/partition_func.cpp
         HDPI/partition_func.h
-        HDPI/PointPrune.cpp
-        HDPI/PointPrune.h
-        HDPI/SamplePrune.cpp
-        HDPI/SamplePrune.h
-        HDPI/STMD.h
-        HDPI/STMD.cpp
+        PointPrune.cpp
+        PointPrune.h
+        SamplePrune.cpp
+        SamplePrune.h
 
         UtilityApprox/UtilityApprox.cpp
         UtilityApprox/UtilityApprox.h
@@ -173,7 +171,7 @@ else ()
         main.cpp)
 
 
-  target_link_libraries(2D glpk)
+  target_link_libraries(RI glpk)
 
-  TARGET_LINK_LIBRARIES(2D ${LP_SOLVE})
+  TARGET_LINK_LIBRARIES(RI ${LP_SOLVE})
 endif()

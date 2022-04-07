@@ -8,9 +8,8 @@
 #include "2DPI/2dPI.h"
 #include "Median_Hull/medianhull.h"
 #include "HDPI/HDPI.h"
-#include "HDPI/PointPrune.h"
-#include "HDPI/SamplePrune.h"
-#include "HDPI/STMD.h"
+#include "PointPrune.h"
+#include "SamplePrune.h"
 #include "UtilityApprox/UtilityApprox.h"
 #include "Preference_Learning/preferLearn.h"
 #include "Active_Ranking/active_ranking.h"
@@ -79,10 +78,6 @@ int main(int argc, char *argv[]){
     double SP_rr = 0;
     int SP_count = 0;
 
-    double ST = 0;
-    double ST_rr = 0;
-    int ST_count = 0;
-
     double UA = 0;
     double UA_rr = 0;
     int UA_count = 0;
@@ -104,7 +99,7 @@ int main(int argc, char *argv[]){
     int RH_count = 0;
 
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P0 = read_points((char*)"2d.txt");
+    point_set_t *P0 = read_points((char*)"4d100.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh;
     skyband(P0, p_set, 1);
@@ -194,11 +189,6 @@ int main(int argc, char *argv[]){
         SP_rr += rr_ratio;
         SP_count += top_1_found;
 
-        // Algorithm HRI (2, 17.2, 0.89)
-        ST += STMD(p_set, u, theta);
-        ST_rr += rr_ratio;
-        ST_count += top_1_found;
-
         // the UH-Simplex algorithm
         int s = 2, cmp_option = SIMPLEX;
         int prune_option = RTREE, dom_option = HYPER_PLANE, stop_option = EXACT_BOUND;
@@ -239,7 +229,6 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "HDPI-Accurate", HD_a/num_repeat, HD_a_rr/num_repeat, ((double)HD_a_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "PointPrune_v2", PP_2/num_repeat, PP_2_rr/num_repeat, ((double)PP_2_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "SamplePrune", SP/num_repeat, SP_rr/num_repeat, ((double)SP_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "STMD", ST/num_repeat, ST_rr/num_repeat, ((double)ST_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "UtilityApprox", UA/num_repeat, UA_rr/num_repeat, ((double)UA_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Preference_Learning", PL/num_repeat, PL_rr/num_repeat, ((double)PL_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat);
