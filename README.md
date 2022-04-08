@@ -1,7 +1,6 @@
 # Robust_Interact
 
-Readme (Robust interactive ssystem)
-=========================
+
 This package contains 2 directories: 
 1. Directory "Robust Interaction", which contains the source codes of the proposed algorithms
 
