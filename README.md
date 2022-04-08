@@ -14,17 +14,17 @@ This package contains 2 directories:
 
 2. Directory "RI_user_study", which contains the source codes for user study
 
-	(1). Verify-Point (ours)
+	(1). *Verify-Point* (ours)
   
-	(2). Verify-Space (ours)
+	(2). *Verify-Space* (ours)
   
-	(3). Preference-Learning
+	(3). *Preference-Learning*
   
-	(4). HDPI
+	(4). *HDPI*
   
-	(5). Active-Ranking
+	(5). *Active-Ranking*
   
-	(6). UH-Simplex
+	(6). *UH-Simplex*
 
 
 Part of the code of *Verify-Space* is based on `volesti` https://github.com/GeomScale/volesti.
