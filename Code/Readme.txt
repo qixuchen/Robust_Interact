@@ -1,32 +1,49 @@
-Readme (Interactive Search for One of the Top-k)
-=========================
-This package contains 5 directories 
-1. Directory "InteractiveTopk", which contains the source codes of the proposed algorithms
-	(1). 2D-PI (only works for 2-dimensional datasets)
-	(2). HD-PI (sampling and accurate)
-	(3). RH
-2. Directory "ExistingAlg", which contains the source codes of the baselines
-	(1). Active-Ranking
-	(2). Preference-Learning
-	(3). Median (only works for 2-dimensional datasets)
-	(4). Median-Adapt (only works for 2-dimensional datasets)
-	(5). Hull (only works for 2-dimensional datasets)
-	(6). Hull-Adapt (only works for 2-dimensional datasets)
-	(7). UH-Simplex
-	(8). UH-Simplex-Adapt
-	(9). UH-Random
-	(10). UH-Random-Adapt
-	(11). UtilityApprox
-3. Directory "All_Top-k", which contains the source codes of the proposed algorithms for motivation study (return all the top-k points)
-	(1). HD-PI (AllTopK) (sampling and accurate)
-	(2). RH (AllTopK)
-4. Directory "User_study", which contains the source codes for user study
-	(1). UH-Simplex
-	(2). Preference-Learning
-	(3). RH
-	(4). UH-Random
+# Robust_Interact
+
+
+This package contains 2 directories: 
+1. Directory "Robust Interaction", which contains the source codes of the proposed algorithms
+
+	(1). *2RI* (only works for 2-dimensional datasets)
+  
+	(2). *Verify-Point* (can be found in PointPrune.cpp)
+  
+	(3). *Verify-Space* (can be found in SpacePrune.cpp)
+  
+      The baseline algorithms can also be found in this directory
+
+2. Directory "RI_user_study", which contains the source codes for user study
+
+	(1). Verify-Point (ours)
+  
+	(2). Verify-Space (ours)
+  
+	(3). Preference-Learning
+  
+	(4). HDPI
+  
 	(5). Active-Ranking
-	(6). HDPI (sampling and accurate)
-5. Directory "User_study(motivation)", which contains the source codes for user study (for motivation)
-	(1). RH (SomeTopK) (returning k' out of top-k points, where k'<=k)
-	(2). HDPI (sampling and accurate) (SomeTopK) (returning k' out of top-k points, where k'<=k)
+  
+	(6). UH-Simplex
+
+
+Part of the code of *Verify-Space* is based on `volesti` https://github.com/GeomScale/volesti.
+
+The code requires `glpk` and `lp-solve` to run.
+
+If you are using ubuntu, you can run the following command to install `glpk` and `lp-solve`.
+
+```
+sudo apt-get install libglpk-dev
+sudo apt-get install lp-solve
+```
+
+To compile the code, clone it to your local machine and direct to `Code/Experiments` or `Code/RI_user_study`, then run the following.
+
+```
+mkdir output
+mkdir build
+cd build
+cmake ..
+make
+```
