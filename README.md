@@ -10,7 +10,7 @@ This package contains 2 directories:
   
 	(3). *Verify-Space* (can be found in SpacePrune.cpp)
   
-      The baseline algorithms can also be found in this directory
+      The baseline algorithms can also be found in this directory.
 
 2. Directory "RI_user_study", which contains the source codes for user study
 
