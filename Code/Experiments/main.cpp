@@ -99,10 +99,11 @@ int main(int argc, char *argv[]){
     int RH_count = 0;
 
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P0 = read_points((char*)"4d100.txt");
+    point_set_t *P0 = read_points((char*)"6d.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh;
     skyband(P0, p_set, 1);
+    printf("%d\n", p_set.size());
     find_top1(p_set, top);
     skyline_c(top, p_convh); //p_convh contains all the top-1 point on the convex hull
     // look for the ground truth top-k point
@@ -113,7 +114,8 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
-    int num_repeat = 50;
+    int num_repeat = 1;
+    float avg_time;
 
 
     for(int i=0; i<num_repeat; i++){
@@ -173,48 +175,53 @@ int main(int argc, char *argv[]){
         
         }
 
-        //Algorithm HDPI_accurate
-        HD_a += HDPI_accurate(p_set, u, theta);
-        HD_a_rr += rr_ratio;
-        HD_a_count += top_1_found;
+        // //Algorithm HDPI_accurate
+        // HD_a += HDPI_accurate(p_set, u, theta);
+        // HD_a_rr += rr_ratio;
+        // HD_a_count += top_1_found;
+
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
         //Algorithm PointPrune_v2 
         PP_2 += PointPrune_v2(p_set, u, checknum, theta);
         PP_2_rr += rr_ratio;
         PP_2_count += top_1_found;
 
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-        // Algorithm SamplePrune 
-        SP += SamplePrune(p_set, u, checknum, theta);
-        SP_rr += rr_ratio;
-        SP_count += top_1_found;
+        avg_time = ((float) std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count())/PP_2;
 
-        // the UH-Simplex algorithm
-        int s = 2, cmp_option = SIMPLEX;
-        int prune_option = RTREE, dom_option = HYPER_PLANE, stop_option = EXACT_BOUND;
-        UH += max_utility(P, u, s, epsilon, maxRound, cmp_option, stop_option, prune_option, dom_option, theta);
-        UH_rr += rr_ratio;
-        UH_count += top_1_found;
+        // // Algorithm SamplePrune 
+        // SP += SamplePrune(p_set, u, checknum, theta);
+        // SP_rr += rr_ratio;
+        // SP_count += top_1_found;
 
-        // Algorithm UtilityApprox
-        UA += utilityapprox(P, u , 2, epsilon, 100, theta);
-        UA_rr += rr_ratio;
-        UA_count += top_1_found;
+        // // the UH-Simplex algorithm
+        // int s = 2, cmp_option = SIMPLEX;
+        // int prune_option = RTREE, dom_option = HYPER_PLANE, stop_option = EXACT_BOUND;
+        // UH += max_utility(P, u, s, epsilon, maxRound, cmp_option, stop_option, prune_option, dom_option, theta);
+        // UH_rr += rr_ratio;
+        // UH_count += top_1_found;
 
-        // Algorithm Preference_learning
-        PL += Preference_Learning_accuracy(p_set, u, theta);
-        PL_rr += rr_ratio;
-        PL_count += top_1_found;
+        // // Algorithm UtilityApprox
+        // UA += utilityapprox(P, u , 2, epsilon, 100, theta);
+        // UA_rr += rr_ratio;
+        // UA_count += top_1_found;
 
-        // Algorithm Active_Ranking
-        AR += Active_Ranking(p_set, u, theta);
-        AR_rr += rr_ratio;
-        AR_count += top_1_found;
+        // // Algorithm Preference_learning
+        // PL += Preference_Learning_accuracy(p_set, u, theta);
+        // PL_rr += rr_ratio;
+        // PL_count += top_1_found;
 
-        // Algorithm RH
-        RH += Random_half(p_set, u, theta);
-        RH_rr += rr_ratio;
-        RH_count += top_1_found;
+        // // Algorithm Active_Ranking
+        // AR += Active_Ranking(p_set, u, theta);
+        // AR_rr += rr_ratio;
+        // AR_count += top_1_found;
+
+        // // Algorithm RH
+        // RH += Random_half(p_set, u, theta);
+        // RH_rr += rr_ratio;
+        // RH_count += top_1_found;
 
 
     }
@@ -235,6 +242,8 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "RH", RH/num_repeat, RH_rr/num_repeat, ((double)RH_count)/num_repeat);
 
+
+    printf("%f\n", avg_time);
     release_point_set(P, true);
     return 0;
 
