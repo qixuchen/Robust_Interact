@@ -31,6 +31,7 @@ extern int num_wrong_answer;
 extern double top_1_score;
 extern double rr_ratio;
 extern int top_1_found;
+extern int top_k_correct;
 
 extern int i1_p1;
 extern int i1_p2;
@@ -43,3 +44,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
 
 
 int SamplePrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int output_size);
+
+
+int SamplePrune_alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int output_size, std::vector<point_t *> ground_truth);
