@@ -9,6 +9,7 @@
 #include "Median_Hull/medianhull.h"
 #include "HDPI/HDPI.h"
 #include "PointPrune.h"
+#include "PointPrune_qtype.h"
 #include "SamplePrune.h"
 #include "UtilityApprox/UtilityApprox.h"
 #include "Preference_Learning/preferLearn.h"
@@ -27,6 +28,7 @@ int num_questions=0;
 double top_1_score = 0;
 double rr_ratio=0;
 int top_1_found=0;
+int top_k_correct=0;
 
 int i1_p1;
 int i1_p2;
@@ -98,14 +100,14 @@ int main(int argc, char *argv[]){
     double RH_rr= 0 ;
     int RH_count = 0;
 
-    int output_size=20;
+    int output_size=5;
 
     srand(time(0));  // Initialize random number generator.
     point_set_t *P0 = read_points((char*)"4d1k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh;
     skyband(P0, p_set, 1);
-    printf("%d\n", p_set.size());
+
     // find_top1(p_set, top);
     // skyline_c(top, p_convh); //p_convh contains all the top-1 point on the convex hull
     // // look for the ground truth top-k point
@@ -116,6 +118,7 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
+    int point_num = 9;
     float avg_time;
 
     int num_repeat = 1;
@@ -132,16 +135,22 @@ int main(int argc, char *argv[]){
             u->coord[i] = u->coord[i]/sum;
         }
 
-        u->coord[0]=0.099655;
-        u->coord[1]=0.332492;
-        u->coord[2]=0.227555;
-        u->coord[3]=0.340296;
 
-        find_top_k(u, P0, top_current, 2);
+        // find_top_k(u, P0, top_current, 2);
+        // printf("---------------------------------------------------------\n");
+        // printf("|%30s |%10s |%10s |\n", "Ground Truth", "--", "--");
+        // printf("|%30s |%8s%2d |%10d |\n", "Point", "top -", 1, top_current[0]->id);
+        // printf("---------------------------------------------------------\n");
+        top_current.clear();
+        find_top_k(u, P0, top_current, output_size);
         printf("---------------------------------------------------------\n");
         printf("|%30s |%10s |%10s |\n", "Ground Truth", "--", "--");
-        printf("|%30s |%8s%2d |%10d |\n", "Point", "top -", 1, top_current[0]->id);
+        for(int i = 0; i < top_current.size(); i++){
+            printf("|%30s |%8s%2d |%10d |\n", "Point", "top -", i+1, top_current[i]->id);
+        }
         printf("---------------------------------------------------------\n");
+
+        std::vector<point_t *> ground_truth = top_current;
 
         top_1_score = dot_prod(u,top_current[0]);
         double top_2_score = dot_prod(u,top_current[1]);
@@ -161,16 +170,16 @@ int main(int argc, char *argv[]){
         // PP_2_rr += rr_ratio;
         // PP_2_count += top_1_found;
 
-        //Algorithm PointPrune_v2 
-        PP_2 += PointPrune_Alltopk_V3(p_set, u, checknum, theta, output_size);
+        // //Algorithm PointPrune_v2 
+        PP_2 += PointPrune_morethan2points(p_set, u, checknum, theta, point_num);
         PP_2_rr += rr_ratio;
         PP_2_count += top_1_found;
 
     
-        // // Algorithm SamplePrune 
-        // SP += SamplePrune_containTop1(p_set, u, checknum, theta,output_size);
+        // Algorithm SamplePrune 
+        // SP +=   SamplePrune_alltopk(p_set, u, checknum, theta, output_size, ground_truth);
         // SP_rr += rr_ratio;
-        // SP_count += top_1_found;
+        // SP_count += top_k_correct;
 
         // // the UH-Simplex algorithm
         // int s = 2, cmp_option = SIMPLEX;

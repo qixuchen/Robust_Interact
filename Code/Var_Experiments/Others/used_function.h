@@ -1,7 +1,3 @@
-#define Beta 0.01
-#define Precision 0.0000015
-#define RandRate 0.5
-
 #include "../Others/data_utility.h"
 #include "../Others/data_struct.h"
 #include "read_write.h"
@@ -11,6 +7,11 @@
 #include <vector>
 #include <ctime>
 #include <math.h>
+
+#define Beta 0.01
+#define Precision 0.0000015
+#define RandRate 0.5
+;
 
 bool is_same_point(point_t* p1, point_t* p2);
 

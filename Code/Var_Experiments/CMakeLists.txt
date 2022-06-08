@@ -104,6 +104,9 @@ else ()
         SamplePrune.cpp
         SamplePrune.h
 
+        PointPrune_qtype.cpp
+        PointPrune_qtype.h
+
         UtilityApprox/UtilityApprox.cpp
         UtilityApprox/UtilityApprox.h
         Preference_Learning/preferLearn.cpp
