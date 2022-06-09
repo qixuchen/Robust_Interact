@@ -10,7 +10,13 @@ bool sort_by_descend_score(std::pair<int, double> i, std::pair<int, double> j){
     return i.second > j.second;
 }
 
-
+/**
+ * @brief check if the returned set contains identical points.
+ * 
+ * @param point_set 
+ * @return true 
+ * @return false 
+ */
 bool contain_same_point(std::vector<point_t *> point_set){
     int size = point_set.size();
     for(int i=0; i<size; i++){
@@ -23,6 +29,50 @@ bool contain_same_point(std::vector<point_t *> point_set){
     return false;
 }
 
+
+/**
+ * @brief user choose one point from the displayed points.
+ * 
+ * @param u             the utiliy vector
+ * @param point_set     the set of displayed point
+ * @return int     the idx of the point chosen by the user
+ */
+int user_choose_point(point_t* u, std::vector<point_t *> point_set){
+    double max_util = -1;
+    int max_ind = -1;
+    int size = point_set.size();
+    for(int i=0; i<size; i++){
+        double cur_util = dot_prod(u, point_set[i]);
+        if(cur_util > max_util){
+            max_util = cur_util;
+            max_ind = i;
+        }
+    }
+    return max_ind;
+}
+
+/**
+ * @brief   Check if hp is a valid hyperplan in choose_item_set.
+ *          If yes, return the index in choose_item_set.
+ *          If not, return -1
+ * 
+ * @param choose_item_set 
+ * @param hp 
+ * @return int 
+ */
+int check_hyperplane_validity(std::vector<choose_item*> choose_item_set, hyperplane_t *hp){
+    int idx = -1;
+    int size = choose_item_set.size();
+    for(int i=0; i<size; i++){
+        if(is_same_hyperplane(hp, choose_item_set[i]->hyper)){
+            idx = i;
+            break;
+        }
+    }
+    return idx;
+}
+
+
 bool choose_k_best_item(std::vector<choose_item*> choose_item_set, std::vector<point_t *> &chosen_point_set, int k){
     
     std::vector< std::pair<int,double> > chosen_hyper_idx_score;
@@ -34,7 +84,7 @@ bool choose_k_best_item(std::vector<choose_item*> choose_item_set, std::vector<p
 
 
     int item_count = 0;                         //the index for scanning the choose_item_set
-    int ES_h = -1000;                           //Even score
+    double ES_h = -1000;                           //Even score
 
     while(item_count < choose_item_set.size())
     {
@@ -73,17 +123,12 @@ bool choose_k_best_item(std::vector<choose_item*> choose_item_set, std::vector<p
         }
     }
 
-    // After find out k best hyperplanes, we return k points associated to them
-    // first, put the two points related to the best hyperplane in the return set
-    int hyper_idx = chosen_hyper_idx_score[0].first;
-    chosen_point_set.push_back(choose_item_set[hyper_idx]->hyper->point1);
-    chosen_point_set.push_back(choose_item_set[hyper_idx]->hyper->point2);
-    
+    ES_h = chosen_hyper_idx_score[0].second; //debug purpose
+
     point_t *cur_point = NULL;
     bool same_point = false;
-
-    for(int i=1; i<chosen_hyper_idx_score.size(); i++){
-        hyper_idx = chosen_hyper_idx_score[i].first;
+    for(int i=0; i<chosen_hyper_idx_score.size(); i++){
+        int hyper_idx = chosen_hyper_idx_score[i].first;
         if(hyper_idx==-1) break;
         // point 1
         same_point = false;
@@ -182,47 +227,47 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
         iter_num++;
         int cur_quest_num = num_questions;
 
+        point_t *p1, *p2, *user_choice;
+
+
+        // //start of phase 1
+        // //==========================================================================================================================================
         point_result = NULL;
-        //index: the index of the chosen hyperplane(question)
-        //p1:    the first point
-        //p2:    the second point
-        int index = choose_best_item(choose_item_set);
-
-        point_t* p1 = choose_item_set[index]->hyper->point1;
-        point_t* p2 = choose_item_set[index]->hyper->point2;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
-
-
-
-        //start of phase 1
-        //==========================================================================================================================================
-
         while (point_result==NULL)
         {
-            if (user_choice==p1)
-            {
-                hy = alloc_halfspace(p2, p1, 0, true);
-                index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, true);
-            }
-            else
-            {
-                hy = alloc_halfspace(p1, p2, 0, true);
-                index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
-            }
-            p1 = choose_item_set[index]->hyper->point1;
-            p2 = choose_item_set[index]->hyper->point2;
-            user_choice = user_rand_err(u,p1,p2,theta);
+            //IMPORTANT : check this in case of counting more question than necessary!!
+            num_questions++;
+            std::vector<point_t *> displayed_point_set;
+            choose_k_best_item(choose_item_set, displayed_point_set, point_num);
+            int idx = user_choose_point(u, displayed_point_set);
+            point_t *p_chosen = displayed_point_set[idx];
+            //displayed_point_set.erase(displayed_point_set.begin() + idx);
 
-            std::vector<point_t *> chosen_point_set;
+            for(int j = 0; j < displayed_point_set.size(); j++){
+                hyperplane_t *hp = alloc_hyperplane(p_chosen, displayed_point_set[j], 0);
+                int index = check_hyperplane_validity(choose_item_set, hp);
+                if(index < 0){
+                    continue;
+                }
+                
+                hy = alloc_halfspace(displayed_point_set[j], p_chosen, 0, true);
+                if(is_same_point(p_chosen, choose_item_set[index]->hyper->point1)){
+                    modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, true);
+                }
+                else if(is_same_point(p_chosen, choose_item_set[index]->hyper->point2)){
+                    modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
+                }
+                else{
+                    printf("UNEXPECTED\n");
+                }
+                R_half_set->halfspaces.push_back(hy);
+                halfspace_t *hy2 = deepcopy_halfspace(hy);
+                selected_halfspaces.push_back(hy2);
 
-            choose_k_best_item(choose_item_set, chosen_point_set, point_num);
+                get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+            }
 
             //Find whether there exist point which is the topk point w.r.t any u in R
-            R_half_set->halfspaces.push_back(hy);
-            halfspace_t *hy2 = deepcopy_halfspace(hy);
-            selected_halfspaces.push_back(hy2);
-
-            get_extreme_pts_refine_halfspaces_alg1(R_half_set);
             std::vector<point_t *> top_current;
             point_result = NULL;
             bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
@@ -234,19 +279,65 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
         }
-
-        if(iter_num==1){
-            i1_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p1 += num_questions-cur_quest_num;
-        }
         //=================================================================================================================================
         //End of phase 1
 
+
+        // int index = choose_best_item(choose_item_set);
+
+        // point_t* p1 = choose_item_set[index]->hyper->point1;
+        // point_t* p2 = choose_item_set[index]->hyper->point2;
+        // point_t* user_choice = user_rand_err(u,p1,p2,theta);
+
+
+
+        // //start of phase 1
+        // //==========================================================================================================================================
+
+        // while (point_result==NULL)
+        // {
+        //     std::vector<point_t *> displayed_point_set;
+        //     choose_k_best_item(choose_item_set, displayed_point_set, point_num, p1, p2);
+        //     int idx = user_choose_point(u, displayed_point_set);
+        //     point_t *p_chosen = displayed_point_set[idx];
+        //     displayed_point_set.erase(displayed_point_set.begin() + idx);
+        //     halfspace_t* hy_k = alloc_halfspace(displayed_point_set[0], p_chosen, 0, true);
+
+
+        //     if (user_choice==p1)
+        //     {
+        //         hy = alloc_halfspace(p2, p1, 0, true);
+        //         index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, true);
+        //     }
+        //     else
+        //     {
+        //         hy = alloc_halfspace(p1, p2, 0, true);
+        //         index = modify_choose_item_table(choose_item_set, half_set_set, considered_half_set, index, false);
+        //     }
+
+        //     bool res = is_same_halfspace(hy, hy_k);
+
+        //     p1 = choose_item_set[index]->hyper->point1;
+        //     p2 = choose_item_set[index]->hyper->point2;
+        //     user_choice = user_rand_err(u,p1,p2,theta);
+
+        //     //Find whether there exist point which is the topk point w.r.t any u in R
+        //     R_half_set->halfspaces.push_back(hy);
+        //     halfspace_t *hy2 = deepcopy_halfspace(hy);
+        //     selected_halfspaces.push_back(hy2);
+
+        //     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
+        //     std::vector<point_t *> top_current;
+        //     point_result = NULL;
+        //     bool check_result = find_possible_topk(p_set, R_half_set, k, top_current);
+        //     if (check_result)
+        //     {
+        //         point_result = check_possible_topk(p_set, R_half_set, k, top_current);
+        //     }
+        //     else if(considered_half_set.size() == 1){
+        //         point_result=half_set_set[considered_half_set[0]]->represent_point[0];
+        //     }
+        // }
 
         //start of phase 2
         //==========================================================================================================================================

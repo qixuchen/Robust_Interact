@@ -566,7 +566,7 @@ int modify_choose_item_table(std::vector<choose_item *> &choose_item_set,
     choose_item_set.erase(choose_item_set.begin() + H_num);
 
     int item_count = 0;                         //the index for scanning the choose_item_set
-    int ES_h = -1000;                           //Even score
+    double ES_h = -1000;                           //Even score
     int num_hyperplane = 0;                     //index of the chosen hyperplane(question)
     int choose_size = choose_item_set.size();   //the original size of the choose_item_set
     for (int i = 0; i < choose_size; i++)
@@ -609,7 +609,7 @@ int modify_choose_item_table(std::vector<choose_item *> &choose_item_set,
 
 int choose_best_item(std::vector<choose_item*> choose_item_set){
     int item_count = 0;                         //the index for scanning the choose_item_set
-    int ES_h = -1000;                           //Even score
+    double ES_h = -1000;                           //Even score
     int num_hyperplane = 0;                     //index of the chosen hyperplane(question)
     int choose_size = choose_item_set.size();   //the original size of the choose_item_set
     for (int i = 0; i < choose_size; i++)

@@ -118,7 +118,7 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
-    int point_num = 9;
+    int point_num = 4;
     float avg_time;
 
     int num_repeat = 1;
@@ -134,7 +134,6 @@ int main(int argc, char *argv[]){
         for (int i = 0; i < dim; i++){
             u->coord[i] = u->coord[i]/sum;
         }
-
 
         // find_top_k(u, P0, top_current, 2);
         // printf("---------------------------------------------------------\n");
