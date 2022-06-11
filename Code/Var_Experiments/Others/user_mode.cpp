@@ -45,6 +45,36 @@ point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
 
 }
 
+
+/**
+ * @brief User choose his favorite point from a set of points. Choose the wrong point with prob. err_rate.
+ * 
+ * @param u 
+ * @param point_set 
+ * @param err_rate 
+ * @return int          The index of the selected point(wrong with some prob.)
+ */
+int user_rand_err_k_points(point_t* u, std::vector<point_t *> point_set, double err_rate){
+    double max_util = -1;
+    int max_ind = -1;
+    int size = point_set.size();
+    for(int i=0; i<size; i++){
+        double cur_util = dot_prod(u, point_set[i]);
+        if(cur_util > max_util){
+            max_util = cur_util;
+            max_ind = i;
+        }
+    }
+    if((double) rand()/RAND_MAX < err_rate){ //user answer wrongly
+        int return_indx = rand()%(size-1);
+        if(return_indx==max_ind){
+            return_indx = size -1;
+        }
+        return return_indx;
+    }
+    return max_ind;
+}
+
 /**
  * @brief               Find out which point is more prefered using majority vote
  *                      p1 is preferred to p2 in user's first answer

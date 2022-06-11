@@ -23,3 +23,6 @@ extern int i3_p2;
 int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num);
 
 
+int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num);
+
+

@@ -116,12 +116,12 @@ int main(int argc, char *argv[]){
      // generate the utility vector
     point_t *u = alloc_point(dim);
 
-    double theta=0.05;
+    double theta=0;
     int checknum=3;
     int point_num = 4;
     float avg_time;
 
-    int num_repeat = 1;
+    int num_repeat = 20;
 
 
     for(int i=0; i<num_repeat; i++){
@@ -170,7 +170,7 @@ int main(int argc, char *argv[]){
         // PP_2_count += top_1_found;
 
         // //Algorithm PointPrune_v2 
-        PP_2 += PointPrune_morethan2points(p_set, u, checknum, theta, point_num);
+        PP_2 += PointPrune_desired_undesired(p_set, u, checknum, theta, point_num);
         PP_2_rr += rr_ratio;
         PP_2_count += top_1_found;
 
