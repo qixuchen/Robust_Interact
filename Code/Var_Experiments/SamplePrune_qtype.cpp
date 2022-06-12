@@ -1,10 +1,10 @@
-#include "PointPrune.h"
-#include "PointPrune_qtype.h"
+#include "SamplePrune.h"
+#include "SamplePrune_qtype.h"
 #include <sys/time.h>
 
 
 
-int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num)
+int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num)
 {
     int k = 1;
 
@@ -21,6 +21,10 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
     i2_p2 = 0;
     i3_p1 = 0;
     i3_p2 = 0;
+
+    int num_points=160;
+    std::vector<std::vector<double>> randPoints;
+    std::vector<double> shift_point;
 
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -116,38 +120,70 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
         //=================================================================================================================================
         //End of phase 1
 
+
+
+        //=================================================================================================================================
+        //Start of phase 2
         cur_quest_num = num_questions;
 
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
-            // IMPORTANT: The order of point recorded in choose_item does not imply user preference
-            // The user preference is indicated in selected_halfspaces: p2 > p1
+            double prune_ratio=0;
+            randPoints.clear();
+            shift_point.clear();
+            polytope_sampling(R_half_set_cp, num_points, randPoints, shift_point);
+
+
             point_t *best_p1=NULL, *best_p2=NULL;
-            double ratio=0;
-            int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces, best_p1, best_p2, ratio);
+            halfspace_t *best_hs = find_best_halfspace(selected_halfspaces, randPoints,shift_point, prune_ratio);
+            best_p1 = best_hs->point1;
+            best_p2 = best_hs->point2;
+
+            //find the corresponding hyperplane index in choose_item_set_cp
+            int item_size = choose_item_set_cp.size();
+            int best_index=-1;
+            for(int j=0;j<item_size;j++){
+                hyperplane_t* h= alloc_hyperplane(best_hs->normal, best_hs->offset);
+                if(is_same_hyperplane(h,choose_item_set_cp[j]->hyper)){
+                    best_index=j;
+                    release_hyperplane(h);
+                    break;
+                }
+                release_hyperplane(h);
+            }
+
+            if(best_index<0){
+                printf("Cannot find the best index\n");
+                return -1;
+            }
+
+            point_t *p1, *p2, *user_choice;
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
-            
+
             double skip_rate = 0.2;
+            //printf("%10f\n",ratio);
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
                 user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(u,p1,p2,theta,checknum, skip_rate);
+                user_choice = checking_varyk(u,p1,p2,theta,checknum,skip_rate);
             }
-            //printf("ratio %10f\n",ratio);
             if(user_choice!=best_p2){
                 encounter_err = true;
             }
-            if(encounter_err==true && ratio<0.15){
+            if(encounter_err==true && prune_ratio<0.2){
                 //printf("enc err\n");
                 end_premature=true;
             }
+            
+            halfspace_t *hy_cp=NULL;
 
             if (user_choice==p1)
             {
+                //encounter_err = true;
                 hy_cp = alloc_halfspace(p2, p1, 0, true);
                 best_index=modify_choose_item_table(choose_item_set_cp, half_set_set_cp, considered_half_set_cp, best_index, true);
             }
@@ -185,7 +221,7 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
 
             if(end_premature){
 
-                // printf("end premature\n");
+                //printf("end premature\n");
                 break;
             }
         }
@@ -256,7 +292,7 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
@@ -272,7 +308,7 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
 
 
 
-int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num)
+int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num)
 {
     int k = 1;
 
@@ -289,6 +325,10 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
     i2_p2 = 0;
     i3_p1 = 0;
     i3_p2 = 0;
+
+    int num_points=160;
+    std::vector<std::vector<double>> randPoints;
+    std::vector<double> shift_point;
 
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -387,38 +427,70 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
         //=================================================================================================================================
         //End of phase 1
 
+        
+        //start of phase 2
+        //==========================================================================================================================================
+
         cur_quest_num = num_questions;
 
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
-            // IMPORTANT: The order of point recorded in choose_item does not imply user preference
-            // The user preference is indicated in selected_halfspaces: p2 > p1
+            double prune_ratio=0;
+            randPoints.clear();
+            shift_point.clear();
+            polytope_sampling(R_half_set_cp, num_points, randPoints, shift_point);
+
+
             point_t *best_p1=NULL, *best_p2=NULL;
-            double ratio=0;
-            int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces, best_p1, best_p2, ratio);
+            halfspace_t *best_hs = find_best_halfspace(selected_halfspaces, randPoints,shift_point, prune_ratio);
+            best_p1 = best_hs->point1;
+            best_p2 = best_hs->point2;
+
+            //find the corresponding hyperplane index in choose_item_set_cp
+            int item_size = choose_item_set_cp.size();
+            int best_index=-1;
+            for(int j=0;j<item_size;j++){
+                hyperplane_t* h= alloc_hyperplane(best_hs->normal, best_hs->offset);
+                if(is_same_hyperplane(h,choose_item_set_cp[j]->hyper)){
+                    best_index=j;
+                    release_hyperplane(h);
+                    break;
+                }
+                release_hyperplane(h);
+            }
+
+            if(best_index<0){
+                printf("Cannot find the best index\n");
+                return -1;
+            }
+
+            point_t *p1, *p2, *user_choice;
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
-            
+
             double skip_rate = 0.2;
+            //printf("%10f\n",ratio);
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
                 user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(u,p1,p2,theta,checknum, skip_rate);
+                user_choice = checking_varyk(u,p1,p2,theta,checknum,skip_rate);
             }
-            //printf("ratio %10f\n",ratio);
             if(user_choice!=best_p2){
                 encounter_err = true;
             }
-            if(encounter_err==true && ratio<0.15){
+            if(encounter_err==true && prune_ratio<0.2){
                 //printf("enc err\n");
                 end_premature=true;
             }
+            
+            halfspace_t *hy_cp=NULL;
 
             if (user_choice==p1)
             {
+                //encounter_err = true;
                 hy_cp = alloc_halfspace(p2, p1, 0, true);
                 best_index=modify_choose_item_table(choose_item_set_cp, half_set_set_cp, considered_half_set_cp, best_index, true);
             }
@@ -456,11 +528,10 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
 
             if(end_premature){
 
-                // printf("end premature\n");
+                //printf("end premature\n");
                 break;
             }
         }
-
         
         if(iter_num==1){
             i1_p2 += num_questions-cur_quest_num;

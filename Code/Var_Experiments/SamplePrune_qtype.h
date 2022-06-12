@@ -2,7 +2,7 @@
 #include "Others/user_mode.h"
 #include "./HDPI/partition_func.h"
 #include "UH/maxUtility.h"
-#include "./PointPrune.h"
+#include "./SamplePrune.h"
 #include "./variant_func.h"
 
 extern int num_questions;
@@ -21,9 +21,9 @@ extern int i3_p1;
 extern int i3_p2;
 
 
-int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num);
+int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num);
 
 
-int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num);
+int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int checknum, double theta, int point_num);
 
 

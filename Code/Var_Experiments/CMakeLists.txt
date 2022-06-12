@@ -106,6 +106,10 @@ else ()
 
         PointPrune_qtype.cpp
         PointPrune_qtype.h
+        SamplePrune_qtype.cpp
+        SamplePrune_qtype.h
+        variant_func.h
+        variant_func.cpp
 
         UtilityApprox/UtilityApprox.cpp
         UtilityApprox/UtilityApprox.h

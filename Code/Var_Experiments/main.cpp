@@ -10,6 +10,7 @@
 #include "HDPI/HDPI.h"
 #include "PointPrune.h"
 #include "PointPrune_qtype.h"
+#include "SamplePrune_qtype.h"
 #include "SamplePrune.h"
 #include "UtilityApprox/UtilityApprox.h"
 #include "Preference_Learning/preferLearn.h"
@@ -169,16 +170,16 @@ int main(int argc, char *argv[]){
         // PP_2_rr += rr_ratio;
         // PP_2_count += top_1_found;
 
-        // //Algorithm PointPrune_v2 
-        PP_2 += PointPrune_desired_undesired(p_set, u, checknum, theta, point_num);
-        PP_2_rr += rr_ratio;
-        PP_2_count += top_1_found;
+        // // //Algorithm PointPrune_v2 
+        // PP_2 += PointPrune_desired_undesired(p_set, u, checknum, theta, point_num);
+        // PP_2_rr += rr_ratio;
+        // PP_2_count += top_1_found;
 
     
-        // Algorithm SamplePrune 
-        // SP +=   SamplePrune_alltopk(p_set, u, checknum, theta, output_size, ground_truth);
-        // SP_rr += rr_ratio;
-        // SP_count += top_k_correct;
+        //Algorithm SamplePrune 
+        SP +=   SamplePrune_desired_undesired(p_set, u, checknum, theta, point_num);
+        SP_rr += rr_ratio;
+        SP_count += top_1_found;
 
         // // the UH-Simplex algorithm
         // int s = 2, cmp_option = SIMPLEX;
