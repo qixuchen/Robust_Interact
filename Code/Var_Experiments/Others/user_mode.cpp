@@ -1,7 +1,9 @@
 #include "user_mode.h"
 
 
-
+bool sort_desc_score(std::pair<int, double> i, std::pair<int, double> j){
+    return i.second > j.second;
+}
 
 /**
  * @brief The user makes random error and returns less favored point with probability err_rate
@@ -74,6 +76,53 @@ int user_rand_err_k_points(point_t* u, std::vector<point_t *> point_set, double 
     }
     return max_ind;
 }
+
+
+
+
+/**
+ * @brief user partition the points into desired group and undesired group
+ * 
+ * @param u             the utiliy vector
+ * @param point_set     the set of displayed point
+ * @param desired       the set containing all desried points
+ * @param undesired     the set containing all undesried points
+ * @return int     the idx of the point chosen by the user
+ */
+void user_rand_err_choose_desired_undesired(point_t* u, std::vector<point_t *> point_set, std::vector<point_t *> & desired, std::vector<point_t *> & undesired, double err_rate){
+
+    std::vector< std::pair<int,double> > point_idx_util_pair;
+    int size = point_set.size();
+    if(size < 2){
+        printf("Only 1 point is displayed ! \n");
+        return;
+    }
+    for(int i=0; i<size; i++){
+        point_idx_util_pair.push_back(std::make_pair(i, dot_prod(u, point_set[i])));
+    }
+    std::sort(point_idx_util_pair.begin(), point_idx_util_pair.end(), sort_desc_score);
+
+    int part_ind = rand() % (size-1) + 1;
+
+    for(int i = 0; i < part_ind; i++){
+        if((double) rand()/RAND_MAX < err_rate){ //user answer wrongly
+            undesired.push_back(point_set[point_idx_util_pair[i].first]);
+        }
+        else{
+            desired.push_back(point_set[point_idx_util_pair[i].first]);
+        }
+    }
+
+    for(int i = part_ind; i < size; i++){
+        if((double) rand()/RAND_MAX < err_rate){ //user answer wrongly
+            desired.push_back(point_set[point_idx_util_pair[i].first]);
+        }
+        else{
+            undesired.push_back(point_set[point_idx_util_pair[i].first]);
+        }
+    }
+}
+
 
 /**
  * @brief               Find out which point is more prefered using majority vote

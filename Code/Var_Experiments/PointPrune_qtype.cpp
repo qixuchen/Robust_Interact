@@ -74,7 +74,7 @@ void user_choose_desired_undesired(point_t* u, std::vector<point_t *> point_set,
     }
     std::sort(point_idx_util_pair.begin(), point_idx_util_pair.end(), sort_by_descend_score);
 
-    int part_ind = rand() % (size-2) + 1;
+    int part_ind = rand() % (size-1) + 1;
 
     for(int i = 0; i < part_ind; i++){
         desired.push_back(point_set[point_idx_util_pair[i].first]);
@@ -545,7 +545,8 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
             std::vector<point_t *> displayed_point_set;
             choose_k_best_item(choose_item_set, displayed_point_set, point_num);
             std::vector<point_t *> desired, undesired;
-            user_choose_desired_undesired(u, displayed_point_set, desired, undesired);
+            //user_choose_desired_undesired(u, displayed_point_set, desired, undesired);
+            user_rand_err_choose_desired_undesired(u, displayed_point_set, desired, undesired, theta);
 
             //displayed_point_set.erase(displayed_point_set.begin() + idx);
             for(int i = 0; i < desired.size(); i++){

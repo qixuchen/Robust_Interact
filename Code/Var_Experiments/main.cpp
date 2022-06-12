@@ -116,12 +116,12 @@ int main(int argc, char *argv[]){
      // generate the utility vector
     point_t *u = alloc_point(dim);
 
-    double theta=0;
+    double theta=0.05;
     int checknum=3;
-    int point_num = 4;
+    int point_num = 5;
     float avg_time;
 
-    int num_repeat = 20;
+    int num_repeat = 50;
 
 
     for(int i=0; i<num_repeat; i++){
