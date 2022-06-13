@@ -122,10 +122,11 @@ int main(int argc, char *argv[]){
     int point_num = 5;
     float avg_time;
 
-    int num_repeat = 50;
+    int num_repeat = 100;
 
 
     for(int i=0; i<num_repeat; i++){
+        printf("Round # %d\n", i);
         double sum = 0;
         for (int i = 0; i < dim; i++)
         {
@@ -160,9 +161,10 @@ int main(int argc, char *argv[]){
 
 
         // //Algorithm HDPI_accurate
-        // HD_a += HDPI_accurate(p_set, u, theta);
+        // // HD_a += HDPI_accurate(p_set, u, theta);
+        // HD_a += HDPI_accurate_Alltopk(p_set, u, theta, output_size, ground_truth);
         // HD_a_rr += rr_ratio;
-        // HD_a_count += top_1_found;
+        // HD_a_count += top_k_correct;
 
 
         // //Algorithm PointPrune_v2 
@@ -171,15 +173,15 @@ int main(int argc, char *argv[]){
         // PP_2_count += top_1_found;
 
         // // //Algorithm PointPrune_v2 
-        // PP_2 += PointPrune_desired_undesired(p_set, u, checknum, theta, point_num);
+        // PP_2 += PointPrune_Alltopk(p_set, u, checknum, theta, output_size, ground_truth);
         // PP_2_rr += rr_ratio;
-        // PP_2_count += top_1_found;
+        // PP_2_count += top_k_correct;
 
     
-        //Algorithm SamplePrune 
-        SP +=   SamplePrune_desired_undesired(p_set, u, checknum, theta, point_num);
-        SP_rr += rr_ratio;
-        SP_count += top_1_found;
+        // //Algorithm SamplePrune 
+        // SP +=   SamplePrune_desired_undesired(p_set, u, checknum, theta, point_num);
+        // SP_rr += rr_ratio;
+        // SP_count += top_1_found;
 
         // // the UH-Simplex algorithm
         // int s = 2, cmp_option = SIMPLEX;
@@ -194,19 +196,19 @@ int main(int argc, char *argv[]){
         // UA_count += top_1_found;
 
         // // Algorithm Preference_learning
-        // PL += Preference_Learning_accuracy(p_set, u, theta);
+        // PL += Preference_Learning_Alltopk(p_set, u, theta, output_size, ground_truth);
         // PL_rr += rr_ratio;
-        // PL_count += top_1_found;
+        // PL_count += top_k_correct;
 
         // // Algorithm Active_Ranking
-        // AR += Active_Ranking(p_set, u, theta);
+        // AR += Active_Ranking_Alltopk(p_set, u, theta, output_size, ground_truth);
         // AR_rr += rr_ratio;
-        // AR_count += top_1_found;
+        // AR_count += top_k_correct;
 
-        // // Algorithm RH
-        // RH += Random_half(p_set, u, theta);
-        // RH_rr += rr_ratio;
-        // RH_count += top_1_found;
+        // Algorithm RH
+        RH += Random_half_Alltopk(p_set, u, theta, output_size, ground_truth);
+        RH_rr += rr_ratio;
+        RH_count += top_k_correct;
 
 
     }

@@ -743,3 +743,174 @@ int Preference_Learning_accuracy(std::vector<point_t *> original_set, point_t *u
 
     return numOfQuestion;
 }
+
+
+
+
+int Preference_Learning_Alltopk(std::vector<point_t *> original_set, point_t *u, double theta, 
+                                int output_size, std::vector<point_t *> ground_truth)
+{
+    timeval t1, t2;
+    gettimeofday(&t1, 0);
+    int M;
+    //p_set: randomly choose 1000 points
+    std::vector<point_t *> p_set;
+    if (original_set.size() < 1000)
+    {
+        M = original_set.size();
+        for (int i = 0; i < M; i++)
+        {
+            bool is_same = false;
+            for (int j = 0; j < p_set.size(); j++)
+            {
+                if (is_same_point(p_set[j], original_set[i]))
+                {
+                    is_same = true;
+                    break;
+                }
+            }
+            if (!is_same)
+            {
+                p_set.push_back(original_set[i]);
+            }
+        }
+        point_random(p_set);
+    }
+    else
+    {
+        int cco = 0;
+        for (int i = 0; i < 1100; i++)
+        {
+            int ide = rand() % original_set.size();
+            bool is_same = false;
+            for (int j = 0; j < p_set.size(); j++)
+            {
+                if (is_same_point(p_set[j], original_set[ide]))
+                {
+                    is_same = true;
+                    break;
+                }
+            }
+            if (!is_same)
+            {
+                p_set.push_back(original_set[ide]);
+                cco++;
+                if (cco >= 1000)
+                {
+                    break;
+                }
+            }
+        }
+        //point_random(p_set);
+    }
+    int dim = p_set[0]->dim;
+    M = p_set.size();
+    double accuracy = 0, de_accuracy = 100;
+    int numOfQuestion = 0;
+
+    //the normal vectors
+    std::vector<point_t *> V;
+    for (int i = 0; i < dim; i++)
+    {
+        point_t *b = alloc_point(dim);
+        for (int j = 0; j < dim; j++)
+        {
+            if (i == j)
+            {
+                b->coord[j] = 1;
+            }
+            else
+            {
+                b->coord[j] = 0;
+            }
+        }
+        V.push_back(b);
+    }
+
+    //build a hyperplane for each pair of points
+    std::vector<hyperplane_t *> h_set;
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < M; j++)
+        {
+            if (i != j && !is_same_point(p_set[i], p_set[j]))
+            {
+                hyperplane_t *h1 = alloc_hyperplane(p_set[i], p_set[j], 0);
+                hyperplane_nomarlize(h1);
+                h_set.push_back(h1);
+                hyperplane_t *h2 = alloc_hyperplane(p_set[j], p_set[i], 0);
+                hyperplane_nomarlize(h2);
+                h_set.push_back(h2);
+            }
+        }
+    }
+
+    s_node_t *stree_root = alloc_s_node(dim);
+    build_spherical_tree(h_set, stree_root);
+
+    //initial
+    point_t *estimate_u = find_estimate(V);
+    point_nomarlize(estimate_u);
+
+    while (accuracy < 0.99999 && de_accuracy > 0)
+    {
+        numOfQuestion++;
+        hyperplane_t *best = NULL;
+        best = orthogonal_search(stree_root, estimate_u, best);
+        point_t *p = best->point1;
+        point_t *q = best->point2;
+        // double v1 = dot_prod(u, p);
+        // double v2 = dot_prod(u, q);
+        point_t *user_choice = user_rand_err(u, p, q, theta) == p ? p : q;
+        point_t *pt = alloc_point(dim);
+        if (user_choice==p)
+        {
+            for (int i = 0; i < dim; i++)
+            {
+                pt->coord[i] = best->normal->coord[i];
+            }
+        }
+        else
+        {
+            for (int i = 0; i < dim; i++)
+            {
+                pt->coord[i] = -best->normal->coord[i];
+            }
+        }
+        V.push_back(pt);
+        estimate_u = find_estimate(V);
+        for (int i = 0; i < dim; i++)
+        {
+            estimate_u->coord[i] = estimate_u->coord[i] < 0 ? 0 : estimate_u->coord[i];
+        }
+        point_nomarlize(estimate_u);
+        double ac = cosine0(u, estimate_u);
+        de_accuracy = fabs(ac - accuracy);
+        accuracy = ac;
+    }
+    //Find the top-k point based on estimated utility vector
+    std::vector<point_t *> top_current;
+    find_top_k(estimate_u, original_set, top_current, output_size);
+    release_point(estimate_u);
+    while(h_set.size()>0)
+    {
+        hyperplane_t *hh = h_set[h_set.size()-1];
+        release_hyperplane(hh);
+        h_set.pop_back();
+    }
+
+    printf("|%30s |%10d |%10s |\n", "Preference_Learning", numOfQuestion, "--");
+    for(int i = 0; i < output_size; ++i)
+        printf("|%30s |%10d |%10d |\n", "Point", i + 1, top_current[i]->id);
+    printf("---------------------------------------------------------\n");
+
+    top_k_correct=1;
+    for(int i = 0; i < output_size; i++){
+        if(top_current[i]->id != ground_truth[i]->id){
+            top_k_correct=0;
+            break;
+        }
+    }
+
+    return numOfQuestion;
+}

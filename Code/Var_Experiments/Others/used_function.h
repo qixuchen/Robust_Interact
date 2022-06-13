@@ -200,6 +200,19 @@ bool find_possible_topk(std::vector<point_t*> p_set, halfspace_set_t* half_set, 
  */
 void find_possible_top_k(std::vector<point_t *> &p_set, vector<point_t *> ext_pts, int k);
 
+
+/*
+ * @brief Find points which could be the top-k points for any utility vector in half_set
+ *        Not accurate. It needs to be used with function check_possible_top_k()
+ * @param p_set			The dataset
+ * @param half_set		The half_set/intersection of the halfspace
+ * @param top_current 	THe possible top-k points
+ * @return              If there are possible top-k points, return true.
+ *                      Otherwise return false
+ */
+bool find_possible_Alltopk(std::vector<point_t *> p_set, halfspace_set_t *half_set, int k,
+                             std::vector<point_t *> &top_current);
+                             
 /*
  * @brief Used to check whether there is a top-k points w.r.t any utility vector in half_set
  * @param p_set			The dataset containing all the points

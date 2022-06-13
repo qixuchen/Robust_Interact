@@ -16,7 +16,7 @@ void construct_halfspace_set(std::vector<point_t *> &p_set, std::vector<point_t 
     int M = p_set.size();
     if (M < 2)
     {
-        printf("%s\n", "Error: The number of points is smaller than 2.");
+        //printf("%s\n", "Error: The number of points is smaller than 2.");
         return;
     }
     int dim = p_set[0]->dim;
@@ -63,7 +63,7 @@ void construct_halfspace_set_with_copy(std::vector<point_t *> &p_set, std::vecto
     int M = p_set.size();
     if (M < 2)
     {
-        printf("%s\n", "Error: The number of points is smaller than 2.");
+        //printf("%s\n", "Error: The number of points is smaller than 2.");
         return;
     }
     int dim = p_set[0]->dim;
@@ -205,7 +205,7 @@ int build_choose_item_table(std::vector<halfspace_set_t *> half_set_set, std::ve
     int H_M = half_set_set.size(); //The number of halfspace sets
     if (M < 2)
     {
-        printf("%s\n", "Error: The number of points is smaller than 2.");
+        //printf("%s\n", "Error: The number of points is smaller than 2.");
         return -1;
     }
     if (H_M < 2)

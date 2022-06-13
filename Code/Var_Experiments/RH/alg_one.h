@@ -3,6 +3,7 @@
 extern double top_1_score;
 extern double rr_ratio;
 extern int top_1_found;
+extern int top_k_correct;
 
 /**
  * @brief Ask user question and find one of the top-k point
@@ -23,3 +24,6 @@ void Random_half_onion(point_set_t* original_set, point_t* u, int k);
  * @param k 				The threshold top-k
  */
 int Random_half(std::vector<point_t*> p_set, point_t* u, double theta);
+
+
+int Random_half_Alltopk(std::vector<point_t*> p_set, point_t* u, double theta, int output_size, std::vector<point_t*> ground_truth);

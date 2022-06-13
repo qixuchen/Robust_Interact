@@ -20,6 +20,7 @@ extern int num_wrong_answer;
 extern double top_1_score;
 extern double rr_ratio;
 extern int top_1_found;
+extern int top_k_correct;
 
 //@brief Used to find the estimated utility vector by max-min
 //@param V          All the hyperplanes which bounds the possible utility range
@@ -33,5 +34,6 @@ point_t* find_estimate(std::vector<point_t*> V);
 //@param k                  The threshold tok-k
 int Preference_Learning_accuracy(std::vector<point_t*> original_set, point_t* u, double theta);
 
-
+int Preference_Learning_Alltopk(std::vector<point_t *> original_set, point_t *u, double theta, 
+                                int output_size, std::vector<point_t *> ground_truth);
 #endif
