@@ -407,6 +407,114 @@ int max_utility(point_set_t *P, point_t *u, int s, double epsilon, int maxRound,
     return Qcount;
 }
 
+
+
+
+int max_utility_containtop1(point_set_t *P, point_t *u, int s, double epsilon, int maxRound,
+                int cmp_option, int stop_option, int prune_option, int dom_option, double theta, int output_size)
+{
+    //point_set_t *P = skyline_point(P0);
+    int dim = P->points[0]->dim;
+
+    // Qcount - the number of questions asked
+    // Csize - the size of the current candidate set
+    int Qcount = 0;
+    double rr = 1;
+    std::vector<point_t *> returned_set;
+
+    // the indexes of the candidate set
+    // record skyline points, used for selecting hyperplanes(questions)
+    vector<int> C_idx;
+    for (int i = 0; i < P->numberOfPoints; i++)
+        C_idx.push_back(i);
+
+    // the initial extreme vector sets V = {−ei | i ∈ [1, d], ei [i] = 1 and ei [j] = 0 if i , j}.
+    vector<point_t *> ext_vec, ext_pts;
+    for (int i = 0; i < dim; i++)
+    {
+        point_t *e = alloc_point(dim);
+        for (int j = 0; j < dim; j++)
+        {
+            if (i == j)
+            {
+                e->coord[j] = -1;
+            }
+            else
+            {
+                e->coord[j] = 0;
+            }
+        }
+        ext_vec.push_back(e);
+    }
+
+    int current_best_idx = -1;
+    int last_best = -1;
+    vector<int> frame;
+
+    // get the index of the "current best" point
+    current_best_idx = get_current_best_pt(P, C_idx, ext_vec);
+
+    // if not skyline
+    //sql_pruning(P, C_idx, ext_vec);
+    // interactively reduce the candidate set and shrink the candidate utility range
+    while (C_idx.size() > 1 && (rr > epsilon && !isZero(rr - epsilon)) && Qcount < maxRound)
+        // while none of the stopping condition is true
+    {
+        Qcount++;
+        //printf("Number of Question %d\n", Qcount);
+        sort(C_idx.begin(), C_idx.end()); // prevent select two different points after different skyline algorithms
+        // generate the options for user selection and update the extreme vectors based on the user feedback
+        update_ext_vec(P, C_idx, u, s, ext_vec, current_best_idx, last_best, frame, cmp_option, theta);
+        if (C_idx.size() <= output_size)
+        { // || global_best_idx == current_best_idx
+            break;
+        }
+        //update candidate set
+        if (prune_option == SQL)
+        {
+            sql_pruning(P, C_idx, ext_vec, rr, stop_option, dom_option);
+        }
+        else
+        {
+            rtree_pruning(P, C_idx, ext_vec, rr, stop_option, dom_option);
+        }
+    }
+
+    // get the final result
+    //point_t *result = P->points[get_current_best_pt(P, C_idx, ext_vec)];
+    for(int i = 0; i < C_idx.size(); i++){
+        returned_set.push_back(P->points[C_idx[i]]);
+    }
+
+    for (int i = 0; i < ext_vec.size(); i++)
+        release_point(ext_vec[i]);
+
+   if (cmp_option == RANDOM)
+    {
+        printf("|%30s |%10d |%10s |\n", "UH-RANDOM", Qcount, "--");
+    }
+    else
+    {
+        printf("|%30s |%10d |%10s |\n", "UH-SIMPLEX", Qcount, "--");
+    }
+    printf("|%30s |%10s |%10ld |\n", "# Point", "--", returned_set.size());
+    printf("---------------------------------------------------------\n");
+    
+    top_1_found=false;
+    for(int i=0; i<returned_set.size();i++){
+        rr_ratio = dot_prod(u, returned_set[i])/top_1_score;
+        if(rr_ratio>=1){
+            top_1_found=true;
+            break;
+        }
+    }
+
+    return Qcount;
+}
+
+
+
+
 /**
  * @brief The interactive algorithm UH-Random-Adapt.
  *        Find a points/return a point which satisfy the regret ratio

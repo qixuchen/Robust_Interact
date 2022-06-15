@@ -58,6 +58,11 @@ vector<int> generate_S(point_set_t* P, vector<int>& C_idx, int s, int current_be
  */
 int max_utility(point_set_t *original_P, point_t *u, int s, double epsilon, int maxRound,
                  int cmp_option, int stop_option, int prune_option, int dom_option, double theta);
+
+
+int max_utility_containtop1(point_set_t *P, point_t *u, int s, double epsilon, int maxRound,
+                int cmp_option, int stop_option, int prune_option, int dom_option, double theta, int output_size);
+
 /*
  * @brief The interactive algorithm UH-Random-Adapt.
  *        Find a points/return a point which satisfy the regret ratio
