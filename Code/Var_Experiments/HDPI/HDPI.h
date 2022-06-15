@@ -19,6 +19,7 @@ extern int top_k_correct;
  */
 int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta);
 
+int HDPI_accurate_containtop1(std::vector<point_t *> p_set, point_t *u, double theta, int output_size);
 
 /**
  * @brief Asking user question and return one of the top-k point
