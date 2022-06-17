@@ -49,65 +49,55 @@ double compute_std(int* round_array, int n){
 
 int main(int argc, char *argv[]){
 
-    double twoRI = 0;
-    double twoRI_rr = 0;
-    int twoRI_count = 0;
-    
-    double med = 0;
-    double med_rr = 0;
-    int med_count = 0;
-
-    double Hull = 0;
-    double Hull_rr = 0;
-    int Hull_count = 0;
-
-    double DPI = 0;
-    double DPI_rr = 0;
-    int DPI_count = 0;
-
-    double HD_s = 0;
-    double HD_s_rr = 0;
-    int HD_s_count = 0;
-
     double HD_a = 0;
     double HD_a_rr = 0;
     int HD_a_count = 0;
+    double HD_time = 0;
 
     double PP_2 = 0;
     double PP_2_rr = 0;
     int PP_2_count = 0;
+    double PP_time = 0;
 
     double SP = 0;
     double SP_rr = 0;
     int SP_count = 0;
+    double SP_time = 0;
 
     double UA = 0;
     double UA_rr = 0;
     int UA_count = 0;
+    double UA_time = 0;
     
     double UH = 0;
     double UH_rr = 0;
     int UH_count = 0;
+    double UH_time = 0;
 
     double PL = 0;
     double PL_rr = 0;
     int PL_count = 0;
+    double PL_time = 0;
 
     double AR = 0;
     double AR_rr = 0;
     int AR_count = 0;
+    double AR_time = 0;
 
     double RH = 0;
     double RH_rr= 0 ;
     int RH_count = 0;
+    double RH_time = 0;
 
-    int output_size=5;
+    int output_size = 5;
 
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P0 = read_points((char*)"4d1k.txt");
+    point_set_t *P0 = read_points((char*)"4d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh;
-    skyband(P0, p_set, 1);
+
+    // IMPORTANT: change output_size when finding topk
+    skyband(P0, p_set, output_size);
 
     // find_top1(p_set, top);
     // skyline_c(top, p_convh); //p_convh contains all the top-1 point on the convex hull
@@ -117,16 +107,17 @@ int main(int argc, char *argv[]){
      // generate the utility vector
     point_t *u = alloc_point(dim);
 
-    double theta=0.05;
+    double theta=0;
     int checknum=3;
-    int point_num = 5;
+    int point_num = 2;
     float avg_time;
 
-    int num_repeat = 100;
+    int num_repeat = 10;
 
+    timeval start, end;
 
     for(int i=0; i<num_repeat; i++){
-        printf("Round # %d\n", i);
+        printf("Round # %d\n", i+1);
         double sum = 0;
         for (int i = 0; i < dim; i++)
         {
@@ -160,74 +151,96 @@ int main(int argc, char *argv[]){
         int maxRound = 1000;
 
 
-        // //Algorithm HDPI_accurate
-        // // HD_a += HDPI_accurate(p_set, u, theta);
+        //Algorithm HDPI_accurate
+        // gettimeofday(&start, 0);
         // HD_a += HDPI_accurate_Alltopk(p_set, u, theta, output_size, ground_truth);
         // HD_a_rr += rr_ratio;
         // HD_a_count += top_k_correct;
+        // gettimeofday(&end, 0);
+        // HD_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
 
 
         // //Algorithm PointPrune_v2 
-        // PP_2 += PointPrune_v2(p_set, u, checknum, theta);
-        // PP_2_rr += rr_ratio;
-        // PP_2_count += top_1_found;
-
-        // // //Algorithm PointPrune_v2 
+        // gettimeofday(&start, 0);
         // PP_2 += PointPrune_Alltopk(p_set, u, checknum, theta, output_size, ground_truth);
         // PP_2_rr += rr_ratio;
         // PP_2_count += top_k_correct;
+        // gettimeofday(&end, 0);
+        // PP_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+
 
     
         // //Algorithm SamplePrune 
-        // SP +=   SamplePrune_desired_undesired(p_set, u, checknum, theta, point_num);
+        // gettimeofday(&start, 0);
+        // SP +=  SamplePrune_alltopk(p_set, u, checknum, theta, output_size, ground_truth);
         // SP_rr += rr_ratio;
-        // SP_count += top_1_found;
+        // SP_count += top_k_correct;
+        // gettimeofday(&end, 0);
+        // SP_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+
+
 
         // // the UH-Simplex algorithm
+        // gettimeofday(&start, 0);
         // int s = 2, cmp_option = SIMPLEX;
         // int prune_option = RTREE, dom_option = HYPER_PLANE, stop_option = EXACT_BOUND;
-        // UH += max_utility(P, u, s, epsilon, maxRound, cmp_option, stop_option, prune_option, dom_option, theta);
+        // UH += max_utility_containtop1(P, u, s, epsilon, maxRound, cmp_option, stop_option, prune_option, dom_option, theta, output_size);
         // UH_rr += rr_ratio;
         // UH_count += top_1_found;
+        // gettimeofday(&end, 0);
+        // UH_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+
 
         // // Algorithm UtilityApprox
+        // gettimeofday(&start, 0);
         // UA += utilityapprox(P, u , 2, epsilon, 100, theta);
         // UA_rr += rr_ratio;
         // UA_count += top_1_found;
+        // gettimeofday(&end, 0);
+        // UA_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+
 
         // // Algorithm Preference_learning
+        // gettimeofday(&start, 0);
         // PL += Preference_Learning_Alltopk(p_set, u, theta, output_size, ground_truth);
         // PL_rr += rr_ratio;
         // PL_count += top_k_correct;
+        // gettimeofday(&end, 0);
+        // PL_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+
 
         // // Algorithm Active_Ranking
-        // AR += Active_Ranking_Alltopk(p_set, u, theta, output_size, ground_truth);
-        // AR_rr += rr_ratio;
-        // AR_count += top_k_correct;
+        gettimeofday(&start, 0);
+        AR += Active_Ranking_Alltopk(p_set, u, theta, output_size, ground_truth);
+        AR_rr += rr_ratio;
+        AR_count += top_k_correct;
+        gettimeofday(&end, 0);
+        AR_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
 
-        // Algorithm RH
-        RH += Random_half_Alltopk(p_set, u, theta, output_size, ground_truth);
-        RH_rr += rr_ratio;
-        RH_count += top_k_correct;
+
+
+        // // Algorithm RH
+        // gettimeofday(&start, 0);
+        // RH += Random_half_Alltopk(p_set, u, theta, output_size, ground_truth);
+        // RH_rr += rr_ratio;
+        // RH_count += top_k_correct;
+        // gettimeofday(&end, 0);
+        // RH_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
 
 
     }
 
     
     printf("\nIn total\n");
-    printf("|%20s |%10s |%8s |%10s\n", "Alg", "# rounds", "rr", "found top1");
-    printf("|%20s |%10f |%8f |%8f\n", "2RI", twoRI/num_repeat, twoRI_rr/num_repeat, ((double)twoRI_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "2DPI", DPI/num_repeat, DPI_rr/num_repeat, ((double)DPI_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "Median", med/num_repeat, med_rr/num_repeat, ((double)med_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "Hull", Hull/num_repeat, Hull_rr/num_repeat, ((double)Hull_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "HDPI-Accurate", HD_a/num_repeat, HD_a_rr/num_repeat, ((double)HD_a_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "PointPrune_v2", PP_2/num_repeat, PP_2_rr/num_repeat, ((double)PP_2_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "SamplePrune", SP/num_repeat, SP_rr/num_repeat, ((double)SP_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "UtilityApprox", UA/num_repeat, UA_rr/num_repeat, ((double)UA_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "Preference_Learning", PL/num_repeat, PL_rr/num_repeat, ((double)PL_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
-    printf("|%20s |%10f |%8f |%8f\n", "RH", RH/num_repeat, RH_rr/num_repeat, ((double)RH_count)/num_repeat);
+    printf("|%20s |%10s |%8s |%10s |%8s\n", "Alg", "# rounds", "rr", "found top1", "time");
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "HDPI-Accurate", HD_a/num_repeat, HD_a_rr/num_repeat, ((double)HD_a_count)/num_repeat, HD_time/HD_a/1E6);
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "PointPrune_v2", PP_2/num_repeat, PP_2_rr/num_repeat, ((double)PP_2_count)/num_repeat, PP_time/PP_2/1E6);
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "SamplePrune", SP/num_repeat, SP_rr/num_repeat, ((double)SP_count)/num_repeat, SP_time/SP/1E6);
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "UtilityApprox", UA/num_repeat, UA_rr/num_repeat, ((double)UA_count)/num_repeat, UA_time/UA/1E6);
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "Preference_Learning", PL/num_repeat, PL_rr/num_repeat, ((double)PL_count)/num_repeat, PL_time/PL/1E6);
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat, AR_time/AR/1E6);
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat, UH_time/UH/1E6);
+    printf("|%20s |%10f |%8f |%10f |%8f\n", "RH", RH/num_repeat, RH_rr/num_repeat, ((double)RH_count)/num_repeat, RH_time/RH/1E6);
     
     release_point_set(P, true);
     return 0;

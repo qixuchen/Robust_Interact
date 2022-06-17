@@ -662,7 +662,7 @@ int PointPrune_Alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, d
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
-
+    top_k_correct=0;
     
     int iter_num = 0;
     double ratio=0;

@@ -69,8 +69,6 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
         point_result = NULL;
         while (point_result==NULL)
         {
-            //IMPORTANT : check this in case of counting more question than necessary!!
-            num_questions++;
             std::vector<point_t *> displayed_point_set;
             choose_k_best_item(choose_item_set, displayed_point_set, point_num);
             int idx = user_rand_err_k_points(u, displayed_point_set, theta);
@@ -128,7 +126,7 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
             
-            double skip_rate = 0.2;
+            double skip_rate = 0.1;
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
                 user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
@@ -141,7 +139,7 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
             if(user_choice!=best_p2){
                 encounter_err = true;
             }
-            if(encounter_err==true && ratio<0.15){
+            if(encounter_err==true && ratio<0.2){
                 //printf("enc err\n");
                 end_premature=true;
             }
@@ -337,8 +335,6 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
         point_result = NULL;
         while (point_result==NULL)
         {
-            //IMPORTANT : check this in case of counting more question than necessary!!
-            num_questions++;
             std::vector<point_t *> displayed_point_set;
             choose_k_best_item(choose_item_set, displayed_point_set, point_num);
             std::vector<point_t *> desired, undesired;
@@ -399,7 +395,7 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
             
-            double skip_rate = 0.2;
+            double skip_rate = 0.1;
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
                 user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
@@ -412,7 +408,7 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
             if(user_choice!=best_p2){
                 encounter_err = true;
             }
-            if(encounter_err==true && ratio<0.15){
+            if(encounter_err==true && ratio<0.2){
                 //printf("enc err\n");
                 end_premature=true;
             }

@@ -57,6 +57,7 @@ point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
  * @return int          The index of the selected point(wrong with some prob.)
  */
 int user_rand_err_k_points(point_t* u, std::vector<point_t *> point_set, double err_rate){
+    num_questions++;
     double max_util = -1;
     int max_ind = -1;
     int size = point_set.size();
@@ -91,12 +92,14 @@ int user_rand_err_k_points(point_t* u, std::vector<point_t *> point_set, double 
  */
 void user_rand_err_choose_desired_undesired(point_t* u, std::vector<point_t *> point_set, std::vector<point_t *> & desired, std::vector<point_t *> & undesired, double err_rate){
 
-    std::vector< std::pair<int,double> > point_idx_util_pair;
     int size = point_set.size();
     if(size < 2){
         printf("Only 1 point is displayed ! \n");
         return;
     }
+
+    num_questions++;
+    std::vector< std::pair<int,double> > point_idx_util_pair;
     for(int i=0; i<size; i++){
         point_idx_util_pair.push_back(std::make_pair(i, dot_prod(u, point_set[i])));
     }

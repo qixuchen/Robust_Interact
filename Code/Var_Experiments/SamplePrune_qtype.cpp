@@ -73,8 +73,6 @@ int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int ch
         point_result = NULL;
         while (point_result==NULL)
         {
-            //IMPORTANT : check this in case of counting more question than necessary!!
-            num_questions++;
             std::vector<point_t *> displayed_point_set;
             choose_k_best_item(choose_item_set, displayed_point_set, point_num);
             int idx = user_rand_err_k_points(u, displayed_point_set, theta);
@@ -133,7 +131,6 @@ int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int ch
             shift_point.clear();
             polytope_sampling(R_half_set_cp, num_points, randPoints, shift_point);
 
-
             point_t *best_p1=NULL, *best_p2=NULL;
             halfspace_t *best_hs = find_best_halfspace(selected_halfspaces, randPoints,shift_point, prune_ratio);
             best_p1 = best_hs->point1;
@@ -161,7 +158,7 @@ int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int ch
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
 
-            double skip_rate = 0.2;
+            double skip_rate = 0.1;
             //printf("%10f\n",ratio);
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
@@ -225,18 +222,6 @@ int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int ch
                 break;
             }
         }
-
-        
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
 
         if(true_point_result!=NULL){
             break;
@@ -377,8 +362,6 @@ int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int 
         point_result = NULL;
         while (point_result==NULL)
         {
-            //IMPORTANT : check this in case of counting more question than necessary!!
-            num_questions++;
             std::vector<point_t *> displayed_point_set;
             choose_k_best_item(choose_item_set, displayed_point_set, point_num);
             std::vector<point_t *> desired, undesired;
@@ -468,7 +451,7 @@ int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int 
             p1 = choose_item_set_cp[best_index]->hyper->point1;
             p2 = choose_item_set_cp[best_index]->hyper->point2;
 
-            double skip_rate = 0.2;
+            double skip_rate = 0.1;
             //printf("%10f\n",ratio);
             if(best_p1==p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
@@ -532,16 +515,6 @@ int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int 
                 break;
             }
         }
-        
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
 
 
         if(true_point_result!=NULL){
@@ -598,7 +571,7 @@ int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int 
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
