@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
     int RH_count = 0;
     double RH_time = 0;
 
-    int output_size = 5;
+    int output_size = 6;
 
     srand(time(0));  // Initialize random number generator.
     point_set_t *P0 = read_points((char*)"4d100k.txt");
@@ -107,12 +107,12 @@ int main(int argc, char *argv[]){
      // generate the utility vector
     point_t *u = alloc_point(dim);
 
-    double theta=0;
-    int checknum=3;
+    double theta = 0.05;
+    int checknum = 3;
     int point_num = 2;
     float avg_time;
 
-    int num_repeat = 10;
+    int num_repeat = 3;
 
     timeval start, end;
 
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]){
         int maxRound = 1000;
 
 
-        //Algorithm HDPI_accurate
+        // //Algorithm HDPI_accurate
         // gettimeofday(&start, 0);
         // HD_a += HDPI_accurate_Alltopk(p_set, u, theta, output_size, ground_truth);
         // HD_a_rr += rr_ratio;
@@ -201,21 +201,21 @@ int main(int argc, char *argv[]){
 
 
         // // Algorithm Preference_learning
-        // gettimeofday(&start, 0);
-        // PL += Preference_Learning_Alltopk(p_set, u, theta, output_size, ground_truth);
-        // PL_rr += rr_ratio;
-        // PL_count += top_k_correct;
-        // gettimeofday(&end, 0);
-        // PL_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+        gettimeofday(&start, 0);
+        PL += Preference_Learning_Alltopk(p_set, u, theta, output_size, ground_truth);
+        PL_rr += rr_ratio;
+        PL_count += top_k_correct;
+        gettimeofday(&end, 0);
+        PL_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
 
 
         // // Algorithm Active_Ranking
-        gettimeofday(&start, 0);
-        AR += Active_Ranking_Alltopk(p_set, u, theta, output_size, ground_truth);
-        AR_rr += rr_ratio;
-        AR_count += top_k_correct;
-        gettimeofday(&end, 0);
-        AR_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+        // gettimeofday(&start, 0);
+        // AR += Active_Ranking_Alltopk(p_set, u, theta, output_size, ground_truth);
+        // AR_rr += rr_ratio;
+        // AR_count += top_k_correct;
+        // gettimeofday(&end, 0);
+        // AR_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
 
 
 
