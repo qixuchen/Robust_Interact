@@ -1047,7 +1047,7 @@ int SamplePrune_alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, 
                 p1 = choose_item_set_cp[best_index]->hyper->point1;
                 p2 = choose_item_set_cp[best_index]->hyper->point2;
 
-                double skip_rate = 0;
+                double skip_rate = 0.2;
                 if(best_p1==p1){
                     user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
                 }
