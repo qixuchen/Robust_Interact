@@ -210,22 +210,22 @@ int main(int argc, char *argv[]){
 
 
         // // Algorithm Active_Ranking
-        gettimeofday(&start, 0);
-        AR += Active_Ranking_Alltopk(p_set, u, theta, output_size, ground_truth);
-        AR_rr += rr_ratio;
-        AR_count += top_k_correct;
-        gettimeofday(&end, 0);
-        AR_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
-
-
-
-        // // Algorithm RH
         // gettimeofday(&start, 0);
-        // RH += Random_half_Alltopk(p_set, u, theta, output_size, ground_truth);
-        // RH_rr += rr_ratio;
-        // RH_count += top_k_correct;
+        // AR += Active_Ranking_Alltopk(p_set, u, theta, output_size, ground_truth);
+        // AR_rr += rr_ratio;
+        // AR_count += top_k_correct;
         // gettimeofday(&end, 0);
-        // RH_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+        // AR_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
+
+
+
+        // Algorithm RH
+        gettimeofday(&start, 0);
+        RH += Random_half_Alltopk(p_set, u, theta, output_size, ground_truth);
+        RH_rr += rr_ratio;
+        RH_count += top_k_correct;
+        gettimeofday(&end, 0);
+        RH_time += (end.tv_sec-start.tv_sec)*1E6 + end.tv_usec - start.tv_usec;
 
 
     }
