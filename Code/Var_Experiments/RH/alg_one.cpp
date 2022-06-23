@@ -132,7 +132,7 @@ int Random_half_Alltopk(std::vector<point_t*> p_set, point_t* u, double theta, i
     //compare: p_set contains all the points
     for(int i=1; i < M; i++)
     {
-        bool same_exist=false, topk_found = false, topk_checked = false;
+        bool same_exist=false;
         for(int j=0; j < current_use.size(); j++)
         {
             if(is_same_point(p_set[i], current_use[j]))
@@ -180,7 +180,7 @@ int Random_half_Alltopk(std::vector<point_t*> p_set, point_t* u, double theta, i
                 }
                 if(need_ask)
                 {
-                    numOfQuestion++;
+                     numOfQuestion++;
                     point_t* user_choice = user_rand_err(u, p_set[i], current_point[p_index], theta);
                     if(user_choice==p_set[i])
                     {
@@ -196,20 +196,39 @@ int Random_half_Alltopk(std::vector<point_t*> p_set, point_t* u, double theta, i
                     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
 
 
+
                     //check if we can find top-k points in R_half_set
                     top_current.clear();
-                    topk_found = find_possible_Alltopk(p_set, R_half_set, output_size, top_current);
-                    topk_checked = check_possible_alltopk(p_set, R_half_set, output_size, top_current);
-                    if(topk_found && topk_checked)
+                    if(find_possible_Alltopk(p_set, R_half_set, output_size, top_current))
                     {
-                       break;
+                        if (check_possible_alltopk(p_set, R_half_set, output_size, top_current))
+                        {
+                            printf("|%30s |%10d |%10s |\n", "RH", numOfQuestion, "--");
+                            for(int i = 0; i < output_size; ++i)
+                                printf("|%30s |%10d |%10d |\n", "Point", i + 1, top_current[i]->id);
+                            printf("---------------------------------------------------------\n");
+
+                            top_k_correct=1;
+                            for(int i = 0; i < output_size; i++){
+                                bool topk_point_not_returned = true;
+                                for(int j=0; j<output_size; j++){
+                                    if(is_same_point(top_current[i], ground_truth[j])){
+                                        topk_point_not_returned = false;
+                                        break;
+                                    }
+                                }
+                                if(topk_point_not_returned){
+                                    top_k_correct=0;
+                                    break;
+                                }
+                            }
+                            return numOfQuestion;
+                        }
                     }
                 }
             }
-
         }
     }
-
     printf("|%30s |%10d |%10s |\n", "RH", numOfQuestion, "--");
     for(int i = 0; i < output_size; ++i)
         printf("|%30s |%10d |%10d |\n", "Point", i + 1, top_current[i]->id);
@@ -217,10 +236,20 @@ int Random_half_Alltopk(std::vector<point_t*> p_set, point_t* u, double theta, i
 
     top_k_correct=1;
     for(int i = 0; i < output_size; i++){
-        if(top_current[i]->id != ground_truth[i]->id){
+        bool topk_point_not_returned = true;
+        for(int j=0; j<output_size; j++){
+            if(is_same_point(top_current[i], ground_truth[j])){
+                topk_point_not_returned = false;
+                break;
+            }
+        }
+        if(topk_point_not_returned){
             top_k_correct=0;
             break;
         }
     }
     return numOfQuestion;
 }
+
+
+
