@@ -2,7 +2,7 @@
 
 
 This package contains 2 directories: 
-1. Directory "Robust Interaction", which contains the source codes of the proposed algorithms
+1. Directory "Robust_Interact", which contains the source codes of the proposed algorithms
 
 	(1). *2RI* (only works for 2-dimensional datasets)
   
@@ -38,7 +38,7 @@ sudo apt-get install libglpk-dev
 sudo apt-get install lp-solve
 ```
 
-To compile the code, clone it to your local machine and direct to `Code/Experiments` or `Code/RI_user_study`, then run the following.
+To compile the code, clone it to your local machine and direct to `Robust_Unteract/Code/Experiments` or `Robust_Unteract/Code/RI_user_study`, then run the following.
 
 ```
 mkdir output
