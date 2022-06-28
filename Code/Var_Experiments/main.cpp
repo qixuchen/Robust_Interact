@@ -31,56 +31,7 @@ double rr_ratio=0;
 int top_1_found=0;
 int top_k_correct=0;
 
-double compute_std(int* round_array, int n){
-    double sum = 0, var_sum = 0;
-    for(int i = 0; i < n; i++) sum += round_array[i];
-    double mean = sum/n;
-    for(int i = 0; i < n; i++) var_sum += (round_array[i]-mean)*(round_array[i]-mean);
-    return sqrt(var_sum/n);
-}
-
-
 int main(int argc, char *argv[]){
-
-    double HD_a = 0;
-    double HD_a_rr = 0;
-    int HD_a_count = 0;
-    double HD_time = 0;
-
-    double PP_2 = 0;
-    double PP_2_rr = 0;
-    int PP_2_count = 0;
-    double PP_time = 0;
-
-    double SP = 0;
-    double SP_rr = 0;
-    int SP_count = 0;
-    double SP_time = 0;
-
-    double UA = 0;
-    double UA_rr = 0;
-    int UA_count = 0;
-    double UA_time = 0;
-    
-    double UH = 0;
-    double UH_rr = 0;
-    int UH_count = 0;
-    double UH_time = 0;
-
-    double PL = 0;
-    double PL_rr = 0;
-    int PL_count = 0;
-    double PL_time = 0;
-
-    double AR = 0;
-    double AR_rr = 0;
-    int AR_count = 0;
-    double AR_time = 0;
-
-    double RH = 0;
-    double RH_rr= 0 ;
-    int RH_count = 0;
-    double RH_time = 0;
 
     int output_size = 5;
 

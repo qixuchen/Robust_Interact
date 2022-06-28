@@ -756,7 +756,7 @@ int SamplePrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checkn
     }
 
     printf("|%30s |%10d |%10s |\n", "Verify-Space (contain best)", num_questions, "--");
-    printf("|%30s |%10s |%10lu |\n", "Point", "--", true_returned_set.size());
+    printf("|%30s |%10s |%10lu |\n", "Return size", "--", true_returned_set.size());
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
     // printf("# of critical wrong answers:%d\n",crit_wrong_answer);
