@@ -1327,6 +1327,60 @@ point_t* check_possible_topk(std::vector<point_t *> p_set, halfspace_set_t *half
     return point_topk;
 }
 
+
+
+/**
+ * @brief Used to check whether there is a top-k points w.r.t any utility vector in half_set
+ * @param p_set			The dataset containing all the points
+ * @param half_set 		The half_set/intersection of the halfspace
+ * @param k 			top-k
+ * @param top_current 	The dataset containing all the possible top-k point found by function find_top_k_point_by_ext()
+ * @return              If there is a top-k point w.r.t any utility vector in half_set, return it
+ *                      Otherwise, return false
+ */
+bool check_possible_alltopk(std::vector<point_t *> p_set, halfspace_set_t *half_set, int k, std::vector<point_t *> &top_current)
+{
+    int size = top_current.size();
+    for (int i = 0; i < size; i++)
+    {
+        bool is_top = true;
+        int large_num = 0;
+        for (int j = 0; j < p_set.size(); j++)
+        {
+            //if the points have the same coordinates, we do not need to use function check_situation
+            bool is_same = true;
+            for (int w = 0; w < top_current[i]->dim; w++)
+            {
+                if (top_current[i]->coord[w] != p_set[j]->coord[w])
+                {
+                    is_same = false;
+                    break;
+                }
+            }
+            if (!is_same)
+            {
+                hyperplane_t *h = alloc_hyperplane(top_current[i], p_set[j], 0);
+                int relation = check_situation_positive(h, half_set);
+                if (relation != 1)
+                {
+                    large_num++;
+                    if (large_num >= k)
+                    {
+                        is_top = false;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!is_top)
+            return false;
+    }
+    return true;
+}
+
+
+
+
 /*
  * @brief Print the information of halfspaces and extreme points of R
  * @param R     The utility range R
