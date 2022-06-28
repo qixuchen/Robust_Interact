@@ -1,8 +1,8 @@
 # Robust_Interact
 
 
-This package contains 2 directories: 
-1. Directory "Robust_Interact", which contains the source codes of the proposed algorithms
+This package contains 3 directories under `Robust_Interact/Code`: 
+1. Directory `Robust_Interact`, which contains the source code of the proposed algorithms
 
 	(1). *2RI* (only works for 2-dimensional datasets)
   
@@ -12,7 +12,7 @@ This package contains 2 directories:
   
       The baseline algorithms can also be found in this directory.
 
-2. Directory "RI_user_study", which contains the source codes for user study
+2. Directory `RI_user_study`, which contains the source code for user study
 
 	(1). *Verify-Point* (ours)
   
@@ -26,6 +26,17 @@ This package contains 2 directories:
   
 	(6). *UH-Simplex*
 
+3. Directory `Var_experiments`, which contains the source code for variants of *Verify-Point* and *Verify-Space*. The following variants are provided:
+
+	(1). Return a set of points with size at most *k* which contains the best point (instead of only returning the best point)
+	
+	(2). Return the top-*k* points (instead of only returning the best point)
+	
+	(3). Display *s* points in Conjecture Phase and ask the user to select the favorite point (instead of pairwise comparison)
+	
+	(4). Display *s* points in Conjecture Phase and ask the user to partition them into *superior* and *inferior* groups (instead of pairwise comparison)
+
+
 
 Part of the code of *Verify-Space* is based on `volesti` https://github.com/GeomScale/volesti.
 
@@ -38,7 +49,7 @@ sudo apt-get install libglpk-dev
 sudo apt-get install lp-solve
 ```
 
-To compile the code, clone it to your local machine and direct to `Robust_Unteract/Code/Experiments` or `Robust_Unteract/Code/RI_user_study`, then run the following.
+To compile the code, clone it to your local machine and direct to `Code/Experiments`, `Code/RI_user_study` or `Code/Var_Experiments`, then run the following.
 
 ```
 mkdir output
