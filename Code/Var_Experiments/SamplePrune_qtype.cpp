@@ -13,15 +13,6 @@ int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int ch
     num_wrong_answer=0;
     crit_wrong_answer=0;
 
-    
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
-
     int num_points=160;
     std::vector<std::vector<double>> randPoints;
     std::vector<double> shift_point;
@@ -62,7 +53,6 @@ int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int ch
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_t *p1, *p2, *user_choice;
@@ -277,7 +267,7 @@ int SamplePrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int ch
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Space (favorite)", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
@@ -301,15 +291,6 @@ int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int 
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
-
-    
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
 
     int num_points=160;
     std::vector<std::vector<double>> randPoints;
@@ -351,7 +332,6 @@ int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int 
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_t *p1, *p2, *user_choice;
@@ -571,7 +551,7 @@ int SamplePrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int 
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Space (sup/inf)", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);

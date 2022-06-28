@@ -13,15 +13,6 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
     num_wrong_answer=0;
     crit_wrong_answer=0;
 
-    
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
-
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -58,7 +49,6 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_t *p1, *p2, *user_choice;
@@ -188,18 +178,6 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
             }
         }
 
-        
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
-
         if(true_point_result!=NULL){
             break;
         }
@@ -227,14 +205,9 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
         for(int i=0; i<considered_half_set_cp.size();i++){
             considered_half_set.push_back(considered_half_set_cp[i]);
         }
-        //////
+
         half_set_set.clear();
-        // while(half_set_set.size()>0){
-        //     release_halfspace_set(half_set_set[0]);
-        //     half_set_set.erase(half_set_set.begin());
-        // }
-        // half_set_set.clear();
-        ////////
+
         for(int i=0; i<half_set_set_cp.size();i++){
             halfspace_set_t *hs = deepcopy_halfspace_set(half_set_set_cp[i]);
             half_set_set.push_back(hs);
@@ -254,12 +227,9 @@ int PointPrune_morethan2points(std::vector<point_t *> p_set, point_t *u, int che
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Point (favorite)", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
-    // printf("# of wrong answers:%d\n",num_wrong_answer);
-    // printf("# of critical wrong answers:%d\n",crit_wrong_answer);
-    // printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
     rr_ratio = dot_prod(u, true_point_result)/top_1_score;
     top_1_found= (rr_ratio>=1);
     return num_questions;
@@ -278,15 +248,6 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
-
-    
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
 
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -324,7 +285,6 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_t *p1, *p2, *user_choice;
@@ -457,18 +417,6 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
             }
         }
 
-        
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
-
         if(true_point_result!=NULL){
             break;
         }
@@ -523,7 +471,7 @@ int PointPrune_desired_undesired(std::vector<point_t *> p_set, point_t *u, int c
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Point (sup/inf)", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);

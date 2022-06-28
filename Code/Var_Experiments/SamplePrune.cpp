@@ -192,18 +192,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     num_wrong_answer=0;
     crit_wrong_answer=0;
 
-
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
-
-
-
-
     int num_points=160;
     std::vector<std::vector<double>> randPoints;
     std::vector<double> shift_point;
@@ -247,7 +235,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_result = NULL;
@@ -299,16 +286,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             else if(considered_half_set.size() == 1){
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
-        }
-
-        if(iter_num==1){
-            i1_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p1 += num_questions-cur_quest_num;
         }
         //=================================================================================================================================
         //End of phase 1
@@ -419,18 +396,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             }
         }
 
-
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
-
         if(true_point_result!=NULL){
             break;
         }
@@ -487,7 +452,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         //End of phase 2
     }
 
-    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Space", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
@@ -508,18 +473,6 @@ int SamplePrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checkn
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
-
-
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
-
-
-
 
     int num_points=160;
     std::vector<std::vector<double>> randPoints;
@@ -565,7 +518,6 @@ int SamplePrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checkn
     bool encounter_err = false, end_premature=false;
 
     while(true_returned_set.size()==0){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_result = NULL;
@@ -627,15 +579,6 @@ int SamplePrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checkn
             }
         }
 
-        if(iter_num==1){
-            i1_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p1 += num_questions-cur_quest_num;
-        }
         //=================================================================================================================================
         //End of phase 1
 
@@ -756,18 +699,6 @@ int SamplePrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checkn
             }
         }
 
-
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
-
         if(true_point_result!=NULL){
             break;
         }
@@ -824,7 +755,7 @@ int SamplePrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checkn
         //End of phase 2
     }
 
-    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Space (contain best)", num_questions, "--");
     printf("|%30s |%10s |%10lu |\n", "Point", "--", true_returned_set.size());
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
@@ -854,15 +785,6 @@ int SamplePrune_alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, 
     num_wrong_answer=0;
     crit_wrong_answer=0;
     top_k_correct=0;
-
-
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
 
     int num_points=160;
     std::vector<std::vector<double>> randPoints;
@@ -942,7 +864,6 @@ int SamplePrune_alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, 
         bool encounter_err = false, end_premature=false;
 
         while(true_point_result==NULL){
-            iter_num++;
             int cur_quest_num = num_questions;
 
             point_result = NULL;
@@ -992,16 +913,6 @@ int SamplePrune_alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, 
                 else if(considered_half_set.size() == 1){
                     point_result=half_set_set[considered_half_set[0]]->represent_point[0];
                 }
-            }
-
-            if(iter_num==1){
-                i1_p1 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==2){
-                i2_p1 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==3){
-                i3_p1 += num_questions-cur_quest_num;
             }
             //=================================================================================================================================
             //End of phase 1
@@ -1106,18 +1017,6 @@ int SamplePrune_alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, 
                 }
             }
 
-
-            if(iter_num==1){
-                i1_p2 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==2){
-                i2_p2 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==3){
-                i3_p2 += num_questions-cur_quest_num;
-            }
-
-
             if(true_point_result!=NULL){
                 topk_result.push_back(true_point_result);
                 break;
@@ -1175,7 +1074,7 @@ int SamplePrune_alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, 
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "SamplePrune", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Space (topk)", num_questions, "--");
     for(int i = 0; i < topk_result.size(); i++){
         printf("|%30s |%8s%2d |%10d |\n", "Point", "top -", i+1, topk_result[i]->id);
         }

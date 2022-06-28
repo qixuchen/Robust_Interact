@@ -13,13 +13,6 @@ extern double rr_ratio;
 extern int top_1_found;
 extern int top_k_correct;
 
-extern int i1_p1;
-extern int i1_p2;
-extern int i2_p1;
-extern int i2_p2;
-extern int i3_p1;
-extern int i3_p2;
-
 int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<halfspace_t *> &selected_halfspaces, 
                         point_t *&best_p1, point_t *&best_p2, double &ratio);
 /**

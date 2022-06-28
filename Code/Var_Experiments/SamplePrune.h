@@ -33,13 +33,6 @@ extern double rr_ratio;
 extern int top_1_found;
 extern int top_k_correct;
 
-extern int i1_p1;
-extern int i1_p2;
-extern int i2_p1;
-extern int i2_p2;
-extern int i3_p1;
-extern int i3_p2;
-
 /**
  * @brief                   Shift the old halfspace according to shift_point
  * 

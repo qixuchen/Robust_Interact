@@ -78,15 +78,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
     num_wrong_answer=0;
     crit_wrong_answer=0;
 
-    
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
-
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -124,7 +115,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_result = NULL;
@@ -174,16 +164,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             else if(considered_half_set.size() == 1){
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
-        }
-
-        if(iter_num==1){
-            i1_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p1 += num_questions-cur_quest_num;
         }
         //=================================================================================================================================
         //End of phase 1
@@ -266,18 +246,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             }
         }
 
-        
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
-
         if(true_point_result!=NULL){
             break;
         }
@@ -332,7 +300,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Point", num_questions, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
@@ -355,15 +323,6 @@ int PointPrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checknu
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
-
-    
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
 
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -403,7 +362,6 @@ int PointPrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checknu
     bool encounter_err = false, end_premature=false;
 
     while(true_returned_set.size()==0){
-        iter_num++;
         int cur_quest_num = num_questions;
 
         point_result = NULL;
@@ -464,15 +422,6 @@ int PointPrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checknu
             }
         }
 
-        if(iter_num==1){
-            i1_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p1 += num_questions-cur_quest_num;
-        }
         //=================================================================================================================================
         //End of phase 1
 
@@ -565,18 +514,6 @@ int PointPrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checknu
             }
         }
 
-        
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
-
         if(true_point_result!=NULL){
             break;
         }
@@ -631,8 +568,8 @@ int PointPrune_containTop1(std::vector<point_t *> p_set, point_t *u, int checknu
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
-    printf("|%30s |%10s |%10lu |\n", "Point", "--", true_returned_set.size());
+    printf("|%30s |%10d |%10s |\n", "Verify-Point (contain best)", num_questions, "--");
+    printf("|%30s |%10s |%10lu |\n", "Return size", "--", true_returned_set.size());
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
     // printf("# of critical wrong answers:%d\n",crit_wrong_answer);
@@ -666,14 +603,6 @@ int PointPrune_Alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, d
     
     int iter_num = 0;
     double ratio=0;
-
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
-
 
     std::vector<point_t *> topk_result;
     point_t* point_result = NULL, *true_point_result = NULL;
@@ -806,16 +735,6 @@ int PointPrune_Alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, d
                     point_result=half_set_set[considered_half_set[0]]->represent_point[0];
                 }
             }
-
-            if(iter_num==1){
-                i1_p1 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==2){
-                i2_p1 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==3){
-                i3_p1 += num_questions-cur_quest_num;
-            }
             //=================================================================================================================================
             //End of phase 1
 
@@ -897,17 +816,6 @@ int PointPrune_Alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, d
                 }
             }
 
-            
-            if(iter_num==1){
-                i1_p2 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==2){
-                i2_p2 += num_questions-cur_quest_num;
-            }
-            else if(iter_num==3){
-                i3_p2 += num_questions-cur_quest_num;
-            }
-
 
             if(true_point_result!=NULL){
                 topk_result.push_back(true_point_result);
@@ -964,7 +872,7 @@ int PointPrune_Alltopk(std::vector<point_t *> p_set, point_t *u, int checknum, d
         }
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "Verify-Point (topk)", num_questions, "--");
     for(int i = 0; i < topk_result.size(); i++){
         printf("|%30s |%8s%2d |%10d |\n", "Point", "top -", i+1, topk_result[i]->id);
         }
