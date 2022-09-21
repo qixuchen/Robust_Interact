@@ -1407,3 +1407,12 @@ void print_halfspace_ext_R(halfspace_set_t *R)
         printf("\n");
     }
 }
+
+void skyline_pset(point_set_t *P, vector<point_t *> &return_set){
+    int p_num = P->numberOfPoints;
+    vector<point_t*> p_set;
+    for(int i=0; i < p_num; i++){
+        p_set.push_back(P->points[i]);
+    }
+    skyline_c(p_set, return_set);
+}

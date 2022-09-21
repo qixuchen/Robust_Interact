@@ -1,6 +1,10 @@
 #include "./Others/used_function.h"
 #include "./Others/user_mode.h"
 #include "./HDPI/partition_func.h"
+#include <ctime>
+#include <cmath>
+#include <chrono>
+#include <sys/time.h>
 
 
 
@@ -31,6 +35,7 @@ extern int num_wrong_answer;
 extern double top_1_score;
 extern double rr_ratio;
 extern int top_1_found;
+extern double v_time;
 
 extern int i1_p1;
 extern int i1_p2;

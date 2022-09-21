@@ -191,7 +191,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     num_questions=0;
     num_wrong_answer=0;
     crit_wrong_answer=0;
-
+    v_time = 0;
 
     int iter_num = 0;
     i1_p1 = 0;
@@ -201,8 +201,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     i3_p1 = 0;
     i3_p2 = 0;
 
-
-
+    std::chrono::steady_clock::time_point begin, end;
+    double time_used = 0;
 
     int num_points=160;
     std::vector<std::vector<double>> randPoints;
@@ -316,9 +316,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
 
         //start of phase 2
         //==========================================================================================================================================
-
+        begin = std::chrono::steady_clock::now();
         cur_quest_num = num_questions;
-
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
             double prune_ratio=0;
@@ -419,6 +418,8 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             }
         }
 
+        end = std::chrono::steady_clock::now();
+        time_used += (double) std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 
         if(iter_num==1){
             i1_p2 += num_questions-cur_quest_num;
@@ -495,6 +496,10 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     // printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
     rr_ratio = dot_prod(u, true_point_result)/top_1_score;
     top_1_found= (rr_ratio>=1);
+
+    int p2_num_question = num_questions - i1_p1 - i2_p1 - i3_p1;
+    v_time = p2_num_question != 0 ? time_used / p2_num_question : 0;
+    
     return num_questions;
     
 }

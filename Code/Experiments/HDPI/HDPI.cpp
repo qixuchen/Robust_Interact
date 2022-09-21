@@ -182,3 +182,35 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
 }
 
 
+
+/**
+ * @brief Run HDPI k times and return the major answer
+ * @param p_set 		 The dataset
+ * @param u 			 The linear function
+ * @param theta          The user error rate
+ * @param n_time 		 Number of repeating times
+ */
+int HDPI_Naive(std::vector<point_t *> p_set, point_t *u, double theta, int n_times){
+    int total_question = 0;
+    vector<int> answer_vec;
+    for(int i = 0; i < n_times; i++){
+        top_1_found = false;
+        total_question += HDPI_accurate(p_set, u, theta);
+        answer_vec.push_back(top_1_found==true ? 1 : 0);
+    }
+
+    int sum = 0;
+    for(int i=0; i < answer_vec.size(); i++){
+        sum += answer_vec[i];
+    }
+
+    if(sum > n_times/2){
+        top_1_found = true;
+    }
+    else{
+        top_1_found = answer_vec[rand() % answer_vec.size()] == 1 ? true : false;
+    }
+    
+    return total_question;
+
+}

@@ -25,7 +25,8 @@ int num_wrong_answer=0;
 int crit_wrong_answer=0;
 int num_questions=0;
 double top_1_score = 0;
-double rr_ratio=0;
+double rr_ratio = 0;
+double v_time = 0;
 int top_1_found=0;
 
 int i1_p1;
@@ -70,6 +71,10 @@ int main(int argc, char *argv[]){
     double HD_a_rr = 0;
     int HD_a_count = 0;
 
+    double HD_n = 0;
+    double HD_n_rr = 0;
+    int HD_n_count = 0;
+
     double PP_2 = 0;
     double PP_2_rr = 0;
     int PP_2_count = 0;
@@ -98,12 +103,17 @@ int main(int argc, char *argv[]){
     double RH_rr= 0 ;
     int RH_count = 0;
 
+    double total_vtime = 0;
+
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P0 = read_points((char*)"6d.txt");
+    point_set_t *P0 = read_points((char*)"4d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
-    std::vector<point_t *> p_set, top, p_convh;
+    std::vector<point_t *> p_set, top, p_convh, skylines;
+
+    skyline_pset(P0, skylines);
+    printf("%ld", skylines.size());
+
     skyband(P0, p_set, 1);
-    printf("%d\n", p_set.size());
     find_top1(p_set, top);
     skyline_c(top, p_convh); //p_convh contains all the top-1 point on the convex hull
     // look for the ground truth top-k point
@@ -114,11 +124,12 @@ int main(int argc, char *argv[]){
 
     double theta=0.05;
     int checknum=3;
-    int num_repeat = 1;
+    int num_repeat = 100;
     float avg_time;
 
 
     for(int i=0; i<num_repeat; i++){
+        printf("round %d\n", i);
         double sum = 0;
         for (int i = 0; i < dim; i++)
         {
@@ -174,22 +185,24 @@ int main(int argc, char *argv[]){
         point_reload(P, p_set);
         
         }
+        // std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-        // //Algorithm HDPI_accurate
+        // //Algorithm HDPI_naive
+        // int n_times = 3;
+        // HD_n += HDPI_Naive(p_set, u, theta, n_times);
+        // HD_n_rr += rr_ratio;
+        // HD_n_count += top_1_found;
+
+        // // Algorithm HDPI_accurate
         // HD_a += HDPI_accurate(p_set, u, theta);
         // HD_a_rr += rr_ratio;
         // HD_a_count += top_1_found;
 
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-        //Algorithm PointPrune_v2 
-        PP_2 += PointPrune_v2(p_set, u, checknum, theta);
-        PP_2_rr += rr_ratio;
-        PP_2_count += top_1_found;
-
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-        avg_time = ((float) std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count())/PP_2;
+        // // Algorithm PointPrune_v2 
+        // PP_2 += PointPrune_v2(p_set, u, checknum, theta);
+        // PP_2_rr += rr_ratio;
+        // PP_2_count += top_1_found;
 
         // // Algorithm SamplePrune 
         // SP += SamplePrune(p_set, u, checknum, theta);
@@ -213,15 +226,19 @@ int main(int argc, char *argv[]){
         // PL_rr += rr_ratio;
         // PL_count += top_1_found;
 
-        // // Algorithm Active_Ranking
-        // AR += Active_Ranking(p_set, u, theta);
-        // AR_rr += rr_ratio;
-        // AR_count += top_1_found;
+        // Algorithm Active_Ranking
+        AR += Active_Ranking(p_set, u, theta);
+        AR_rr += rr_ratio;
+        AR_count += top_1_found;
 
         // // Algorithm RH
         // RH += Random_half(p_set, u, theta);
         // RH_rr += rr_ratio;
         // RH_count += top_1_found;
+
+        // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+        // avg_time = ((float) std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()) / SP;
 
 
     }
@@ -233,6 +250,7 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "2DPI", DPI/num_repeat, DPI_rr/num_repeat, ((double)DPI_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Median", med/num_repeat, med_rr/num_repeat, ((double)med_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "Hull", Hull/num_repeat, Hull_rr/num_repeat, ((double)Hull_count)/num_repeat);
+    printf("|%20s |%10f |%8f |%8f\n", "HDPI-Naive", HD_n/num_repeat, HD_n_rr/num_repeat, ((double)HD_n_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "HDPI-Accurate", HD_a/num_repeat, HD_a_rr/num_repeat, ((double)HD_a_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "PointPrune_v2", PP_2/num_repeat, PP_2_rr/num_repeat, ((double)PP_2_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "SamplePrune", SP/num_repeat, SP_rr/num_repeat, ((double)SP_count)/num_repeat);
@@ -241,10 +259,8 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "Active_Ranking", AR/num_repeat, AR_rr/num_repeat, ((double)AR_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "RH", RH/num_repeat, RH_rr/num_repeat, ((double)RH_count)/num_repeat);
-
-
-    printf("%f\n", avg_time);
     release_point_set(P, true);
+    printf("avgtime: %f\n", avg_time);
     return 0;
 
 }

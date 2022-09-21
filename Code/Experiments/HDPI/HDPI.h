@@ -26,3 +26,11 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, double theta);
  */
 int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta);
 
+/**
+ * @brief Run HDPI k times and return the major answer
+ * @param p_set 		 The dataset
+ * @param u 			 The linear function
+ * @param theta          The user error rate
+ * @param n_time 		 Number of repeating times
+ */
+int HDPI_Naive(std::vector<point_t *> p_set, point_t *u, double theta, int n_times);

@@ -72,20 +72,23 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
 int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double theta)
 {
     int k = 1;
+    int iter_num = 0;
 
     //reset statistics
-    num_questions=0;
-    num_wrong_answer=0;
-    crit_wrong_answer=0;
-
+    num_questions = 0;
+    num_wrong_answer = 0;
+    crit_wrong_answer = 0;
+    v_time = 0;
     
-    int iter_num = 0;
     i1_p1 = 0;
     i1_p2 = 0;
     i2_p1 = 0;
     i2_p2 = 0;
     i3_p1 = 0;
     i3_p2 = 0;
+
+    std::chrono::steady_clock::time_point begin, end;
+    double time_used = 0;
 
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -192,9 +195,8 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
         //start of phase 2
         //==========================================================================================================================================
-
+        begin = std::chrono::steady_clock::now();
         cur_quest_num = num_questions;
-
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
             // IMPORTANT: The order of point recorded in choose_item does not imply user preference
@@ -266,6 +268,9 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
                 break;
             }
         }
+
+        end = std::chrono::steady_clock::now();
+        time_used += (double) std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 
         
         if(iter_num==1){
@@ -341,6 +346,10 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
     // printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
     rr_ratio = dot_prod(u, true_point_result)/top_1_score;
     top_1_found= (rr_ratio>=1);
+
+    int p2_num_question = num_questions - i1_p1 - i2_p1 - i3_p1;
+    v_time = p2_num_question != 0 ? time_used / p2_num_question : 0;
+    
     return num_questions;
     
 }
