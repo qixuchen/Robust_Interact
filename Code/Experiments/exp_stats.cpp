@@ -3,7 +3,7 @@
 double best_score = 0;
 double question_num = 0;
 double return_size = 0;
-int correct_count = 0;
+double correct_count = 0;
 double tot_time = 0;
 
 
@@ -11,6 +11,14 @@ using namespace std::chrono;
 steady_clock::time_point begin, end;
 
 void reset_timer(){
+    tot_time = 0;
+}
+
+void reset_stats(){
+    best_score = 0;
+    question_num = 0;
+    return_size = 0;
+    correct_count = 0;
     tot_time = 0;
 }
 

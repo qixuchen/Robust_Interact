@@ -112,8 +112,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
     start_timer();
     while(true_point_result==NULL){
-        int cur_quest_num = num_questions;
-
         point_result = NULL;
         //index: the index of the chosen hyperplane(question)
         //p1:    the first point
@@ -167,7 +165,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
         //start of phase 2
         //==========================================================================================================================================
-        cur_quest_num = num_questions;
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
             // IMPORTANT: The order of point recorded in choose_item does not imply user preference

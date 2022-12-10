@@ -13,12 +13,10 @@
  * @return point_t* 
  */
 int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate){
-    num_questions++;
     if((double) rand()/RAND_MAX > err_rate){ //user answers correctly
         return (dot_prod(u,p_set[p1])>dot_prod(u,p_set[p2])? p1 : p2) ;
     }
     else{ //user answers wrongly
-        num_wrong_answer++;
         return (dot_prod(u,p_set[p1])>dot_prod(u,p_set[p2])? p2 : p1) ;    
     }
 
@@ -34,12 +32,10 @@ int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p
  * @return point_t* 
  */
 point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate){
-    num_questions++;
     if((double) rand()/RAND_MAX > err_rate){ //user answers correctly
         return (dot_prod(u,p1)>dot_prod(u,p2)? p1 : p2) ;
     }
     else{ //user answers wrongly
-        num_wrong_answer++;
         return (dot_prod(u,p1)>dot_prod(u,p2)? p2 : p1) ;    
     }
 
@@ -105,9 +101,6 @@ point_t* checking(point_t* u, point_t* p1, point_t* p2, double err_rate, int k){
 
     point_t* final_res = p1_count>k/2 ? p1 : p2;
     point_t* true_res = dot_prod(u, p1) > dot_prod(u,p2)? p1: p2;
-    if(final_res!=true_res){
-        crit_wrong_answer++ ;
-    }
     return final_res;
 }
 
@@ -132,9 +125,6 @@ point_t* checking_varyk(point_t* u, point_t* p1, point_t* p2, double err_rate, i
     
     if((double) rand()/RAND_MAX < skip_rate){ //skip checking with prob skip_rate
         point_t* true_res = dot_prod(u, p1) > dot_prod(u,p2)? p1: p2;
-        if(p1!=true_res){
-            crit_wrong_answer++ ;
-        }
         return p1;
     }
 
@@ -150,9 +140,6 @@ point_t* checking_varyk(point_t* u, point_t* p1, point_t* p2, double err_rate, i
     }
     point_t* final_res = p1_count>k/2 ? p1 : p2;
     point_t* true_res = dot_prod(u, p1) > dot_prod(u,p2)? p1: p2;
-    if(final_res!=true_res){
-        crit_wrong_answer++ ;
-    }
     return final_res;
 }
 

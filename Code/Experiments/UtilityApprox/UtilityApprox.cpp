@@ -252,7 +252,7 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     release_point_set(q_set, true);
 
     stop_timer();
-    printf("|%30s |%d |%10s |\n", "UtilityApprox", round, "--");
+    printf("|%30s |%10d |%10s |\n", "UtilityApprox", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", result->id);
     printf("---------------------------------------------------------\n");
     correct_count += dot_prod(u, result) >= best_score;    

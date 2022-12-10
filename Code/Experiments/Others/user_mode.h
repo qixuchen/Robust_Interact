@@ -7,10 +7,6 @@
 #ifndef USER_MODE_H
 #define USER_MODE_H
 
-extern int num_wrong_answer;
-extern int crit_wrong_answer;
-extern int num_questions;
-
 int user_rand_err(const std::vector<point_t *> &p_set, point_t* u, int p1, int p2, double err_rate);
 
 point_t* user_rand_err(point_t* u, point_t* p1, point_t* p2, double err_rate);
