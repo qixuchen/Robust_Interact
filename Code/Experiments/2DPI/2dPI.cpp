@@ -43,8 +43,9 @@ struct MinHeapCmp
  */
 int twoDPI(std::vector<point_t*> &top_set, point_t* u, double theta)
 {
-
+    start_timer();
     int k = 1;
+    int round = 0;
     std::vector<point_t*> point_set; //the sorted version of onion_set
     point_t* u0 = alloc_point(2);
     u0->coord[0] = 0;
@@ -235,15 +236,13 @@ int twoDPI(std::vector<point_t*> &top_set, point_t* u, double theta)
         printf("point %d %lf %lf\n", represent_point[i]->id, represent_point[i]->coord[0], represent_point[i]->coord[1]);
     }
     */
-    int numOfQuestion=0;
     int b_left=0, b_right=border.size()-1;
     while(b_left <= b_right)
     {
-        numOfQuestion++;
         int index = (b_left+b_right)/2;
         // double v1 = dot_prod(u, border[index]->point_up);
         // double v2 = dot_prod(u, border[index]->point_down);
-        point_t* user_choice = user_rand_err(u, border[index]->point_up, border[index]->point_down, theta);
+        point_t* user_choice = user_rand_err(u, border[index]->point_up, border[index]->point_down, theta, round);
         if(user_choice==border[index]->point_up)
         {
             b_right=index-1;
@@ -253,11 +252,12 @@ int twoDPI(std::vector<point_t*> &top_set, point_t* u, double theta)
             b_left=index+1;
         }
     }
-    printf("|%30s |%10d |%10s |\n", "2D-PI", numOfQuestion, "--");
+    stop_timer();
+    printf("|%30s |%10d |%10s |\n", "2D-PI", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", represent_point[b_left]->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, represent_point[b_left])/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return numOfQuestion;
+    correct_count += dot_prod(u, represent_point[b_left]) >= best_score;    
+    question_num += round;
+    return 0;
 }
         // point_t* user_choice = user_rand_err(u, border[index]->point_up, border[index]->point_down, theta);

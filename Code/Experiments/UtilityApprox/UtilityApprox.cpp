@@ -97,9 +97,9 @@ void set_ext_on_R(bool *place, double *high, double *low, std::vector<point_t *>
  */
 int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRound, double theta)
 {
+    start_timer();
+    int round = 0;
     s = 2; // set # point asked in each question to 2
-
-
     int D = P->points[0]->dim;
     double delta, gamma, beta, regret = 1.0, sum;
     //double bestUtility, currUtility;
@@ -108,7 +108,6 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     double *U = new double[D];
     double *L = new double[D];
     double *chi = new double[s + 1];
-    double Qcount = 0;
 
     point_t *v = alloc_point(D);
     point_set_t *q_set = alloc_point_set(s);
@@ -140,11 +139,11 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     // to determine highest rating above
     if ((D - 1) % (s - 1) == 0)
     {
-        Qcount = (D - 1) / (s - 1);
+        round = (D - 1) / (s - 1);
     }
     else
     {
-        Qcount = (D - 1) / (s - 1) + 1;
+        round = (D - 1) / (s - 1) + 1;
     }
 
     // initialize U and L
@@ -170,7 +169,7 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     i = 0;
     t = 1;
     vector<int> C;
-    while ((rr_bound(L, U, D) > epsilon && !isZero(rr_bound(L, U, D) - epsilon)) && Qcount < maxRound)
+    while ((rr_bound(L, U, D) > epsilon && !isZero(rr_bound(L, U, D) - epsilon)) && round < maxRound)
     {
         //printf("%d\n", C.size());
         //if (VERBOSE) printf("i = %d, rounds = %d, t = %d\n", i, rounds, t);
@@ -236,31 +235,10 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
                     q_set->points[j]->coord[l] = q_set->points[j]->coord[l] * beta;
 
             // check which point the user would pick and update L and U accordingly
-            // alpha = findbestpoint(q_set, u);
-            alpha = user_rand_err(u, q_set->points[0], q_set->points[1], theta)==q_set->points[0] ? 0 : 1;
-            //if (VERBOSE) printf("alpha = %d\n", alpha);
-            //if (VERBOSE) printf("old L[%d] = %lf, old U[%d] = %lf\n", i, L[i], i, U[i]);
+            alpha = user_rand_err(u, q_set->points[0], q_set->points[1], theta, round)==q_set->points[0] ? 0 : 1;
             L[i] = chi[alpha];
             U[i] = chi[alpha + 1];
-            /*if (VERBOSE) printf("new L[%d] = %lf, new U[%d] = %lf\n", i, L[i], i, U[i]);*/
 
-            // compute utility and regret of current best
-            //currUtility = dot_prod(P->points[findbestpoint(P, v)], u);
-            //regret = 1.0 - currUtility / bestUtility;
-
-            //if (VERBOSE) printf("curr best point index: %d\n", findbestpoint(D, N, p, v));
-            //if (VERBOSE)
-            //{
-            //	printf("best and curr utilities: %lf, %lf\nregret at round %d is %lf\n", bestUtility, currUtility, rounds, regret);
-            //	printf("u: ");
-            //	for(j = 0; j < D; ++j)
-            //		printf("%lf ",  u->coord[j]);
-            //	printf("\nv: ");
-            //	for(j = 0; j < D; ++j)
-            //		printf("%lf ",  v->coord[j]);
-            //	printf("\n\n");
-            //}
-            Qcount = Qcount + 1;
         }
         i = (i + 1) % D; // cycle through all the dimensions
         t += 1;
@@ -273,10 +251,11 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     release_point(v);
     release_point_set(q_set, true);
 
-    printf("|%30s |%10.0lf |%10s |\n", "UtilityApprox", Qcount, "--");
+    stop_timer();
+    printf("|%30s |%d |%10s |\n", "UtilityApprox", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", result->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, result)/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return Qcount;
+    correct_count += dot_prod(u, result) >= best_score;    
+    question_num += round;
+    return 0;
 }

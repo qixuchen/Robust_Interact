@@ -584,9 +584,9 @@ hyperplane_t *orthogonal_search(s_node_t *node, point_t *q, hyperplane_t *best)
 //@param k                  The threshold tok-k
 int Preference_Learning_accuracy(std::vector<point_t *> original_set, point_t *u, double theta)
 {
+    start_timer();
     int k = 1;
-    timeval t1, t2;
-    gettimeofday(&t1, 0);
+    int round = 0;
     int M;
     //p_set: randomly choose 1000 points
     std::vector<point_t *> p_set;
@@ -641,7 +641,6 @@ int Preference_Learning_accuracy(std::vector<point_t *> original_set, point_t *u
     int dim = p_set[0]->dim;
     M = p_set.size();
     double accuracy = 0, de_accuracy = 100;
-    int numOfQuestion = 0;
 
     //the normal vectors
     std::vector<point_t *> V;
@@ -689,14 +688,13 @@ int Preference_Learning_accuracy(std::vector<point_t *> original_set, point_t *u
 
     while (accuracy < 0.99999 && de_accuracy > 0)
     {
-        numOfQuestion++;
         hyperplane_t *best = NULL;
         best = orthogonal_search(stree_root, estimate_u, best);
         point_t *p = best->point1;
         point_t *q = best->point2;
         // double v1 = dot_prod(u, p);
         // double v2 = dot_prod(u, q);
-        point_t *user_choice = user_rand_err(u, p, q, theta) == p ? p : q;
+        point_t *user_choice = user_rand_err(u, p, q, theta, round) == p ? p : q;
         point_t *pt = alloc_point(dim);
         if (user_choice==p)
         {
@@ -733,13 +731,12 @@ int Preference_Learning_accuracy(std::vector<point_t *> original_set, point_t *u
         release_hyperplane(hh);
         h_set.pop_back();
     }
+    stop_timer();
 
-    printf("|%30s |%10d |%10s |\n", "Preference_Learning", numOfQuestion, "--");
+    printf("|%30s |%10d |%10s |\n", "Preference_Learning", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", top_current[0]->id);
     printf("---------------------------------------------------------\n");
-
-    rr_ratio = dot_prod(u, top_current[0])/top_1_score;
-    top_1_found= (rr_ratio>=1);
-
-    return numOfQuestion;
+    correct_count += dot_prod(u, top_current[0]) >= best_score;    
+    question_num += round;
+    return 0;
 }

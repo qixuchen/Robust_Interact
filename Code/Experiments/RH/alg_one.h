@@ -1,8 +1,6 @@
 #include "../Others/used_function.h"
+#include "../exp_stats.h"
 
-extern double top_1_score;
-extern double rr_ratio;
-extern int top_1_found;
 
 /**
  * @brief Ask user question and find one of the top-k point

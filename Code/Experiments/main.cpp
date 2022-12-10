@@ -15,6 +15,7 @@
 #include "Active_Ranking/active_ranking.h"
 #include "UH/maxUtility.h"
 #include "RH/alg_one.h"
+#include "exp_stats.h"
 
 #include <vector>
 #include <ctime>
@@ -106,7 +107,7 @@ int main(int argc, char *argv[]){
     double total_vtime = 0;
 
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P0 = read_points((char*)"4d100k.txt");
+    point_set_t *P0 = read_points((char*)"2d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh, skylines;
 
@@ -122,10 +123,9 @@ int main(int argc, char *argv[]){
      // generate the utility vector
     point_t *u = alloc_point(dim);
 
-    double theta=0.05;
-    int checknum=3;
+    double theta = 0.05;
+    int checknum = 3;
     int num_repeat = 100;
-    float avg_time;
 
 
     for(int i=0; i<num_repeat; i++){
@@ -148,8 +148,9 @@ int main(int argc, char *argv[]){
         printf("---------------------------------------------------------\n");
 
         top_1_score = dot_prod(u,top_current[0]);
+        best_score = dot_prod(u,top_current[0]);
         double top_2_score = dot_prod(u,top_current[1]);
-        double epsilon = (top_1_score - top_2_score) / top_1_score;
+        double epsilon = (best_score - top_2_score) / best_score;
 
         int maxRound = 1000;
 
@@ -157,41 +158,33 @@ int main(int argc, char *argv[]){
         // Beginning of algs
 
         if(dim==2){ // 2d algs
-        // the 2RI algorithm
-        twoRI += ST2D(p_convh, u, checknum, theta);
-        twoRI_rr += rr_ratio;
-        twoRI_count += top_1_found;
-            
 
-        // the Median algorithm
-        med += Median_Adapt(p_set, u, maxRound, theta);
-        med_rr += rr_ratio;
-        med_count += top_1_found;
+            // // the 2RI algorithm
+            // twoRI += ST2D(p_convh, u, checknum, theta);
+            // twoRI_rr += rr_ratio;
+            // twoRI_count += top_1_found;
 
-        // the Hull algorithm
-        Hull += Hull_Adapt(p_set, u, maxRound, theta);
-        Hull_rr += rr_ratio;
-        Hull_count += top_1_found;
+            // // the Median algorithm
+            // med += Median_Adapt(p_set, u, maxRound, theta);
+            // med_rr += rr_ratio;
+            // med_count += top_1_found;
 
-        // the 2DPI algorithm
-        for (int i = 0; i < p_set.size(); i++)
-            p_set[i]->pid = i;
-        DPI += twoDPI(p_set,u,theta);
-        DPI_rr += rr_ratio;
-        DPI_count += top_1_found;
-        for (int i = 0; i < p_set.size(); i++)
-            p_set[i]->dim = dim;
-        p_set.clear();
-        point_reload(P, p_set);
-        
+            // // the Hull algorithm
+            // Hull += Hull_Adapt(p_set, u, maxRound, theta);
+            // Hull_rr += rr_ratio;
+            // Hull_count += top_1_found;
+
+            // the 2DPI algorithm
+            for (int i = 0; i < p_set.size(); i++)
+                p_set[i]->pid = i;
+            DPI += twoDPI(p_set,u,theta);
+            DPI_rr += rr_ratio;
+            DPI_count += top_1_found;
+            for (int i = 0; i < p_set.size(); i++)
+                p_set[i]->dim = dim;
+            p_set.clear();
+            point_reload(P, p_set);
         }
-        // std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-        // //Algorithm HDPI_naive
-        // int n_times = 3;
-        // HD_n += HDPI_Naive(p_set, u, theta, n_times);
-        // HD_n_rr += rr_ratio;
-        // HD_n_count += top_1_found;
 
         // // Algorithm HDPI_accurate
         // HD_a += HDPI_accurate(p_set, u, theta);
@@ -226,20 +219,15 @@ int main(int argc, char *argv[]){
         // PL_rr += rr_ratio;
         // PL_count += top_1_found;
 
-        // Algorithm Active_Ranking
-        AR += Active_Ranking(p_set, u, theta);
-        AR_rr += rr_ratio;
-        AR_count += top_1_found;
+        // // Algorithm Active_Ranking
+        // AR += Active_Ranking(p_set, u, theta);
+        // AR_rr += rr_ratio;
+        // AR_count += top_1_found;
 
         // // Algorithm RH
         // RH += Random_half(p_set, u, theta);
         // RH_rr += rr_ratio;
         // RH_count += top_1_found;
-
-        // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-        // avg_time = ((float) std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()) / SP;
-
 
     }
 
@@ -260,7 +248,10 @@ int main(int argc, char *argv[]){
     printf("|%20s |%10f |%8f |%8f\n", "UH-SIMPLEX", UH/num_repeat, UH_rr/num_repeat, ((double)UH_count)/num_repeat);
     printf("|%20s |%10f |%8f |%8f\n", "RH", RH/num_repeat, RH_rr/num_repeat, ((double)RH_count)/num_repeat);
     release_point_set(P, true);
-    printf("avgtime: %f\n", avg_time);
+    std::cout << "accuracy: " << ((double) correct_count)/num_repeat << std::endl;
+    std::cout << "avg question num: "<< question_num/num_repeat << std::endl;
+    std::cout << "avg return size: "<< return_size/num_repeat << std::endl;
+    std::cout << "avg time: "<< avg_time() << std::endl;
     return 0;
 
 }

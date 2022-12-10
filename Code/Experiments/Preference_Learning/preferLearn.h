@@ -12,6 +12,7 @@
 #include <sstream>
 #include <string>
 #include "../Others/QuadProg++.hh"
+#include "../exp_stats.h"
 using namespace quadprogpp;
 
 extern int num_questions;

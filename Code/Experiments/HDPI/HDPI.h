@@ -1,6 +1,7 @@
 #include "../Others/used_function.h"
 #include "../Others/user_mode.h"
 #include "partition_func.h"
+#include "../exp_stats.h"
 
 extern int num_questions;
 extern int crit_wrong_answer;

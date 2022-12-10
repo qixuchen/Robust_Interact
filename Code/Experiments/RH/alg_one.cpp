@@ -12,9 +12,11 @@
  */
 int Random_half(std::vector<point_t*> p_set, point_t* u, double theta)
 {
+    start_timer();
     int k = 1;
+    int round = 0;
     point_random(p_set);
-    int dim = p_set[0]->dim, M = p_set.size(), numOfQuestion = 0;
+    int dim = p_set[0]->dim, M = p_set.size();
 
     //initial: add the basic halfspace into R_hyperplane
     halfspace_set_t* R_half_set = R_initial(dim);
@@ -73,8 +75,7 @@ int Random_half(std::vector<point_t*> p_set, point_t* u, double theta)
                 }
                 if(need_ask)
                 {
-                    numOfQuestion++;
-                    point_t* user_choice = user_rand_err(u, p_set[i], current_point[p_index], theta);
+                    point_t* user_choice = user_rand_err(u, p_set[i], current_point[p_index], theta, round);
                     if(user_choice==p_set[i])
                     {
                         halfspace_t* half=alloc_halfspace(current_point[p_index], p_set[i], 0, true);
@@ -107,10 +108,11 @@ int Random_half(std::vector<point_t*> p_set, point_t* u, double theta)
             break;
         }
     }
-    printf("|%30s |%10d |%10s |\n", "RH", numOfQuestion, "--");
+    stop_timer();
+    printf("|%30s |%10d |%10s |\n", "RH", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, point_result)/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return numOfQuestion;
+    correct_count += dot_prod(u, point_result) >= best_score;    
+    question_num += round;
+    return 0;
 }

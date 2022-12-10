@@ -4,15 +4,8 @@
 #include "../Others/data_struct.h"
 #include "../Others/data_utility.h"
 #include "../Others/used_function.h"
-
 #include "../Others/operation.h"
-
-extern int num_questions;
-extern int crit_wrong_answer;
-extern int num_wrong_answer;
-extern double top_1_score;
-extern double rr_ratio;
-extern int top_1_found;
+#include "./exp_stats.h"
 
 /**
  * @brief Danupon's UtilityApprox algorithm
