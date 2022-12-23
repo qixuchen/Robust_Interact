@@ -584,10 +584,10 @@ hyperplane_t *orthogonal_search(s_node_t *node, point_t *q, hyperplane_t *best)
 //@param k                  The threshold tok-k
 int Preference_Learning_accuracy(std::vector<point_t *> original_set, point_t *u, double theta)
 {
-    start_timer();
     int k = 1;
     int round = 0;
     int M;
+    start_timer();
     //p_set: randomly choose 1000 points
     std::vector<point_t *> p_set;
     if (original_set.size() < 1000)

@@ -43,9 +43,9 @@ struct MinHeapCmp
  */
 int twoDPI(std::vector<point_t*> &top_set, point_t* u, double theta)
 {
-    start_timer();
     int k = 1;
     int round = 0;
+    start_timer(round);
     std::vector<point_t*> point_set; //the sorted version of onion_set
     point_t* u0 = alloc_point(2);
     u0->coord[0] = 0;
@@ -252,7 +252,7 @@ int twoDPI(std::vector<point_t*> &top_set, point_t* u, double theta)
             b_left=index+1;
         }
     }
-    stop_timer();
+    stop_timer(round);
     printf("|%30s |%10d |%10s |\n", "2D-PI", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", represent_point[b_left]->id);
     printf("---------------------------------------------------------\n");

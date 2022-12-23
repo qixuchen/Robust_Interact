@@ -1,7 +1,6 @@
 #include "ST2D.h"
 
 int ST2D(std::vector<point_t *> p_convh, point_t *u, int k, double theta){
-    start_timer();
     int round = 0;
     int size = p_convh.size();
     if(size==0){
@@ -14,6 +13,7 @@ int ST2D(std::vector<point_t *> p_convh, point_t *u, int k, double theta){
     int L=0, U=size-1;
 
     while(L<U){
+        start_timer(round);
         int search_size = U-L+1;
         int m = std::max(int(ceil(2 * theta * search_size)), 1);
         int sL=L, sU=U;
@@ -68,8 +68,8 @@ int ST2D(std::vector<point_t *> p_convh, point_t *u, int k, double theta){
                 }
             }
         }
+        stop_timer(round);
     }
-    stop_timer();
     printf("|%30s |%10d |%10s |\n", "ST2D", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", p_convh[L]->id);
     printf("---------------------------------------------------------\n");

@@ -165,7 +165,6 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     {
         q_set->points[i] = alloc_point(D);
     }
-
     i = 0;
     t = 1;
     vector<int> C;
@@ -246,7 +245,8 @@ int utilityapprox(point_set_t *P, point_t *u, int s, double epsilon, int maxRoun
     delete[] U;
     delete[] L;
     delete[] chi;
-
+    
+    stop_timer();
     point_t *result = P->points[findbestpoint(P, v)];
     release_point(v);
     release_point_set(q_set, true);

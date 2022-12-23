@@ -231,7 +231,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     halfspace_t *hy=NULL, *hy_cp=NULL;
     bool encounter_err = false, end_premature=false;
 
-    start_timer();
     while(true_point_result==NULL){
 
         point_result = NULL;
@@ -245,14 +244,11 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         point_t* p2 = choose_item_set[index]->hyper->point2;
         point_t* user_choice = user_rand_err(u, p1, p2, theta, round);
 
-
-
         //start of phase 1
         //==========================================================================================================================================
-
-
         while (point_result==NULL)
         {
+            start_timer(round);
             if (user_choice==p1)
             {
                 hy = alloc_halfspace(p2, p1, 0, true);
@@ -283,6 +279,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             else if(considered_half_set.size() == 1){
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
+            stop_timer(round);
         }
         //=================================================================================================================================
         //End of phase 1
@@ -292,6 +289,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         //==========================================================================================================================================
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
+            start_timer(round);
             double prune_ratio=0;
             randPoints.clear();
             shift_point.clear();
@@ -380,7 +378,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             else if(considered_half_set_cp.size() == 1){
                 true_point_result=half_set_set_cp[considered_half_set_cp[0]]->represent_point[0];
             }
-
+            stop_timer(round);
             if(end_premature){
 
                 //printf("end premature\n");
@@ -440,7 +438,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         //=================================================================================================================================
         //End of phase 2
     }
-    stop_timer();
 
     printf("|%30s |%10d |%10s |\n", "SamplePrune", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
