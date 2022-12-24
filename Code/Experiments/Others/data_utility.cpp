@@ -350,7 +350,7 @@ void release_point_set(point_set_t *&point_set_v, bool clear)
         if (clear)
         {
             for (int i = 0; i < point_set_v->numberOfPoints; i++)
-                release_point(point_set_v->points[i]);
+                release_point(point_set_v->points[i]); 
         }
 
         free(point_set_v->points);
@@ -385,7 +385,7 @@ halfspace_set_t *alloc_halfspace_set(int dim)
  * @param hss   the hyperplane set to copy from
  * @return      hyperplane_set_t* 
  */
-halfspace_set_t *deepcopy_halfspace_set(const halfspace_set_t * hss){
+halfspace_set_t *deepcopy_halfspace_set(const halfspace_set_t * hss){ //LEAK
     halfspace_set_t * hss_v;
     if(hss==NULL){
         return hss_v;
@@ -429,7 +429,7 @@ halfspace_set_t *deepcopy_halfspace_set(const halfspace_set_t * hss){
 /*
  *	Release memory for halfspace_set
  */
-void release_halfspace_set(halfspace_set_t *&halfspace_set_v)
+void release_halfspace_set(halfspace_set_t *&halfspace_set_v) //LEAK
 {
     if (halfspace_set_v == NULL)
     {

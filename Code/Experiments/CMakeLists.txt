@@ -168,6 +168,8 @@ else ()
         Qhull/userprintf_rbox.cpp
         lp.cpp
         lp.h
+        exp_stats.cpp
+        exp_stats.h
         main.cpp)
 
 

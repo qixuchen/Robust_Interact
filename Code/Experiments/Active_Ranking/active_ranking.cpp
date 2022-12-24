@@ -10,11 +10,10 @@
  */
 int Active_Ranking(std::vector<point_t *> p_set, point_t *u, double theta)
 {
+    start_timer();
     int k = 1;
-    timeval t1, t2;
-    gettimeofday(&t1, 0);
+    int round = 0;
     int dim = p_set[0]->dim;
-    int numOfQuestion = 0;
     point_random(p_set);
 
     //initial
@@ -48,10 +47,9 @@ int Active_Ranking(std::vector<point_t *> p_set, point_t *u, double theta)
                 //if intersect, calculate the distance
                 if (relation == 0)
                 {
-                    numOfQuestion++;
                     // double v1 = dot_prod(u, p_set[i]);
                     // double v2 = dot_prod(u, current_use[j]);
-                    point_t* user_choice = user_rand_err(u, p_set[i], current_use[j], theta) == p_set[i] ? p_set[i] : current_use[j];
+                    point_t* user_choice = user_rand_err(u, p_set[i], current_use[j], theta, round) == p_set[i] ? p_set[i] : current_use[j];
                     if (user_choice == p_set[i])
                     {
                         halfspace_t *half = alloc_halfspace(current_use[j], p_set[i], 0, true);
@@ -74,14 +72,15 @@ int Active_Ranking(std::vector<point_t *> p_set, point_t *u, double theta)
             current_use.insert(current_use.begin() + place, p_set[i]);
         }
     }
+    stop_timer();
     p_set.clear();
     //p_set.shrink_to_fit();
     release_halfspace_set(R_half_set);
-    printf("|%30s |%10d |%10s |\n", "Active-Ranking", numOfQuestion, "--");
+    printf("|%30s |%10d |%10s |\n", "Active-Ranking", round, "--");
     int i = rand()%k;
     printf("|%30s |%10s |%10d |\n", "Point", "--", current_use[i]->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, current_use[i])/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return numOfQuestion;
+    correct_count += dot_prod(u, current_use[i]) >= best_score;    
+    question_num += round;
+    return 0;
 }
