@@ -246,9 +246,9 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
 
         //start of phase 1
         //==========================================================================================================================================
+        start_timer();
         while (point_result==NULL)
         {
-            start_timer(round);
             if (user_choice==p1)
             {
                 hy = alloc_halfspace(p2, p1, 0, true);
@@ -279,7 +279,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             else if(considered_half_set.size() == 1){
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
-            stop_timer(round);
         }
         //=================================================================================================================================
         //End of phase 1
@@ -289,7 +288,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         //==========================================================================================================================================
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
-            start_timer(round);
             double prune_ratio=0;
             randPoints.clear();
             shift_point.clear();
@@ -378,7 +376,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
             else if(considered_half_set_cp.size() == 1){
                 true_point_result=half_set_set_cp[considered_half_set_cp[0]]->represent_point[0];
             }
-            stop_timer(round);
             if(end_premature){
 
                 //printf("end premature\n");
@@ -388,7 +385,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         if(true_point_result!=NULL){
             break;
         }
-
+        stop_timer();
         //  re-initialize all data structures used in the inner loop with the record of the outer loop
         //  std::vector<halfspace_set_t *> half_set_set
         //  std::vector<int> considered_half_set

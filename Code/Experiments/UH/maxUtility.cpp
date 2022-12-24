@@ -318,6 +318,7 @@ update_ext_vec(point_set_t *P, vector<int> &C_idx, point_t *u, int s, vector<poi
 int max_utility(point_set_t *P, point_t *u, int s, double epsilon, int maxRound,
                 int cmp_option, int stop_option, int prune_option, int dom_option, double theta)
 {
+    start_timer();
     //point_set_t *P = skyline_point(P0);
     int dim = P->points[0]->dim;
 
@@ -364,7 +365,6 @@ int max_utility(point_set_t *P, point_t *u, int s, double epsilon, int maxRound,
     while (C_idx.size() > 1 && (rr > epsilon && !isZero(rr - epsilon)) && round < maxRound)
         // while none of the stopping condition is true
     {
-        start_timer(round);
         //printf("Number of Question %d\n", Qcount);
         sort(C_idx.begin(), C_idx.end()); // prevent select two different points after different skyline algorithms
         // generate the options for user selection and update the extreme vectors based on the user feedback
@@ -382,7 +382,6 @@ int max_utility(point_set_t *P, point_t *u, int s, double epsilon, int maxRound,
         {
             rtree_pruning(P, C_idx, ext_vec, rr, stop_option, dom_option);
         }
-        stop_timer(round);
     }
 
     // get the final result
@@ -391,6 +390,7 @@ int max_utility(point_set_t *P, point_t *u, int s, double epsilon, int maxRound,
     for (int i = 0; i < ext_vec.size(); i++)
         release_point(ext_vec[i]);
 
+    stop_timer();
    if (cmp_option == RANDOM)
     {
         printf("|%30s |%10d |%10s |\n", "UH-RANDOM", round, "--");

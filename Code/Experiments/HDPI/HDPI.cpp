@@ -137,7 +137,6 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
     point_t* point_result = NULL;
     while (considered_half_set.size() > 1)
     {
-        start_timer(round);
         point_t* user_choice = user_rand_err(u, p1, p2, theta, round);
         if (user_choice == p1)
         {
@@ -164,7 +163,7 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
         }
         if (point_result!= NULL)
         {
-            stop_timer(round);
+            stop_timer();
             printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", round, "--");
             printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
             printf("---------------------------------------------------------\n");
@@ -172,7 +171,6 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
             question_num += round;
             return 0;
         }
-        stop_timer(round);
     }
     stop_timer();
     printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", round, "--");

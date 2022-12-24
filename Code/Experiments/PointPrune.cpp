@@ -124,10 +124,9 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
         //start of phase 1
         //==========================================================================================================================================
-
+        start_timer();
         while (point_result==NULL)
         {
-            start_timer(round);
             if (user_choice==p1)
             {
                 hy = alloc_halfspace(p2, p1, 0, true);
@@ -158,7 +157,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             else if(considered_half_set.size() == 1){
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
-            stop_timer(round);
         }
         //=================================================================================================================================
         //End of phase 1
@@ -170,7 +168,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
         while(true_point_result==NULL && selected_halfspaces.size()>0){
             // IMPORTANT: The order of point recorded in choose_item does not imply user preference
             // The user preference is indicated in selected_halfspaces: p2 > p1
-            start_timer(round);
             point_t *best_p1=NULL, *best_p2=NULL;
             double ratio=0;
             int best_index = find_best_hyperplane(choose_item_set_cp,selected_halfspaces, best_p1, best_p2, ratio);
@@ -231,7 +228,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             else if(considered_half_set_cp.size() == 1){
                 true_point_result=half_set_set_cp[considered_half_set_cp[0]]->represent_point[0];
             }
-            stop_timer(round);
             if(end_premature){
                 // printf("end premature\n");
                 break;
@@ -248,7 +244,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
         //  std::vector<choose_item *> choose_item_set
         //  std::vector<halfspace_t*> selected_halfspaces
         //  halfspace_set_t *R_half_set
-
+        stop_timer();
 
         selected_halfspaces.clear();
 

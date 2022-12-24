@@ -310,6 +310,7 @@ int Hull(point_set_t *P, point_t *u, int s, int maxRound)
 // Algorithm Median
 int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta)
 {
+    start_timer();
     int k = 1;
     int round = 0;
     int dim = vertices[0]->dim;
@@ -322,7 +323,6 @@ int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, doub
 
     while (vertices.size() > k && round < maxRound)
     {
-        start_timer(round);
         sort(vertices.begin(), vertices.end(), angleCmp());
         int start = 0, end = vertices.size() - 1, delete_id;
         int idx1 = end / 2, idx2 = idx1;
@@ -375,8 +375,8 @@ int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, doub
                 break;
             }
         }
-        stop_timer(round);
     }
+    stop_timer();
     int current_best = vertices.size() / 2;
     printf("|%30s |%10d |%10s |\n", "Median-Adapt", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", vertices[current_best]->id);
@@ -389,6 +389,7 @@ int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, doub
 // Algorithm Hull
 int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta)
 {
+    start_timer();
     int k = 1;
     int round = 0;
     int dim = vertices[0]->dim;
@@ -401,7 +402,6 @@ int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double
 
     while (vertices.size() > k && round < maxRound)
     {
-        start_timer(round);
         sort(vertices.begin(), vertices.end(), angleCmp());
         int start = 0, end = vertices.size()-1, delete_id;
         int idx1 = end / 3, idx2 = 2*idx1;
@@ -460,8 +460,8 @@ int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double
                 break;
             }
         }
-        stop_timer(round);
     }
+    stop_timer();
     int current_best = vertices.size() / 2;
     printf("|%30s |%10d |%10s |\n", "Hull-Adapt", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", vertices[current_best]->id);

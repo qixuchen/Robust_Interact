@@ -34,7 +34,7 @@ double compute_std(int* round_array, int n){
 int main(int argc, char *argv[]){
 
     srand(time(0));  // Initialize random number generator.
-    point_set_t *P0 = read_points((char*)"2d100k.txt");
+    point_set_t *P0 = read_points((char*)"4d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh, skylines;
 
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
 
     double theta = 0.05;
     int checknum = 3;
-    int num_repeat = 200;
+    int num_repeat = 100;
 
 
     for(int i=0; i<num_repeat; i++){
@@ -66,14 +66,15 @@ int main(int argc, char *argv[]){
         double sum = 0;
         for (int i = 0; i < dim; i++)
         {
-            u->coord[i] = ((double) rand()) / RAND_MAX;
+            // u->coord[i] = ((double) rand()) / RAND_MAX;
+            // sum += u->coord[i];
+            if(i != 0){
+                u->coord[i] = ((double) rand()) / RAND_MAX / 2; 
+            }
+            else{
+                u->coord[i] = ((double) rand()) / RAND_MAX / 2 + 0.5;
+            }
             sum += u->coord[i];
-            // if(i == 1){
-            //     u->coord[i] = ((double) rand()) / RAND_MAX / 2; 
-            // }
-            // else{
-            //     u->coord[i] = ((double) rand()) / RAND_MAX / 2 + 0.5;
-            // }
         }
         for (int i = 0; i < dim; i++){
             u->coord[i] = u->coord[i]/sum;
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]){
         // if(dim==2){ // 2d algs
 
             // // the 2RI algorithm
-            ST2D(p_convh, u, checknum, theta);
+            // ST2D(p_convh, u, checknum, theta);
 
             // the Median algorithm
             // Median_Adapt(p_set, u, maxRound, theta);
@@ -120,7 +121,7 @@ int main(int argc, char *argv[]){
         // HDPI_accurate(p_set, u, theta);
 
         // // Algorithm PointPrune_v2 
-        // PointPrune_v2(p_set, u, checknum, theta);
+        PointPrune_v2(p_set, u, checknum, theta);
 
         // // Algorithm SamplePrune 
         // SamplePrune(p_set, u, checknum, theta);
@@ -147,8 +148,8 @@ int main(int argc, char *argv[]){
     std::cout << "accuracy: " << ((double) correct_count)/num_repeat << std::endl;
     std::cout << "avg question num: "<< question_num/num_repeat << std::endl;
     std::cout << "avg return size: "<< return_size/num_repeat << std::endl;
-    print_time_stats();
-    std::cout << "avg accumulate time: "<< tot_time / num_repeat << std::endl;
+    // print_time_stats();
+    std::cout << "avg accumulate time: "<< tot_time / question_num << std::endl;
     return 0;
 
 }
