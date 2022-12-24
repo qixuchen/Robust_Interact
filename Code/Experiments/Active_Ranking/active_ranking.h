@@ -1,12 +1,5 @@
 #include "../Others/used_function.h"
-
-
-extern int num_questions;
-extern int crit_wrong_answer;
-extern int num_wrong_answer;
-extern double top_1_score;
-extern double rr_ratio;
-extern int top_1_found;
+#include "./exp_stats.h"
 
 /**
  * @brief Ask user questions and give a ranking

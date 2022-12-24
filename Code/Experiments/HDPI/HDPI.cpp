@@ -12,6 +12,7 @@
 int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, double theta)
 {
     int k = 1;
+    int round = 0;
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -44,12 +45,10 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, double theta)
     halfspace_set_t *R_half_set = R_initial(dim);
     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
     halfspace_t *hy;
-    int numOfQuestion = 0;
     point_t* point_result = NULL;
     while (considered_half_set.size() > 1)
     {
-        numOfQuestion++;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+        point_t* user_choice = user_rand_err(u, p1, p2, theta, round);
         if (user_choice == p1)
         {
             hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
@@ -75,22 +74,22 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, double theta)
         }
         if (point_result!= NULL)
         {
-            printf("|%30s |%10d |%10s |\n", "HD-PI_sampling", numOfQuestion, "--");
+            printf("|%30s |%10d |%10s |\n", "HD-PI_sampling", round, "--");
             printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
             printf("---------------------------------------------------------\n");
-            rr_ratio = dot_prod(u, point_result)/top_1_score;
-            top_1_found= (rr_ratio>=1);
-            return numOfQuestion;
+            correct_count += dot_prod(u, point_result) >= best_score;    
+            question_num += round;
+            return 0;
         }
     }
 
-    printf("|%30s |%10d |%10s |\n", "HD-PI_sampling", numOfQuestion, "--");
+    printf("|%30s |%10d |%10s |\n", "HD-PI_sampling", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--",
            half_set_set[considered_half_set[0]]->represent_point[0]->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, half_set_set[considered_half_set[0]]->represent_point[0])/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return numOfQuestion;
+    correct_count += dot_prod(u, half_set_set[considered_half_set[0]]->represent_point[0]) >= best_score;    
+    question_num += round;
+    return 0;
 }
 
 /**
@@ -103,6 +102,8 @@ int HDPI_sampling(std::vector<point_t *> p_set, point_t *u, double theta)
 int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
 {
     int k = 1;
+    int round = 0;
+    start_timer();
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
     //p_top_1 contains the points which are the convex points
@@ -133,12 +134,10 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
     halfspace_set_t *R_half_set = R_initial(dim);
     get_extreme_pts_refine_halfspaces_alg1(R_half_set);
     halfspace_t *hy;
-    int numOfQuestion = 0;
     point_t* point_result = NULL;
     while (considered_half_set.size() > 1)
     {
-        numOfQuestion++;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
+        point_t* user_choice = user_rand_err(u, p1, p2, theta, round);
         if (user_choice == p1)
         {
             hy = alloc_halfspace(choose_item_set[index]->hyper->point2, choose_item_set[index]->hyper->point1, 0, true);
@@ -164,21 +163,52 @@ int HDPI_accurate(std::vector<point_t *> p_set, point_t *u, double theta)
         }
         if (point_result!= NULL)
         {
-            printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", numOfQuestion, "--");
+            stop_timer();
+            printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", round, "--");
             printf("|%30s |%10s |%10d |\n", "Point", "--", point_result->id);
             printf("---------------------------------------------------------\n");
-            rr_ratio = dot_prod(u, point_result)/top_1_score;
-            top_1_found= (rr_ratio>=1);
-            return numOfQuestion;
+            correct_count += dot_prod(u, point_result) >= best_score;    
+            question_num += round;
+            return 0;
         }
     }
-    printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", numOfQuestion, "--");
+    stop_timer();
+    printf("|%30s |%10d |%10s |\n", "HD-PI_accurate", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--",
            half_set_set[considered_half_set[0]]->represent_point[0]->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, half_set_set[considered_half_set[0]]->represent_point[0])/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return numOfQuestion;
+    correct_count += dot_prod(u, half_set_set[considered_half_set[0]]->represent_point[0]) >= best_score;    
+    question_num += round;
+    return 0;
 }
 
 
+// /**
+//  * @brief Run HDPI k times and return the major answer
+//  * @param p_set 		 The dataset
+//  * @param u 			 The linear function
+//  * @param theta          The user error rate
+//  * @param n_time 		 Number of repeating times
+//  */
+// int HDPI_Naive(std::vector<point_t *> p_set, point_t *u, double theta, int n_times){
+//     int total_question = 0;
+//     vector<int> answer_vec;
+//     for(int i = 0; i < n_times; i++){
+//         top_1_found = false;
+//         total_question += HDPI_accurate(p_set, u, theta);
+//         answer_vec.push_back(top_1_found==true ? 1 : 0);
+//     }
+
+//     int sum = 0;
+//     for(int i=0; i < answer_vec.size(); i++){
+//         sum += answer_vec[i];
+//     }
+
+//     if(sum > n_times/2){
+//         top_1_found = true;
+//     }
+//     else{
+//         top_1_found = answer_vec[rand() % answer_vec.size()] == 1 ? true : false;
+//     }
+//     return total_question;
+// }

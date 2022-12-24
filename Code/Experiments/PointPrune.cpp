@@ -72,20 +72,7 @@ int find_best_hyperplane(std::vector<choose_item*> choose_item_set, std::vector<
 int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double theta)
 {
     int k = 1;
-
-    //reset statistics
-    num_questions=0;
-    num_wrong_answer=0;
-    crit_wrong_answer=0;
-
-    
-    int iter_num = 0;
-    i1_p1 = 0;
-    i1_p2 = 0;
-    i2_p1 = 0;
-    i2_p2 = 0;
-    i3_p1 = 0;
-    i3_p2 = 0;
+    int round = 0;
 
     //p_set_1 contains the points which are not dominated by >=1 points
     //p_set_k contains the points which are not dominated by >=k points
@@ -124,9 +111,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
     bool encounter_err = false, end_premature=false;
 
     while(true_point_result==NULL){
-        iter_num++;
-        int cur_quest_num = num_questions;
-
         point_result = NULL;
         //index: the index of the chosen hyperplane(question)
         //p1:    the first point
@@ -136,13 +120,11 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
         // double v2 = dot_prod(u, choose_item_set[index]->hyper->point2);
         point_t* p1 = choose_item_set[index]->hyper->point1;
         point_t* p2 = choose_item_set[index]->hyper->point2;
-        point_t* user_choice = user_rand_err(u,p1,p2,theta);
-
-
+        point_t* user_choice = user_rand_err(u, p1, p2, theta, round);
 
         //start of phase 1
         //==========================================================================================================================================
-
+        start_timer();
         while (point_result==NULL)
         {
             if (user_choice==p1)
@@ -157,7 +139,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             }
             p1 = choose_item_set[index]->hyper->point1;
             p2 = choose_item_set[index]->hyper->point2;
-            user_choice = user_rand_err(u,p1,p2,theta);
+            user_choice = user_rand_err(u, p1, p2, theta, round);
 
             //Find whether there exist point which is the topk point w.r.t any u in R
             R_half_set->halfspaces.push_back(hy);
@@ -176,25 +158,12 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
                 point_result=half_set_set[considered_half_set[0]]->represent_point[0];
             }
         }
-
-        if(iter_num==1){
-            i1_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p1 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p1 += num_questions-cur_quest_num;
-        }
         //=================================================================================================================================
         //End of phase 1
 
 
         //start of phase 2
         //==========================================================================================================================================
-
-        cur_quest_num = num_questions;
-
         encounter_err = false, end_premature=false;
         while(true_point_result==NULL && selected_halfspaces.size()>0){
             // IMPORTANT: The order of point recorded in choose_item does not imply user preference
@@ -206,19 +175,19 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             p2 = choose_item_set_cp[best_index]->hyper->point2;
             
             double skip_rate = 0.2;
-            if(best_p1==p1){
+            if(best_p1 == p1){
                 //user_choice = checking(u,p2,p1,theta,checknum);
-                user_choice = checking_varyk(u,p2,p1,theta,checknum,skip_rate);
+                user_choice = checking_varyk(u, p2, p1, theta, checknum, skip_rate, round);
             }
             else{
                 //user_choice = checking(u,p1,p2,theta,checknum);
-                user_choice = checking_varyk(u,p1,p2,theta,checknum, skip_rate);
+                user_choice = checking_varyk(u, p1, p2, theta, checknum, skip_rate, round);
             }
             //printf("ratio %10f\n",ratio);
-            if(user_choice!=best_p2){
+            if(user_choice != best_p2){
                 encounter_err = true;
             }
-            if(encounter_err==true && ratio<0.15){
+            if(encounter_err == true && ratio < 0.15){
                 //printf("enc err\n");
                 end_premature=true;
             }
@@ -259,26 +228,11 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
             else if(considered_half_set_cp.size() == 1){
                 true_point_result=half_set_set_cp[considered_half_set_cp[0]]->represent_point[0];
             }
-
             if(end_premature){
-
                 // printf("end premature\n");
                 break;
             }
         }
-
-        
-        if(iter_num==1){
-            i1_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==2){
-            i2_p2 += num_questions-cur_quest_num;
-        }
-        else if(iter_num==3){
-            i3_p2 += num_questions-cur_quest_num;
-        }
-
-
         if(true_point_result!=NULL){
             break;
         }
@@ -290,7 +244,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
         //  std::vector<choose_item *> choose_item_set
         //  std::vector<halfspace_t*> selected_halfspaces
         //  halfspace_set_t *R_half_set
-
+        stop_timer();
 
         selected_halfspaces.clear();
 
@@ -333,16 +287,16 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
     }
 
-    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", num_questions, "--");
+    printf("|%30s |%10d |%10s |\n", "PointPrune_v2", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
     // printf("# of wrong answers:%d\n",num_wrong_answer);
     // printf("# of critical wrong answers:%d\n",crit_wrong_answer);
     // printf("regret ratio: %10f \n", dot_prod(u, true_point_result)/top_1_score);
-    rr_ratio = dot_prod(u, true_point_result)/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return num_questions;
-    
+    correct_count += dot_prod(u, true_point_result) >= best_score;    
+    question_num += round;
+    return 0;
+
 }
 
 

@@ -225,8 +225,6 @@ int Median(point_set_t *P, point_t *u, int maxRound)
     printf("|%30s |%10.0lf |%10s |\n", "Median", Qcount, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", vertices[current_best]->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, vertices[current_best])/top_1_score;
-    top_1_found= (rr_ratio>=1);
     return Qcount;
 }
 
@@ -312,21 +310,19 @@ int Hull(point_set_t *P, point_t *u, int s, int maxRound)
 // Algorithm Median
 int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta)
 {
+    start_timer();
     int k = 1;
-    timeval t1, t2;
-    gettimeofday(&t1, 0);
+    int round = 0;
     int dim = vertices[0]->dim;
     if (dim != 2)
     {
         printf("median requires dim = 2\n");
         exit(0);
     }
-    double Qcount = 0;
     halfspace_set_t *R = R_initial(dim);
 
-    while (vertices.size() > k && Qcount < maxRound)
+    while (vertices.size() > k && round < maxRound)
     {
-        Qcount++;
         sort(vertices.begin(), vertices.end(), angleCmp());
         int start = 0, end = vertices.size() - 1, delete_id;
         int idx1 = end / 2, idx2 = idx1;
@@ -352,7 +348,7 @@ int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, doub
             }
         }
 
-        point_t* user_choice = user_rand_err(u, vertices[idx1],vertices[idx2], theta);
+        point_t* user_choice = user_rand_err(u, vertices[idx1],vertices[idx2], theta, round);
         // double v1 = dot_prod(u, vertices[idx1]);
         // double v2 = dot_prod(u, vertices[idx2]);
         if (user_choice == vertices[idx1])
@@ -380,34 +376,32 @@ int Median_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, doub
             }
         }
     }
-
+    stop_timer();
     int current_best = vertices.size() / 2;
-    printf("|%30s |%10.0lf |%10s |\n", "Median-Adapt", Qcount, "--");
+    printf("|%30s |%10d |%10s |\n", "Median-Adapt", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", vertices[current_best]->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, vertices[current_best])/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return Qcount;
+    correct_count += dot_prod(u, vertices[current_best]) >= best_score;    
+    question_num += round;
+    return 0;
 }
 
 // Algorithm Hull
 int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double theta)
 {
+    start_timer();
     int k = 1;
-    timeval t1, t2;
-    gettimeofday(&t1, 0);
+    int round = 0;
     int dim = vertices[0]->dim;
     if (dim != 2)
     {
         printf("Hull requires dim = 2\n");
         exit(0);
     }
-    double Qcount = 0;
     halfspace_set_t *R = R_initial(dim);
 
-    while (vertices.size() > k && Qcount < maxRound)
+    while (vertices.size() > k && round < maxRound)
     {
-        Qcount++;
         sort(vertices.begin(), vertices.end(), angleCmp());
         int start = 0, end = vertices.size()-1, delete_id;
         int idx1 = end / 3, idx2 = 2*idx1;
@@ -441,7 +435,7 @@ int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double
                 count_change = 0;
             }
         }
-        point_t* user_choice = user_rand_err(u, vertices[idx1], vertices[idx2], theta);
+        point_t* user_choice = user_rand_err(u, vertices[idx1], vertices[idx2], theta, round);
         if (user_choice == vertices[idx1])
         {
             delete_id = vertices[idx2]->id;
@@ -467,12 +461,12 @@ int Hull_Adapt(std::vector<point_t *> vertices, point_t *u, int maxRound, double
             }
         }
     }
-
+    stop_timer();
     int current_best = vertices.size() / 2;
-    printf("|%30s |%10.0lf |%10s |\n", "Hull-Adapt", Qcount, "--");
+    printf("|%30s |%10d |%10s |\n", "Hull-Adapt", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", vertices[current_best]->id);
     printf("---------------------------------------------------------\n");
-    rr_ratio = dot_prod(u, vertices[current_best])/top_1_score;
-    top_1_found= (rr_ratio>=1);
-    return Qcount;
+    correct_count += dot_prod(u, vertices[current_best]) >= best_score;    
+    question_num += round;
+    return 0;
 }

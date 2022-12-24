@@ -9,13 +9,8 @@
 #include "../Qhull/qset.h"
 #include "../Qhull/mem.h"
 #include "../Others/operation.h"
+#include "../exp_stats.h"
 #include <algorithm>
-
-
-extern int num_questions;
-extern double top_1_score;
-extern double rr_ratio;
-extern int top_1_found;
 
 // get the set of vertices of Conv(P)
 vector<point_t*> getVertices(point_set_t* P);

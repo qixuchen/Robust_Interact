@@ -8,7 +8,7 @@
 #include "../Others/used_function.h"
 #include <vector>
 #include <algorithm> 
-
+#include "exp_stats.h"
 #include "../Others/rtree.h"
 #include "../lp.h"
 #include "../Others/pruning.h"
@@ -19,12 +19,6 @@
 #define SIMPLEX_FLY 3
 
 using namespace std;
-
-extern int num_questions;
-extern double top_1_score;
-extern double rr_ratio;
-extern int top_1_found;
-
 
 // get the index of the "current best" point
 int get_current_best_pt(point_set_t* P, vector<int>& C_idx, vector<point_t*>& ext_vec);
