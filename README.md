@@ -58,3 +58,5 @@ cd build
 cmake ..
 make
 ```
+
+All the used dataset (after filtering out tuples with missing values and normalization) can be found under the `input` folder.
