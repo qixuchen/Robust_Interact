@@ -16,37 +16,19 @@
 #include "UH/maxUtility.h"
 #include "RH/alg_one.h"
 #include "exp_stats.h"
-
 #include <vector>
 #include <ctime>
 #include <cmath>
 #include <sys/time.h>
 
-double compute_std(int* round_array, int n){
-    double sum = 0, var_sum = 0;
-    for(int i = 0; i < n; i++) sum += round_array[i];
-    double mean = sum/n;
-    for(int i = 0; i < n; i++) var_sum += (round_array[i]-mean)*(round_array[i]-mean);
-    return sqrt(var_sum/n);
-}
-
-
 int main(int argc, char *argv[]){
-
     srand(time(0));  // Initialize random number generator.
     point_set_t *P0 = read_points((char*)"4d100k.txt");
     int dim = P0->points[0]->dim; //obtain the dimension of the point
     std::vector<point_t *> p_set, top, p_convh, skylines;
 
-    // int p_num = P0->numberOfPoints;
-    // vector<point_t*> origin;
-    // for(int i=0; i < p_num; i++){
-    //     origin.push_back(P0->points[i]);
-    // }
-
     skyline_pset(P0, skylines);
     printf("%ld\n", skylines.size());
-
     skyband(P0, p_set, 1);
     find_top1(p_set, top);
     skyline_c(top, p_convh); //p_convh contains all the top-1 point on the convex hull
@@ -60,26 +42,17 @@ int main(int argc, char *argv[]){
     int checknum = 3;
     int num_repeat = 100;
 
-
     for(int i=0; i<num_repeat; i++){
         printf("round %d\n", i);
         double sum = 0;
         for (int i = 0; i < dim; i++)
         {
-            // u->coord[i] = ((double) rand()) / RAND_MAX;
-            // sum += u->coord[i];
-            if(i != 0){
-                u->coord[i] = ((double) rand()) / RAND_MAX / 2; 
-            }
-            else{
-                u->coord[i] = ((double) rand()) / RAND_MAX / 2 + 0.5;
-            }
+            u->coord[i] = ((double) rand()) / RAND_MAX;
             sum += u->coord[i];
         }
         for (int i = 0; i < dim; i++){
             u->coord[i] = u->coord[i]/sum;
         }
-
 
         find_top_k(u, P0, top_current, 2);
         printf("---------------------------------------------------------\n");
@@ -147,9 +120,7 @@ int main(int argc, char *argv[]){
     release_point_set(P, true);
     std::cout << "accuracy: " << ((double) correct_count)/num_repeat << std::endl;
     std::cout << "avg question num: "<< question_num/num_repeat << std::endl;
-    std::cout << "avg return size: "<< return_size/num_repeat << std::endl;
-    // print_time_stats();
-    std::cout << "avg accumulate time: "<< tot_time / question_num << std::endl;
+    std::cout << "avg time: "<< tot_time / question_num << std::endl;
     return 0;
 
 }
