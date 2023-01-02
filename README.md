@@ -59,12 +59,4 @@ cmake ..
 make
 ```
 
-All the used dataset (after filtering out tuples with missing values and normalization) can be found under the `input` folder. The source of datasets are as follows.
-
-(1). *Diamond* can be found at https://www.kaggle.com/datasets/shivam2503/diamonds.
-
-(2). *NBA* was extracted from https://databasketball.com/.
-
-(3). *Car* was extracted from Yahoo! autos https://autos.yahoo.com/.
-
-(4). *Island* was downloaded from Yufei Tao's homepage.
+All the used dataset (after filtering out tuples with missing values and normalization) can be found under the `input` folder. Links to the original dataset can be found in our paper.

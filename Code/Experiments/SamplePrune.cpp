@@ -230,7 +230,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
     point_t* point_result = NULL, *true_point_result = NULL;
     halfspace_t *hy=NULL, *hy_cp=NULL;
     bool encounter_err = false, end_premature=false;
-
+    start_timer();
     while(true_point_result==NULL){
 
         point_result = NULL;
@@ -246,7 +246,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
 
         //start of phase 1
         //==========================================================================================================================================
-        start_timer();
         while (point_result==NULL)
         {
             if (user_choice==p1)
@@ -385,7 +384,6 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         if(true_point_result!=NULL){
             break;
         }
-        stop_timer();
         //  re-initialize all data structures used in the inner loop with the record of the outer loop
         //  std::vector<halfspace_set_t *> half_set_set
         //  std::vector<int> considered_half_set
@@ -435,7 +433,7 @@ int SamplePrune(std::vector<point_t *> p_set, point_t *u, int checknum, double t
         //=================================================================================================================================
         //End of phase 2
     }
-
+    stop_timer();
     printf("|%30s |%10d |%10s |\n", "SamplePrune", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");

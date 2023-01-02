@@ -40,10 +40,10 @@ int main(int argc, char *argv[]){
 
     double theta = 0.05;
     int checknum = 3;
-    int num_repeat = 100;
+    int num_repeat = 20;
 
     for(int i=0; i<num_repeat; i++){
-        printf("round %d\n", i);
+        printf("round %d\n", i+1);
         double sum = 0;
         for (int i = 0; i < dim; i++)
         {
@@ -71,10 +71,10 @@ int main(int argc, char *argv[]){
 
         // if(dim==2){ // 2d algs
 
-            // // the 2RI algorithm
+            // the 2RI algorithm
             // ST2D(p_convh, u, checknum, theta);
 
-            // the Median algorithm
+            // // the Median algorithm
             // Median_Adapt(p_set, u, maxRound, theta);
 
             // // the Hull algorithm

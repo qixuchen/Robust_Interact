@@ -109,7 +109,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
     point_t* point_result = NULL, *true_point_result = NULL;
     halfspace_t *hy=NULL, *hy_cp=NULL;
     bool encounter_err = false, end_premature=false;
-
+    start_timer();
     while(true_point_result==NULL){
         point_result = NULL;
         //index: the index of the chosen hyperplane(question)
@@ -124,7 +124,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
 
         //start of phase 1
         //==========================================================================================================================================
-        start_timer();
         while (point_result==NULL)
         {
             if (user_choice==p1)
@@ -244,7 +243,6 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
         //  std::vector<choose_item *> choose_item_set
         //  std::vector<halfspace_t*> selected_halfspaces
         //  halfspace_set_t *R_half_set
-        stop_timer();
 
         selected_halfspaces.clear();
 
@@ -286,7 +284,7 @@ int PointPrune_v2(std::vector<point_t *> p_set, point_t *u, int checknum, double
         //End of phase 2
 
     }
-
+    stop_timer();
     printf("|%30s |%10d |%10s |\n", "PointPrune_v2", round, "--");
     printf("|%30s |%10s |%10d |\n", "Point", "--", true_point_result->id);
     printf("---------------------------------------------------------\n");
