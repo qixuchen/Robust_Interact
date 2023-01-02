@@ -1,8 +1,8 @@
 # Robust_Interact
 
 
-This package contains 3 directories under `Robust_Interact/Code`: 
-1. Directory `Robust_Interact`, which contains the source code of the proposed algorithms
+This package contains 3 directories under `Code`: 
+1. Directory `Experiments`, which contains the source code of the proposed algorithms
 
 	(1). *2RI* (only works for 2-dimensional datasets)
   
