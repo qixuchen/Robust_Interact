@@ -84,7 +84,7 @@ The output is the content of the user study. The instruction in the user study i
 
 There are in total 8 algorithms in the user study (6 mentioned above, 1 variation of `Verify-Point`, and 1 algorithm `STMD` designed by us but was not included in the paper)
 
-Their performances are recorded under directory `RI_user_study/output`.
+Their performance is recorded under directory `RI_user_study/output`.
 
 `result.txt` records the car recommended by each algorithm. One example output:
 

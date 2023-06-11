@@ -51,7 +51,7 @@ Then update the following lines in file `CMakeLists.txt`:
     set(INC_DIR /usr/local/Cellar/glpk/4.65/include)
     set(LINK_DIR /usr/local/Cellar/glpk/4.65/lib)
 
-Update the path `/usr/local/Cellar/glpk/4.65` to the path where you installed the `glpk` package.
+Replace the path `/usr/local/Cellar/glpk/4.65` to the path where you installed the `glpk` package.
 
 ### Install lp_solve
 
@@ -63,7 +63,7 @@ Then update the following line in file `CMakeLists.txt`:
 
     find_library(LP_SOLVE NAMES liblpsolve55.so PATHS /usr/lib/lp_solve)
 
-Update the path `/usr/lib/lp_solve` to the path where you installed the `lp_solve` package.
+Replace the path `/usr/lib/lp_solve` to the path where you installed the `lp_solve` package.
 
 ## Usage Steps
 
@@ -102,7 +102,7 @@ A toy 3-d dataset with 4 records:
     0.5 0.5 0
 	
 ### Output
-The output will be shown on the console. It runs an algorithm with name `Alg` for a number of times (e.g., 100 times). 
+The output will be shown on the console. It runs an algorithm (e.g. an algorithm with name `Alg`) for a number of times (e.g., 100 times). 
 
 In each round, it displays the ground truth best point and the point returned by `Alg`.
 

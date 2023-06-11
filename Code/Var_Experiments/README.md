@@ -81,7 +81,7 @@ A toy 3-d dataset with 4 records:
 ### Output
 The output consists of several parts, we give an example for each part of the output.
 
-In the following examples we assume that `k=5`.
+In the following examples we assume that *k* = 5.
 
 Further, we use the following notations:
 

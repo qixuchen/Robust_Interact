@@ -36,6 +36,8 @@ This package contains 3 directories under `Code`:
 
 2. Directory `RI_user_study`, which contains the source code for user study.
 
+	The following algorithms are included in the user study:
+
 	(1). *Verify-Point* (ours)
   
 	(2). *Verify-Space* (ours)
@@ -61,6 +63,7 @@ This package contains 3 directories under `Code`:
 See the readme files in these directories for further detail.
 
 Part of the code of *Verify-Point* and *Verify-Space* is based on https://github.com/Weicheng1996/SIGMOD2021.
+
 Part of the code of *Verify-Space* is based on `volesti` https://github.com/GeomScale/volesti.
 
 All datasets used in our paper can be found under `Code/Experiments/input`.
