@@ -93,7 +93,7 @@ ret_size | size of the returned set |
 num_ques | number of questions used by the algorithm |
 
 
-1, ground truth 
+Part 1: Ground truth 
 
     ---------------------------------------------------------
     |                  Ground Truth |        -- |        -- |
@@ -106,14 +106,14 @@ num_ques | number of questions used by the algorithm |
 
 which is the ground truth of the top-5 points.
 
-2, Return a set of points with size at most *k* which contains the best point (instead of only returning the best point)
+Part 2: Return a set of points with size at most *k* which contains the best point (instead of only returning the best point)
 
     ---------------------------------------------------------
     |        Alg (contain best) |      num_ques |        -- |
     |               Return size |            -- |   ret_size|
     ---------------------------------------------------------
 
-3, Return the top-*k* points (instead of only returning the best point)
+Part 3: Return the top-*k* points (instead of only returning the best point)
 
     ---------------------------------------------------------
     |                    Alg (topk) |  num_ques |        -- |
@@ -124,10 +124,10 @@ which is the ground truth of the top-5 points.
     |                         Point |   top - 5 |     PID_5 |
     ---------------------------------------------------------
 
-which are the top-5 found by `Alg`.
+which are the top-5 points found by `Alg`.
 
 
-4, Display *s* points in Conjecture Phase and ask the user to select the favorite point (instead of pairwise comparison)
+Part 4: Display *s* points in Conjecture Phase and ask the user to select the favorite point (instead of pairwise comparison)
 
     ---------------------------------------------------------
     |                Alg (favorite) |  num_ques |        -- |
@@ -136,7 +136,7 @@ which are the top-5 found by `Alg`.
 
 where `PID_1` is the best point found by `Alg`.
 
-5, Display *s* points in Conjecture Phase and ask the user to partition them into *superior* and *inferior* groups (instead of pairwise comparison)
+Part 5: Display *s* points in Conjecture Phase and ask the user to partition them into *superior* and *inferior* groups (instead of pairwise comparison)
 
     ---------------------------------------------------------
     |                 Alg (sup/inf) |  num_ques |        -- |

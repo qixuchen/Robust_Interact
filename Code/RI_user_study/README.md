@@ -1,5 +1,7 @@
 This Directory contains the code for user study on the follwing algorithms.
 
+The following algorithms are included in the user study:
+
 (1). *Verify-Point* (ours)
 
 (2). *Verify-Space* (ours)
@@ -13,7 +15,7 @@ This Directory contains the code for user study on the follwing algorithms.
 (6). *UH-Simplex*
 
 This package also provides real datasets `car` under directory `input` used in the user study.
-Links to the original dataset can be found in our paper.
+Link to the original dataset can be found in our paper.
 
 Make sure there is a folder called `input` and a folder called `output` under the directory `RI_user_study`.
 They will be used for storing the input/output files and some intermediate results.
@@ -80,7 +82,7 @@ Each car record consist of 4 numbers representing attributes `price`, `year`, `p
 ### Output
 The output is the content of the user study. The instruction in the user study is self-explanatory.
 
-There are in total 8 algorithms in the user study (6 mentioned above, 1 variation of `Verify-Point`, and 1 algorithm `STMD` designed by us that was not included in the paper)
+There are in total 8 algorithms in the user study (6 mentioned above, 1 variation of `Verify-Point`, and 1 algorithm `STMD` designed by us but was not included in the paper)
 
 Their performances are recorded under directory `RI_user_study/output`.
 
@@ -97,4 +99,4 @@ Their performances are recorded under directory `RI_user_study/output`.
     ---------------------------------------------------------
 where `Alg` is the name of the algorithm and `num_question` is the number of questions used by `Alg`.
 
-`question.txt`, `hit.txt` and `dissat.txt` each record the number of question, hit and dissatisfaction score (see our paper for the definition of hit and dissatisfaction score) of the tested algorithms, respectively.
+`question.txt`, `hit.txt` and `dissat.txt` each record the number of question, hit and dissatisfaction score (see our paper for the definition of hit and dissatisfaction score) of the tested algorithm 1 to algorithm 8 in an array of length 8, respectively.

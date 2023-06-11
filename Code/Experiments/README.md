@@ -1,37 +1,37 @@
 This Directory contains the source code of the proposed algorithms.
 
-	(1). *2RI* (only works for 2-dimensional datasets)
-  
-	(2). *Verify-Point* (can be found in PointPrune.cpp)
-  
-	(3). *Verify-Space* (can be found in SpacePrune.cpp)
-  
-    The following baseline algorithms can also be found in this directory.
-	
-	(a). Algorithms for 2-d:
+(1). *2RI* (only works for 2-dimensional datasets)
 
-	(1). *2DPI* 
+(2). *Verify-Point* (can be found in PointPrune.cpp)
 
-	(2). *Median*
+(3). *Verify-Space* (can be found in SpacePrune.cpp)
 
-	(3). *Hull*
+The following baseline algorithms can also be found in this directory.
 
-	(b). Algorithms for multi-d:
+(a). Algorithms for 2-d:
 
-	(1). *HD-PI*
+(1). *2DPI* 
 
-	(2). *UtilApprox*
+(2). *Median*
 
-	(3). *Active-Ranking*
+(3). *Hull*
 
-	(4). *Pref-Learning*
+(b). Algorithms for multi-d:
 
-	(5). *UH-Simplex*
+(1). *HD-PI*
 
-	(6). *RH*
+(2). *UtilApprox*
+
+(3). *Active-Ranking*
+
+(4). *Pref-Learning*
+
+(5). *UH-Simplex*
+
+(6). *RH*
 
 This package also provides the synthetic and real datasets under directory `input`.
-Links to the original dataset can be found in our paper.
+Links to the original real datasets can be found in our paper.
 
 Make sure there is a folder called `input` and a folder called `output` under the directory `Experiments`.
 They will be used for storing the input/output files and some intermediate results.
