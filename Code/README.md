@@ -1,7 +1,7 @@
 # Robust_Interact
 
 
-This package contains 3 directories under `Code`: 
+This package contains 3 directories: 
 1. Directory `Experiments`, which contains the source code of the proposed algorithms.
 
 	(1). *2RI* (only works for 2-dimensional datasets)
@@ -63,4 +63,4 @@ See the readme files in these directories for further detail.
 Part of the code of *Verify-Point* and *Verify-Space* is based on https://github.com/Weicheng1996/SIGMOD2021.
 Part of the code of *Verify-Space* is based on `volesti` https://github.com/GeomScale/volesti.
 
-All datasets used in our paper can be found under `Code/Experiments/input`.
+All datasets used in our paper can be found under `Experiments/input`.
